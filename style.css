@@ -1,0 +1,57 @@
+html {
+	height: 100%;
+}
+
+body {
+	background: black;
+	font-family: Helvetica;
+	font-size: 15px;
+	font-weight: 300;
+	margin: 0;
+	height: 100%;
+}
+
+#menu {
+	background: white;
+	box-sizing: border-box;
+	padding: 5px;
+	position: fixed;
+	top: 0; right: 0;
+	width: 100%;
+	z-index: 1;
+}
+
+#menu button {
+	background: white;
+	border: none;
+	cursor: pointer;
+	font: inherit;
+	margin: 0;
+	outline: none;
+	padding: 5px;
+}
+
+#menu input {
+	border: none;
+	font: inherit;
+	margin: 0;
+	outline: none;
+	padding: 5px;
+	width: 70px;
+}
+
+#alert {
+	background: lightyellow;
+	padding: 5px;
+}
+
+#board {
+	position: absolute;
+	top: 0; left: 0;
+}
+
+#grid {
+	pointer-events: none;
+	position: absolute;
+	top: 0; left: 0;
+}
