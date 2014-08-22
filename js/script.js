@@ -30,6 +30,10 @@ $( function() {
 	firebase.on( 'child_changed', board.changeChild );
 	firebase.on( 'child_removed', board.removeChild );
 
+	$( '#colorInput' ).spectrum({
+		preferredFormat: "hex",
+		showButtons: false
+	});
 });
 
 firebase = new Firebase( 'https://pixel-by-pixel.firebaseio.com/' );
@@ -55,12 +59,10 @@ menu = {
 	},
 
 	onZoomInButtonClick: function( event ) {
-		$( '#board' ).css( 'cursor', 'zoom-in' );
 		board.zoomIn();
 	},
 
 	onZoomOutButtonClick: function( event ) {
-		$( '#board' ).css( 'cursor', 'zoom-out' );
 		board.zoomOut();
 	},
 

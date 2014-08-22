@@ -7,8 +7,11 @@ Bugs
 
 Tasks
 -----
+- Color picker + Eyedrop
+- Interface: alerts
 - Keyboard
-- Interface: alerts, icons
+- Menu
+- Accessibility
 - Logo and favicon
 - Bucket
 - Undo

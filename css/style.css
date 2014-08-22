@@ -31,15 +31,6 @@ body {
 	padding: 5px;
 }
 
-#menu input {
-	border: none;
-	font: inherit;
-	margin: 0;
-	outline: none;
-	padding: 5px;
-	width: 70px;
-}
-
 #alert {
 	background: lightyellow;
 	padding: 5px;
