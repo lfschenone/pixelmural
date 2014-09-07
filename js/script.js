@@ -22,7 +22,7 @@ $( function() {
 	$( '#menu #pencilButton' ).click( menu.onPencilButtonClick );
 	$( '#menu #eyedropButton' ).click( menu.onEyedropButtonClick );
 	$( '#menu #eraserButton' ).click( menu.onEraserButtonClick );
-	$( '#menu #colorInput' ).change( menu.changeColor );
+	$( '#menu #colorInput' ).change( menu.onColorInputChange );
 	$( document ).keydown( keyboard.onKeydown );
 
 	menu.setAlert( 'Loading pixels, please wait...' );
@@ -32,7 +32,10 @@ $( function() {
 
 	$( '#colorInput' ).spectrum({
 		preferredFormat: "hex",
-		showButtons: false
+		showButtons: false,
+		move: function( color ) {
+			menu.setColor( color.toHexString() );
+		}
 	});
 });
 
@@ -82,10 +85,6 @@ menu = {
 		$( '#board' ).css( 'cursor', 'default' );
 		mouse.downAction = 'clearPixel';
 		mouse.dragAction = 'clearPixel';
-	},
-
-	changeColor: function( event ) {
-		menu.color = event.target.value;
 	},
 
 	setColor: function( color ) {
@@ -200,6 +199,7 @@ mouse = {
 			var data = snapshot.val();
 			if ( data ) {
 				menu.setColor( data.color );
+				$( '#colorInput' ).spectrum( 'set', data.color );
 				mouse.downAction = 'drawPixel';
 			} else {
 				mouse.downAction = 'clearPixel';

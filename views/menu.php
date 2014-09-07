@@ -7,5 +7,6 @@
 <button id="pencilButton"><img src="images/pencil.png" title="Pencil" /></button>
 <button id="eraserButton"><img src="images/eraser.png" title="Eraser" /></button>
 <input id="colorInput" type="text" value="#ffffff" />
-<span id="alert"></span>
+<span id="alert">asd</span>
+<a class="button" id="gitHubLink" target="_blank" href="https://github.com/lfschenone/pixel-by-pixel"><img src="images/github.png" title="GitHub repository" /></a>
 </div>

@@ -21,19 +21,34 @@ body {
 	z-index: 1;
 }
 
-#menu button {
+#menu button,
+#menu a.button {
 	background: white;
 	border: none;
 	cursor: pointer;
+	display: inline-block;
 	font: inherit;
 	margin: 0;
 	outline: none;
 	padding: 5px;
 }
 
+#menu button img,
+#menu a.button img {
+	display: block;
+}
+
+#menu #gitHubLink {
+	float: right;
+}
+
 #alert {
 	background: lightyellow;
-	padding: 5px;
+	display: inline-block;
+	line-height: 30px;
+	margin: 5px;
+	padding: 0 10px;
+	vertical-align: bottom;
 }
 
 #board {
