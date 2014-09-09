@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Pixel by Pixel</title>
+<link rel="icon" href="favicon.ico" />
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/spectrum.css" />
 <script src="js/prototypes.js"></script>

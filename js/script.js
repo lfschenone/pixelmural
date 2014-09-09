@@ -173,8 +173,8 @@ mouse = {
 		mouse.previousX = mouse.currentX;
 		mouse.previousY = mouse.currentY;
 
-		mouse.currentX = board.topLeftX + Math.floor( event.clientX / board.pixelSize );
-		mouse.currentY = board.topLeftY + Math.floor( event.clientY / board.pixelSize );
+		mouse.currentX = board.topLeftX + Math.floor( ( event.clientX - 2 ) / board.pixelSize ); //-2 is a bugfix
+		mouse.currentY = board.topLeftY + Math.floor( ( event.clientY - 2 ) / board.pixelSize ); //-2 is a bugfix
 
 		//If the mouse is being dragged
 		if ( mouse.state == 'down' && ( mouse.currentX != mouse.previousX || mouse.currentY != mouse.previousY ) && mouse.dragAction ) {

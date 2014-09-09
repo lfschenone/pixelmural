@@ -3,15 +3,14 @@ Pixel by Pixel
 
 Bugs
 ----
-* The mouse is off by 1px on the Y axis
+* The mouse is off by one or two pixels (but there is a temporary bugfix in place)
 
 Tasks
 -----
 * Perfect the CSS
-* Keyboard
+* Keyboard shortcuts
 * Menu
 * Accessibility
-* Logo and favicon
 * Bucket
 * Undo
 * Users?
