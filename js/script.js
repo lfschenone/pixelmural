@@ -102,45 +102,36 @@ keyboard = {
 	onKeydown: function( event ) {
 		//Space bar
 		if ( event.keyCode == 32 ) {
-			keyboard.onSpaceBar();
+			$( '#moveButton' ).click();
 		}
 		//Left arrow
 		if ( event.keyCode == 37 ) {
-			keyboard.onLeftArrow();
+			board.topLeftX -= 1;
+			board.redraw();
 		}
 		//Up arrow
 		if ( event.keyCode == 38 ) {
-			keyboard.onUpArrow();
+			board.topLeftY -= 1;
+			board.redraw();
 		}
 		//Right arrow
 		if ( event.keyCode == 39 ) {
-			keyboard.onRightArrow();
+			board.topLeftX += 1;
+			board.redraw();
 		}
 		//Down arrow
 		if ( event.keyCode == 40 ) {
-			keyboard.onDownArrow();
+			board.topLeftY += 1;
+			board.redraw();
 		}
-	},
-
-	onSpaceBar: function() {
-		$( '#moveButton' ).click();
-	},
-
-	onLeftArrow: function() {
-		board.topLeftX -= 1;
-		board.redraw();
-	},
-	onUpArrow: function() {
-		board.topLeftY -= 1;
-		board.redraw();
-	},
-	onRightArrow: function() {
-		board.topLeftX += 1;
-		board.redraw();
-	},
-	onDownArrow: function() {
-		board.topLeftY += 1;
-		board.redraw();
+		//E
+		if ( event.keyCode == 69 ) {
+			menu.onEyedropButtonClick();
+		}
+		//P
+		if ( event.keyCode == 80 ) {
+			menu.onPencilButtonClick();
+		}
 	}
 }
 
