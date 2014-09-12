@@ -38,6 +38,10 @@ body {
 	display: block;
 }
 
+#menu button.active {
+	background: #aaf;
+}
+
 #menu #gitHubLink {
 	float: right;
 }

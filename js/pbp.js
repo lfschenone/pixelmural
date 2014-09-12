@@ -15,16 +15,18 @@ $( function() {
 		mousedown( mouse.down ).
 		mousemove( mouse.move ).
 		mouseup( mouse.up );
-	$( '#menu #gridButton' ).click( menu.onGridButtonClick );
-	$( '#menu #moveButton' ).click( menu.onMoveButtonClick );
-	$( '#menu #zoomInButton' ).click( menu.onZoomInButtonClick );
-	$( '#menu #zoomOutButton' ).click( menu.onZoomOutButtonClick );
-	$( '#menu #eyedropButton' ).click( menu.onEyedropButtonClick );
-	$( '#menu #pencilButton' ).click( menu.onPencilButtonClick );
-	$( '#menu #bucketButton' ).click( menu.onBucketButtonClick );
-	$( '#menu #eraserButton' ).click( menu.onEraserButtonClick );
-	$( '#menu #colorInput' ).change( menu.onColorInputChange );
+	$( '#gridButton' ).click( menu.onGridButtonClick );
+	$( '#zoomInButton' ).click( menu.onZoomInButtonClick );
+	$( '#zoomOutButton' ).click( menu.onZoomOutButtonClick );
+	$( '#moveButton' ).click( menu.onMoveButtonClick );
+	$( '#eyedropButton' ).click( menu.onEyedropButtonClick );
+	$( '#pencilButton' ).click( menu.onPencilButtonClick );
+	$( '#bucketButton' ).click( menu.onBucketButtonClick );
+	$( '#eraserButton' ).click( menu.onEraserButtonClick );
 	$( document ).keydown( keyboard.onKeydown );
+
+	//Set 'Move' as the default action
+	$( '#moveButton' ).click();
 
 	//Fill the board
 	board.fill();
@@ -53,12 +55,6 @@ menu = {
 		grid.toggle();
 	},
 
-	onMoveButtonClick: function( event ) {
-		$( '#board' ).css( 'cursor', 'move' );
-		mouse.downAction = 'moveBoard';
-		mouse.dragAction = 'moveBoard';
-	},
-
 	onZoomInButtonClick: function( event ) {
 		board.zoomIn();
 	},
@@ -67,26 +63,37 @@ menu = {
 		board.zoomOut();
 	},
 
+	onMoveButtonClick: function( event ) {
+		$( '#board' ).css( 'cursor', 'move' );
+		$( '#moveButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
+		mouse.downAction = 'moveBoard';
+		mouse.dragAction = 'moveBoard';
+	},
+
 	onEyedropButtonClick: function( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
+		$( '#eyedropButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'suckColor';
 		mouse.dragAction = null;
 	},
 
 	onPencilButtonClick: function( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
+		$( '#pencilButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'drawPixel';
 		mouse.dragAction = null;
 	},
 
 	onBucketButtonClick: function( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
+		$( '#bucketButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintArea';
 		mouse.dragAction = null;
 	},
 
 	onEraserButtonClick: function( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
+		$( '#eraserButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'clearPixel';
 		mouse.dragAction = 'clearPixel';
 	},
@@ -96,8 +103,11 @@ menu = {
 		$( '#colorInput' ).val( color );
 	},
 
-	setAlert: function( alert ) {
+	setAlert: function( alert, time ) {
 		$( '#alert' ).text( alert );
+		window.setTimeout( function() {
+			$( '#alert' ).empty();
+		}, 1000 );
 	}
 }
 
@@ -136,9 +146,25 @@ keyboard = {
 		if ( event.keyCode == 69 ) {
 			menu.onEyedropButtonClick();
 		}
+		//G
+		if ( event.keyCode == 71 ) {
+			menu.onGridButtonClick();
+		}
+		//I
+		if ( event.keyCode == 73 ) {
+			menu.onZoomInButtonClick();
+		}
+		//O
+		if ( event.keyCode == 79 ) {
+			menu.onZoomOutButtonClick();
+		}
 		//P
 		if ( event.keyCode == 80 ) {
 			menu.onPencilButtonClick();
+		}
+		//R
+		if ( event.keyCode == 82 ) {
+			menu.onEraserButtonClick();
 		}
 	}
 }
@@ -159,7 +185,7 @@ mouse = {
 
 	state: 'up',
 
-	downAction: 'drawPixel',
+	downAction: null,
 	dragAction: null,
 
 	down: function( event ) {
@@ -203,7 +229,6 @@ mouse = {
 		var color = rgbToHex( r, g, b );
 		menu.setColor( color );
 		$( '#colorInput' ).spectrum( 'set', color );
-		mouse.downAction = 'drawPixel';
 		return mouse;
 	},
 

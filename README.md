@@ -7,11 +7,9 @@ Bugs
 
 Tasks
 -----
-* Perfect the CSS
-* Keyboard shortcuts
-* Menu
-* Accessibility
 * Undo
+* Perfect the CSS
+* Menu
 * Users?
 * Redo?
 * Grid numbers?
