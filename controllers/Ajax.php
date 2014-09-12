@@ -111,12 +111,15 @@ class Ajax extends Controller {
 	static function clearPixel() {
 		$x = GET( 'x' );
 		$y = GET( 'y' );
+		$ip = $_SERVER['REMOTE_ADDR'];
 		$Pixel = Pixel::newFromCoords( $x, $y );
-		if ( $Pixel ) {
-			$Pixel->delete();
-			exit( 'Pixel deleted' );
-		} else {
+		if ( !$Pixel ) {
 			exit( 'Pixel not found' );
 		}
+		if ( $Pixel->ip != $ip ) {
+			exit( 'Not your pixel' );
+		}
+		$Pixel->delete();
+		exit( 'Pixel deleted' );
 	}
 }

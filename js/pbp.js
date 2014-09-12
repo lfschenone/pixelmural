@@ -289,8 +289,16 @@ mouse = {
 		var y = mouse.currentY;
 		$.get( 'ajax/clearPixel?x=' + x + '&y=' + y, function( data ) {
 			//console.log( data );
-			if ( data == 'Pixel deleted' ) {
-				board.clearPixel( x, y );
+			switch ( data ) {
+				case 'Pixel not found':
+					//Do nothing
+					break;
+				case 'Pixel deleted':
+					board.clearPixel( x, y );
+					break;
+				case 'Not your pixel':
+					menu.setAlert( data );
+					break;
 			}
 		});
 		return mouse;
