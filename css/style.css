@@ -53,11 +53,11 @@ body {
 
 #board {
 	position: absolute;
-	top: 0; left: 0;
+	top: -2px; left: -2px; /* Should be 0 and 0, but there is a 2px bug with the mouse position */
 }
 
 #grid {
 	pointer-events: none;
 	position: absolute;
-	top: 0; left: 0;
+	top: -2px; left: -2px;
 }

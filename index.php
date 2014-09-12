@@ -1,7 +1,14 @@
-<?php include "views/header.php"; ?>
-<?php include "views/menu.php"; ?>
+<?php
 
-<canvas id="board" width="800" height="600"></canvas>
-<canvas id="grid" width="800" height="600"></canvas>
+session_start();
 
-<?php include "views/footer.php"; ?>
+include 'includes/config.php';
+include 'includes/functions.php';
+
+$gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
+
+$gController = GET( 'controller', DEFAULT_CONTROLLER );
+
+$gMethod = GET( 'method', DEFAULT_METHOD );
+
+$gController::$gMethod();

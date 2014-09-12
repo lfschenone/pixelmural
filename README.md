@@ -3,10 +3,11 @@ Pixel by Pixel
 
 Bugs
 ----
-* The mouse is off by one or two pixels (but there is a temporary bugfix in place)
+* The mouse position is off by two pixels. There is a bugfix in place in the CSS though.
 
 Tasks
 -----
+* Use the 'transaction' method instead of the 'once' method?
 * Perfect the CSS
 * Keyboard shortcuts
 * Menu

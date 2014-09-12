@@ -5,6 +5,7 @@
 <button id="zoomOutButton"><img src="images/zoom-out.png" title="Zoom out" /></button>
 <button id="eyedropButton"><img src="images/eyedrop.png" title="Eyedrop [E]" /></button>
 <button id="pencilButton"><img src="images/pencil.png" title="Pencil [P]" /></button>
+<button id="bucketButton"><img src="images/bucket.png" title="Bucket [B]" /></button>
 <button id="eraserButton"><img src="images/eraser.png" title="Eraser" /></button>
 <input id="colorInput" type="text" value="#ffffff" />
 <span id="alert"></span>

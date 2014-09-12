@@ -1,0 +1,8 @@
+CREATE TABLE pixels (
+	`x` INT NOT NULL,
+	`y` INT NOT NULL,
+	`ip` VARCHAR(50) NOT NULL,
+	`time` INT UNSIGNED NOT NULL,
+	`color` VARCHAR(7) NOT NULL,
+	PRIMARY KEY( `x`, `y` )
+);

@@ -11,25 +11,25 @@ $( function() {
 	grid.setHeight( board.height );
 
 	//Bind events
-	$( '#board' )
-		.mousedown( mouse.down )
-		.mousemove( mouse.move )
-		.mouseup( mouse.up );
+	$( '#board' ).
+		mousedown( mouse.down ).
+		mousemove( mouse.move ).
+		mouseup( mouse.up );
 	$( '#menu #gridButton' ).click( menu.onGridButtonClick );
 	$( '#menu #moveButton' ).click( menu.onMoveButtonClick );
 	$( '#menu #zoomInButton' ).click( menu.onZoomInButtonClick );
 	$( '#menu #zoomOutButton' ).click( menu.onZoomOutButtonClick );
-	$( '#menu #pencilButton' ).click( menu.onPencilButtonClick );
 	$( '#menu #eyedropButton' ).click( menu.onEyedropButtonClick );
+	$( '#menu #pencilButton' ).click( menu.onPencilButtonClick );
+	$( '#menu #bucketButton' ).click( menu.onBucketButtonClick );
 	$( '#menu #eraserButton' ).click( menu.onEraserButtonClick );
 	$( '#menu #colorInput' ).change( menu.onColorInputChange );
 	$( document ).keydown( keyboard.onKeydown );
 
-	menu.setAlert( 'Loading pixels, please wait...' );
-	firebase.on( 'child_added', board.addChild );
-	firebase.on( 'child_changed', board.changeChild );
-	firebase.on( 'child_removed', board.removeChild );
+	//Fill the board
+	board.fill();
 
+	//Initialize spectrum
 	$( '#colorInput' ).spectrum({
 		preferredFormat: "hex",
 		showButtons: false,
@@ -38,8 +38,6 @@ $( function() {
 		}
 	});
 });
-
-firebase = new Firebase( 'https://pixel-by-pixel.firebaseio.com/' );
 
 user = {
 	ip: null
@@ -69,15 +67,21 @@ menu = {
 		board.zoomOut();
 	},
 
+	onEyedropButtonClick: function( event ) {
+		$( '#board' ).css( 'cursor', 'default' );
+		mouse.downAction = 'suckColor';
+		mouse.dragAction = null;
+	},
+
 	onPencilButtonClick: function( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		mouse.downAction = 'drawPixel';
 		mouse.dragAction = null;
 	},
 
-	onEyedropButtonClick: function( event ) {
+	onBucketButtonClick: function( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
-		mouse.downAction = 'suckColor';
+		mouse.downAction = 'paintArea';
 		mouse.dragAction = null;
 	},
 
@@ -107,22 +111,22 @@ keyboard = {
 		//Left arrow
 		if ( event.keyCode == 37 ) {
 			board.topLeftX -= 1;
-			board.redraw();
+			board.refill();
 		}
 		//Up arrow
 		if ( event.keyCode == 38 ) {
 			board.topLeftY -= 1;
-			board.redraw();
+			board.refill();
 		}
 		//Right arrow
 		if ( event.keyCode == 39 ) {
 			board.topLeftX += 1;
-			board.redraw();
+			board.refill();
 		}
 		//Down arrow
 		if ( event.keyCode == 40 ) {
 			board.topLeftY += 1;
-			board.redraw();
+			board.refill();
 		}
 		//E
 		if ( event.keyCode == 69 ) {
@@ -138,9 +142,10 @@ keyboard = {
 mouse = {
 
 	/**
-	 * X and Y coordinates of the current position of the mouse.
-	 * This is NOT the distance from the top left corner of the screen
-	 * but rather the distance from the origin of the coordinate system.
+	 * This is the distance from the origin of the coordinate system,
+	 * NOT the distance from the top left corner of the screen.
+	 * The origin of the coordinate system starts at the top left corner of the screen,
+	 * but it can be moved by the user.
 	 */
 	currentX: null,
 	currentY: null,
@@ -155,7 +160,7 @@ mouse = {
 
 	down: function( event ) {
 		mouse.state = 'down';
-		mouse[ mouse.downAction ]();
+		mouse[ mouse.downAction ]( event );
 		return mouse;
 	},
 
@@ -164,8 +169,8 @@ mouse = {
 		mouse.previousX = mouse.currentX;
 		mouse.previousY = mouse.currentY;
 
-		mouse.currentX = board.topLeftX + Math.floor( ( event.clientX - 2 ) / board.pixelSize ); //-2 is a bugfix
-		mouse.currentY = board.topLeftY + Math.floor( ( event.clientY - 2 ) / board.pixelSize ); //-2 is a bugfix
+		mouse.currentX = board.topLeftX + Math.floor( event.clientX / board.pixelSize );
+		mouse.currentY = board.topLeftY + Math.floor( event.clientY / board.pixelSize );
 
 		//If the mouse is being dragged
 		if ( mouse.state == 'down' && ( mouse.currentX != mouse.previousX || mouse.currentY != mouse.previousY ) && mouse.dragAction ) {
@@ -184,52 +189,79 @@ mouse = {
 		board.move();
 	},
 
-	suckColor: function() {
-		var dataRef = firebase.child( mouse.currentX + ':' + mouse.currentY );
-		dataRef.once( 'value', function( snapshot ) { //TODO: Use the 'transaction' method instead?
-			var data = snapshot.val();
-			if ( data ) {
-				menu.setColor( data.color );
-				$( '#colorInput' ).spectrum( 'set', data.color );
-				mouse.downAction = 'drawPixel';
-			} else {
-				mouse.downAction = 'clearPixel';
+	suckColor: function( event ) {
+		var x = mouse.currentX;
+		var y = mouse.currentY;
+		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
+		var r = imageData.data[0];
+		var g = imageData.data[1];
+		var b = imageData.data[2];
+		var color = rgbToHex( r, g, b );
+		menu.setColor( color );
+		$( '#colorInput' ).spectrum( 'set', color );
+		mouse.downAction = 'drawPixel';
+		return mouse;
+	},
+
+	drawPixel: function() {
+		var x = mouse.currentX;
+		var y = mouse.currentY;
+		var color = menu.color.substring( 1 ); //Remove the '#'
+		$.get( 'ajax/drawPixel?x=' + x + '&y=' + y + '&color=' + color, function( data ) {
+			//console.log( data );
+			switch ( data ) {
+				case 'Pixel inserted':
+					board.paintPixel( x, y, color );
+					break;
+				case 'Pixel updated':
+					board.paintPixel( x, y, color );
+					break;
+				case 'Pixel deleted':
+					board.clearPixel( x, y );
+					break;
+				case 'Not your pixel':
+					menu.setAlert( data );
+					break;
 			}
 		});
 		return mouse;
 	},
 
-	drawPixel: function() {
-		var dataRef = firebase.child( mouse.currentX + ':' + mouse.currentY );
-		dataRef.once( 'value', function( snapshot ) { //TODO: Use the 'transaction' method instead?
-			var data = snapshot.val();
-			if ( data ) {
-				if ( data.ip == user.ip ) {
-					if ( data.color == menu.color && mouse.currentX == mouse.previousX && mouse.currentY == mouse.currentY ) {
-						board.clearPixel( mouse.currentX, mouse.currentY );
-						dataRef.remove();
-					} else {
-						board.fillPixel( mouse.currentX, mouse.currentY, menu.color );
-						dataRef.child( 'color' ).set( menu.color );
+	paintArea: function() {
+		var x = mouse.currentX;
+		var y = mouse.currentY;
+		var color = menu.color.substring( 1 ); //Remove the '#'
+		$.get( 'ajax/paintArea?x=' + x + '&y=' + y + '&color=' + color, function( data ) {
+			//console.log( data );
+			switch ( data ) {
+				case 'Pixel inserted':
+					board.paintPixel( x, y, color );
+					break;
+				case 'Pixel deleted':
+					board.clearPixel( x, y );
+					break;
+				case 'Not your pixel':
+					menu.setAlert( data );
+					break;
+				default: //Assume everything went ok
+					data = JSON.parse( data );
+					var i, pixel;
+					for ( i = 0; i < data.length; i++ ) {
+						pixel = data[ i ];
+						board.paintPixel( pixel.x, pixel.y, pixel.color );
 					}
-				} else {
-					menu.setAlert( 'Not your pixel', 1000 );
-				}
-			} else {
-				board.fillPixel( mouse.currentX, mouse.currentY, menu.color );
-				dataRef.set({ 'ip': user.ip, 'color': menu.color });
 			}
 		});
 		return mouse;
 	},
 
 	clearPixel: function() {
-		var dataRef = firebase.child( mouse.currentX + ':' + mouse.currentY );
-		dataRef.once( 'value', function( snapshot ) { //TODO: Use the 'transaction' method instead?
-			var data = snapshot.val();
-			if ( data ) {
-				board.clearPixel( mouse.currentX, mouse.currentY );
-				dataRef.remove();
+		var x = mouse.currentX;
+		var y = mouse.currentY;
+		$.get( 'ajax/clearPixel?x=' + x + '&y=' + y, function( data ) {
+			//console.log( data );
+			if ( data == 'Pixel deleted' ) {
+				board.clearPixel( x, y );
 			}
 		});
 		return mouse;
@@ -314,7 +346,7 @@ board = {
 		mouse.currentX = board.topLeftX + Math.floor( event.clientX / board.pixelSize );
 		mouse.currentY = board.topLeftY + Math.floor( event.clientY / board.pixelSize );
 
-		board.redraw();
+		board.refill();
 		return board;
 	},
 
@@ -325,7 +357,7 @@ board = {
 		board.setPixelSize( board.pixelSize * 2 );
 		board.topLeftX += Math.floor( board.xPixels / 2 );
 		board.topLeftY += Math.floor( board.yPixels / 2 );
-		board.redraw();
+		board.refill();
 		return board;
 	},
 
@@ -336,13 +368,19 @@ board = {
 		board.setPixelSize( board.pixelSize / 2 );
 		board.topLeftX -= Math.floor( board.xPixels / 4 );
 		board.topLeftY -= Math.floor( board.yPixels / 4 );
-		board.redraw();
+		board.refill();
 		return board;
 	},
 
 	fill: function() {
-		firebase.once( 'value', function( snapshot ) { //TODO: Use the 'transaction' method instead?
-			snapshot.forEach( board.addChild );
+		$.get( 'ajax/getPixels', function( data ) {
+			//console.log( data );
+			data = JSON.parse( data );
+			var i, pixel;
+			for ( i = 0; i < data.length; i++ ) {
+				pixel = data[ i ];
+				board.paintPixel( pixel.x, pixel.y, pixel.color );
+			}
 		});
 		return board;
 	},
@@ -352,18 +390,13 @@ board = {
 		return board;
 	},
 
-	redraw: function() {
+	refill: function() {
 		board.clear().fill();
 		grid.toggle().toggle();
 		return board;
 	},
 
-	fillPixel: function( x, y, color ) {
-/*
-		if ( x < 0 || y < 0 || x > board.xPixels || y > board.yPixels ) {
-			return board; //If the pixel is outside the field of view, don't draw it
-		}
-*/
+	paintPixel: function( x, y, color ) {
 		rectX = ( x - board.topLeftX ) * board.pixelSize;
 		rectY = ( y - board.topLeftY ) * board.pixelSize;
 		rectW = board.pixelSize;
@@ -374,38 +407,12 @@ board = {
 	},
 
 	clearPixel: function( x, y ) {
-/*
-		if ( x < 0 || y < 0 || x > board.xPixels || y > board.yPixels ) {
-			return board //If the pixel is outside the field of view, exit
-		}
-*/
 		rectX = ( x - board.topLeftX ) * board.pixelSize;
 		rectY = ( y - board.topLeftY ) * board.pixelSize;
 		rectW = board.pixelSize;
 		rectH = board.pixelSize;
 		board.context.clearRect( rectX, rectY, rectW, rectH );
 		return board;
-	},
-
-	addChild: function( snapshot ) {
-		var coords = snapshot.name().split( ":" );
-		var x = parseInt( coords[0] );
-		var y = parseInt( coords[1] );
-/*
-		if ( x < 0 || y < 0 || x > board.xPixels || y > board.yPixels ) {
-			return board; //If the pixel is outside the field of view, don't draw it
-		}
-*/
-		var color = snapshot.val().color;
-		board.fillPixel( x, y, color );
-		menu.setAlert( '' ); //This will be called once for every pixel, but I can't find a way around it
-	},
-
-	changeChild: function( snapshot ) {
-		return board.addChild( snapshot );
-	},
-
-	removeChild: function( snapshot ) {
 	}
 }
 
