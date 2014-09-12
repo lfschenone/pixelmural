@@ -7,12 +7,10 @@ Bugs
 
 Tasks
 -----
-* Use the 'transaction' method instead of the 'once' method?
 * Perfect the CSS
 * Keyboard shortcuts
 * Menu
 * Accessibility
-* Bucket
 * Undo
 * Users?
 * Redo?

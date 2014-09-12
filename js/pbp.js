@@ -128,6 +128,10 @@ keyboard = {
 			board.topLeftY += 1;
 			board.refill();
 		}
+		//B
+		if ( event.keyCode == 66 ) {
+			menu.onBucketButtonClick();
+		}
 		//E
 		if ( event.keyCode == 69 ) {
 			menu.onEyedropButtonClick();
@@ -206,8 +210,8 @@ mouse = {
 	drawPixel: function() {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
-		var color = menu.color.substring( 1 ); //Remove the '#'
-		$.get( 'ajax/drawPixel?x=' + x + '&y=' + y + '&color=' + color, function( data ) {
+		var color = menu.color;
+		$.get( 'ajax/drawPixel?x=' + x + '&y=' + y + '&color=' + color.substring(1), function( data ) {
 			//console.log( data );
 			switch ( data ) {
 				case 'Pixel inserted':
@@ -230,8 +234,8 @@ mouse = {
 	paintArea: function() {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
-		var color = menu.color.substring( 1 ); //Remove the '#'
-		$.get( 'ajax/paintArea?x=' + x + '&y=' + y + '&color=' + color, function( data ) {
+		var color = menu.color;
+		$.get( 'ajax/paintArea?x=' + x + '&y=' + y + '&color=' + color.substring(1), function( data ) {
 			//console.log( data );
 			switch ( data ) {
 				case 'Pixel inserted':
