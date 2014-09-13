@@ -217,7 +217,9 @@ mouse = {
 
 	up: function( event ) {
 		mouse.state = 'up';
-		mouse[ mouse.upAction ]();
+		if ( mouse.upAction ) {
+			mouse[ mouse.upAction ]( event );
+		}
 		return mouse;
 	},
 
