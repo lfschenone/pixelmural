@@ -432,6 +432,7 @@ board = {
 	},
 
 	fill: function() {
+		menu.setAlert( 'Loading pixels, please wait...' );
 		var data = {
 			'x': board.topLeftX,
 			'y': board.topLeftY,
