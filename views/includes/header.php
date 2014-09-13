@@ -13,6 +13,8 @@
 <script src="js/spectrum.js"></script>
 <script src="js/pbp.js"></script>
 <script>user.ip = '<?php echo $_SERVER['REMOTE_ADDR']; ?>';</script>
+<meta property="og:url" content="http://pixel-by-pixel.lfschenone.com/" />
+<meta property="og:title" content="Pixel by Pixel" />
 <meta property="og:image" content="http://pixel-by-pixel.lfschenone.com/images/mandala.png" />
 <meta property="og:image" content="http://pixel-by-pixel.lfschenone.com/images/mario.png" />
 <meta property="og:image" content="http://pixel-by-pixel.lfschenone.com/images/invaders.png" />
