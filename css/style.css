@@ -42,7 +42,12 @@ body {
 	background: #aaf;
 }
 
-#menu #gitHubLink {
+#menu .fb-like {
+	float: right;
+	padding: 10px;
+}
+
+#menu #github-link {
 	float: right;
 }
 

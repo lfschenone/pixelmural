@@ -36,7 +36,7 @@ class Ajax extends Controller {
 			$Pixel->insert();
 			exit( 'Pixel inserted' );
 		}
-		if ( $firstPixel->ip != $ip ) {
+		if ( $Pixel->ip != $ip ) {
 			exit( 'Not your pixel' );
 		}
 		if ( $Pixel->color == $color ) {

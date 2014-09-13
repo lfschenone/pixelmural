@@ -42,7 +42,21 @@ $( function() {
 });
 
 user = {
-	ip: null
+
+	/**
+	 * The IP of the user
+	 */
+	ip: null,
+
+	/**
+	 * An array of pixels
+	 */
+	undo: [],
+
+	/**
+	 * An array of pixels
+	 */
+	redo: []
 }
 
 menu = {
@@ -123,53 +137,33 @@ keyboard = {
 		if ( event.keyCode == 32 ) {
 			$( '#moveButton' ).click();
 		}
-		//Left arrow
-		if ( event.keyCode == 37 ) {
-			board.topLeftX -= 1;
-			board.refill();
-		}
-		//Up arrow
-		if ( event.keyCode == 38 ) {
-			board.topLeftY -= 1;
-			board.refill();
-		}
-		//Right arrow
-		if ( event.keyCode == 39 ) {
-			board.topLeftX += 1;
-			board.refill();
-		}
-		//Down arrow
-		if ( event.keyCode == 40 ) {
-			board.topLeftY += 1;
-			board.refill();
-		}
 		//B
 		if ( event.keyCode == 66 ) {
-			menu.onBucketButtonClick();
+			$( '#bucketButton' ).click();
 		}
 		//E
 		if ( event.keyCode == 69 ) {
-			menu.onEyedropButtonClick();
+			$( '#eyedropButton' ).click();
 		}
 		//G
 		if ( event.keyCode == 71 ) {
-			menu.onGridButtonClick();
+			$( '#gridButton' ).click();
 		}
 		//I
 		if ( event.keyCode == 73 ) {
-			menu.onZoomInButtonClick();
+			$( '#zoomInButton' ).click();
 		}
 		//O
 		if ( event.keyCode == 79 ) {
-			menu.onZoomOutButtonClick();
+			$( '#zoomOutButton' ).click();
 		}
 		//P
 		if ( event.keyCode == 80 ) {
-			menu.onPencilButtonClick();
+			$( '#pencilButton' ).click();
 		}
 		//R
 		if ( event.keyCode == 82 ) {
-			menu.onEraserButtonClick();
+			$( '#eraserButton' ).click();
 		}
 	}
 }
@@ -271,7 +265,7 @@ mouse = {
 		var color = menu.color;
 		var data = { 'x': x, 'y': y, 'color': color.substring(1) };
 		$.get( 'ajax/paintPixel', data, function( data ) {
-			//console.log( data );
+			console.log( data );
 			switch ( data ) {
 				case 'Pixel inserted':
 					board.paintPixel( x, y, color );
@@ -440,7 +434,6 @@ board = {
 			'height': board.yPixels
 		};
 		$.get( 'ajax/getArea', data, function( data ) {
-			//console.log( data );
 			var pixel;
 			for ( var i = 0; i < data.length; i++ ) {
 				pixel = data[ i ];
