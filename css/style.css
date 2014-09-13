@@ -46,7 +46,8 @@ body {
 	float: right;
 	height: 20px;
 	overflow: hidden;
-	padding: 10px;
+	padding: 0;
+	margin: 10px;
 }
 
 #menu #github-link {
