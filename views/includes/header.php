@@ -13,8 +13,10 @@
 <script src="js/spectrum.js"></script>
 <script src="js/pbp.js"></script>
 <script>user.ip = '<?php echo $_SERVER['REMOTE_ADDR']; ?>';</script>
+<meta name="description" content="An infinite canvas for collaborative pixel art, where your work is always protected." />
 <meta property="og:url" content="http://pixel-by-pixel.lfschenone.com/" />
 <meta property="og:title" content="Pixel by Pixel" />
+<meta property="og:description" content="An infinite canvas for collaborative pixel art, where your work is always protected. Come leave your mark!" />
 <meta property="og:image" content="http://pixel-by-pixel.lfschenone.com/images/mandala.png" />
 <meta property="og:image" content="http://pixel-by-pixel.lfschenone.com/images/mario.png" />
 <meta property="og:image" content="http://pixel-by-pixel.lfschenone.com/images/invaders.png" />
