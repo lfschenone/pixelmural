@@ -44,9 +44,7 @@ body {
 
 #facebook-buttons {
 	float: right;
-	height: 20px;
-	overflow: hidden;
-	padding: 0;
+	overflow: hidden; /* Hides the Facebook flyout */
 	margin: 10px;
 }
 
