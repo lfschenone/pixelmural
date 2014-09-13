@@ -66,8 +66,9 @@ menu = {
 	onMoveButtonClick: function( event ) {
 		$( '#board' ).css( 'cursor', 'move' );
 		$( '#moveButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
-		mouse.downAction = 'moveBoard';
-		mouse.dragAction = 'moveBoard';
+		mouse.downAction = 'moveBoard1';
+		mouse.dragAction = 'moveBoard2';
+		mouse.upAction = 'moveBoard3';
 	},
 
 	onEyedropButtonClick: function( event ) {
@@ -75,13 +76,15 @@ menu = {
 		$( '#eyedropButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'suckColor';
 		mouse.dragAction = null;
+		mouse.upAction = null;
 	},
 
 	onPencilButtonClick: function( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#pencilButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
-		mouse.downAction = 'drawPixel';
+		mouse.downAction = 'paintPixel';
 		mouse.dragAction = null;
+		mouse.upAction = null;
 	},
 
 	onBucketButtonClick: function( event ) {
@@ -89,6 +92,7 @@ menu = {
 		$( '#bucketButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintArea';
 		mouse.dragAction = null;
+		mouse.upAction = null;
 	},
 
 	onEraserButtonClick: function( event ) {
@@ -96,6 +100,7 @@ menu = {
 		$( '#eraserButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'clearPixel';
 		mouse.dragAction = 'clearPixel';
+		mouse.upAction = null;
 	},
 
 	setColor: function( color ) {
@@ -204,7 +209,7 @@ mouse = {
 
 		//If the mouse is being dragged
 		if ( mouse.state == 'down' && ( mouse.currentX != mouse.previousX || mouse.currentY != mouse.previousY ) && mouse.dragAction ) {
-			mouse[ mouse.dragAction ]();
+			mouse[ mouse.dragAction ]( event );
 		}
 
 		return mouse;
@@ -212,11 +217,37 @@ mouse = {
 
 	up: function( event ) {
 		mouse.state = 'up';
+		mouse[ mouse.upAction ]();
 		return mouse;
 	},
 
-	moveBoard: function() {
-		board.move();
+	moveBoard1: function() {
+		mouse.diffX = 0;
+		mouse.diffY = 0;
+		board.imageData = board.context.getImageData( 0, 0, board.width, board.height );
+		return mouse;
+	},
+
+	moveBoard2: function( event ) {
+		board.topLeftX += mouse.previousX - mouse.currentX;
+		board.topLeftY += mouse.previousY - mouse.currentY;
+
+		mouse.diffX += -( mouse.previousX - mouse.currentX ) * board.pixelSize;
+		mouse.diffY += -( mouse.previousY - mouse.currentY ) * board.pixelSize;
+
+		board.context.clear();
+		board.context.putImageData( board.imageData, mouse.diffX, mouse.diffY );
+
+		//Bug fix
+		mouse.currentX = board.topLeftX + Math.floor( event.clientX / board.pixelSize );
+		mouse.currentY = board.topLeftY + Math.floor( event.clientY / board.pixelSize );
+
+		return mouse;
+	},
+
+	moveBoard3: function() {
+		board.fill();
+		return mouse;
 	},
 
 	suckColor: function( event ) {
@@ -232,11 +263,12 @@ mouse = {
 		return mouse;
 	},
 
-	drawPixel: function() {
+	paintPixel: function() {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
 		var color = menu.color;
-		$.get( 'ajax/drawPixel?x=' + x + '&y=' + y + '&color=' + color.substring(1), function( data ) {
+		var data = { 'x': x, 'y': y, 'color': color.substring(1) };
+		$.get( 'ajax/paintPixel', data, function( data ) {
 			//console.log( data );
 			switch ( data ) {
 				case 'Pixel inserted':
@@ -260,7 +292,8 @@ mouse = {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
 		var color = menu.color;
-		$.get( 'ajax/paintArea?x=' + x + '&y=' + y + '&color=' + color.substring(1), function( data ) {
+		var data = { 'x': x, 'y': y, 'color': color.substring(1) };
+		$.get( 'ajax/paintArea', data, function( data ) {
 			//console.log( data );
 			switch ( data ) {
 				case 'Pixel inserted':
@@ -274,8 +307,8 @@ mouse = {
 					break;
 				default: //Assume everything went ok
 					data = JSON.parse( data );
-					var i, pixel;
-					for ( i = 0; i < data.length; i++ ) {
+					var pixel;
+					for ( var i = 0; i < data.length; i++ ) {
 						pixel = data[ i ];
 						board.paintPixel( pixel.x, pixel.y, pixel.color );
 					}
@@ -287,7 +320,8 @@ mouse = {
 	clearPixel: function() {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
-		$.get( 'ajax/clearPixel?x=' + x + '&y=' + y, function( data ) {
+		var data = { 'x': x, 'y': y };
+		$.get( 'ajax/clearPixel', data, function( data ) {
 			//console.log( data );
 			switch ( data ) {
 				case 'Pixel not found':
@@ -311,16 +345,16 @@ board = {
 
 	context: {},
 
-	width: 800,
-	height: 600,
+	width: 300,
+	height: 150,
 
 	topLeftX: 0,
 	topLeftY: 0,
 
-	pixelSize: 8,
+	pixelSize: 4,
 
-	xPixels: 80,
-	yPixels: 60,
+	xPixels: 30,
+	yPixels: 15,
 
 	background: 'black',
 
@@ -373,20 +407,6 @@ board = {
 		return board;
 	},
 
-	/* Methods */
-
-	move: function() {
-		board.topLeftX += mouse.previousX - mouse.currentX;
-		board.topLeftY += mouse.previousY - mouse.currentY;
-
-		//Bug fix
-		mouse.currentX = board.topLeftX + Math.floor( event.clientX / board.pixelSize );
-		mouse.currentY = board.topLeftY + Math.floor( event.clientY / board.pixelSize );
-
-		board.refill();
-		return board;
-	},
-
 	zoomIn: function() {
 		if ( board.pixelSize == 64 ) {
 			return board;
@@ -410,15 +430,20 @@ board = {
 	},
 
 	fill: function() {
-		$.get( 'ajax/getPixels', function( data ) {
+		var data = {
+			'x': board.topLeftX,
+			'y': board.topLeftY,
+			'width': board.xPixels,
+			'height': board.yPixels
+		};
+		$.get( 'ajax/getArea', data, function( data ) {
 			//console.log( data );
-			data = JSON.parse( data );
-			var i, pixel;
-			for ( i = 0; i < data.length; i++ ) {
+			var pixel;
+			for ( var i = 0; i < data.length; i++ ) {
 				pixel = data[ i ];
 				board.paintPixel( pixel.x, pixel.y, pixel.color );
 			}
-		});
+		}, 'json' );
 		return board;
 	},
 

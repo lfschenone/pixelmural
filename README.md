@@ -7,10 +7,10 @@ Bugs
 
 Tasks
 -----
+* Users?
 * Undo
 * Perfect the CSS
 * Menu
-* Users?
 * Redo?
 * Grid numbers?
 

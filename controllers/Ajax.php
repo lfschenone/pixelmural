@@ -2,17 +2,23 @@
 
 class Ajax extends Controller {
 
-	static function getPixels() {
+	static function getArea() {
 		global $gDatabase;
+
+		$x = GET( 'x' );
+		$y = GET( 'y' );
+		$width = GET( 'width' );
+		$height = GET( 'height' );
+
 		$PIXELS = array();
-		$Result = $gDatabase->query( 'SELECT * FROM pixels' );
+		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $x AND x <= ( $x + $width ) AND y >= $y AND y <= ( $y + $height )" );
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$PIXELS[] = new Pixel( $DATA );
 		}
 		exit( json_encode( $PIXELS ) );
 	}
 
-	static function drawPixel() {
+	static function paintPixel() {
 		$x = GET( 'x' );
 		$y = GET( 'y' );
 		$ip = $_SERVER['REMOTE_ADDR'];
