@@ -26,20 +26,7 @@ class Ajax extends Controller {
 		$color = '#' . GET( 'color' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
-		if ( $Pixel ) {
-			if ( $Pixel->ip == $ip ) {
-				if ( $Pixel->color == $color ) {
-					$Pixel->delete();
-					exit( 'Pixel deleted' );
-				} else {
-					$Pixel->color = $color;
-					$Pixel->update();
-					exit( 'Pixel updated' );
-				}
-			} else {
-				exit( 'Not your pixel' );
-			}
-		} else {
+		if ( !$Pixel ) {
 			$Pixel = new Pixel;
 			$Pixel->x = $x;
 			$Pixel->y = $y;
@@ -49,6 +36,16 @@ class Ajax extends Controller {
 			$Pixel->insert();
 			exit( 'Pixel inserted' );
 		}
+		if ( $firstPixel->ip != $ip ) {
+			exit( 'Not your pixel' );
+		}
+		if ( $Pixel->color == $color ) {
+			$Pixel->delete();
+			exit( 'Pixel deleted' );
+		}
+		$Pixel->color = $color;
+		$Pixel->update();
+		exit( 'Pixel updated' );
 	}
 
 	static function paintArea() {
