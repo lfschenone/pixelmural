@@ -10,5 +10,5 @@
 <input id="colorInput" type="text" value="#ffffff" />
 <span id="alert"></span>
 <a class="button" id="github-link" target="_blank" href="https://github.com/lfschenone/pixel-by-pixel"><img src="images/github.png" title="GitHub repository" /></a>
-<span class="fb-like" data-href="http://pixel-by-pixel.lfschenone.com/" data-layout="button" data-action="like" data-show-faces="true" data-share="true"></span>
+<span id="facebook-buttons" class="fb-like" data-href="http://pixel-by-pixel.lfschenone.com/" data-layout="button" data-action="like" data-show-faces="false" data-share="true"></span>
 </div>

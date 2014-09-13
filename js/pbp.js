@@ -265,7 +265,7 @@ mouse = {
 		var color = menu.color;
 		var data = { 'x': x, 'y': y, 'color': color.substring(1) };
 		$.get( 'ajax/paintPixel', data, function( data ) {
-			console.log( data );
+			//console.log( data );
 			switch ( data ) {
 				case 'Pixel inserted':
 					board.paintPixel( x, y, color );

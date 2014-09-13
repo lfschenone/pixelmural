@@ -42,8 +42,10 @@ body {
 	background: #aaf;
 }
 
-#menu .fb-like {
+#facebook-buttons {
 	float: right;
+	height: 20px;
+	overflow: hidden;
 	padding: 10px;
 }
 
