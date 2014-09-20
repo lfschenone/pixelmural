@@ -7,7 +7,8 @@ Bugs
 
 Tasks
 -----
-* Undo
+* Detect transparent pixels
+* Improve the undo function
 * Redo?
 * Perfect the interface
 * Optimize the zoom

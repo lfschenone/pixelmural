@@ -2,6 +2,7 @@
 <button id="gridButton"><img src="images/grid.png" title="Grid [G]" /></button>
 <button id="zoomInButton"><img src="images/zoom-in.png" title="Zoom in [I]" /></button>
 <button id="zoomOutButton"><img src="images/zoom-out.png" title="Zoom out [O]" /></button>
+<button id="undoButton"><img src="images/undo.png" title="Undo [Z]" /></button>
 <button id="moveButton"><img src="images/move.png" title="Move [Spacebar]" /></button>
 <button id="eyedropButton"><img src="images/eyedrop.png" title="Eyedrop [E]" /></button>
 <button id="pencilButton"><img src="images/pencil.png" title="Pencil [P]" /></button>

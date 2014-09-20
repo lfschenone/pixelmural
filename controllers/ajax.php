@@ -60,31 +60,19 @@ class Ajax extends Controller {
 		$firstPixel = Pixel::newFromCoords( $x, $y );
 
 		if ( !$firstPixel ) {
-			$Pixel = new Pixel;
-			$Pixel->x = $x;
-			$Pixel->y = $y;
-			$Pixel->ip = $ip;
-			$Pixel->time = $time;
-			$Pixel->color = $color;
-			$Pixel->insert();
-			exit( 'Pixel inserted' );
+			exit( 'Background changed only for you' );
 		}
 
 		if ( $firstPixel->ip != $ip ) {
 			exit( 'Not your pixel' );
 		}
 
-		if ( $firstPixel->color == $color ) {
-			$firstPixel->delete();
-			exit( 'Pixel deleted' );
-		}
-
 		$oldColor = $firstPixel->color;
 		$firstPixel->color = $color;
 		$firstPixel->update();
-
 		$PAINTED = array( $firstPixel );
 		$QUEUE = array( $firstPixel );
+
 		while ( $QUEUE ) {
 			$Pixel = array_shift( $QUEUE );
 
