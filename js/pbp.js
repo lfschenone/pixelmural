@@ -303,7 +303,7 @@ mouse = {
 					break;
 				case 'Not your pixel':
 					board.paintPixel( x, y, oldColor );
-					user.undo();
+					menu.setAlert( data );
 					break;
 			}
 		});
