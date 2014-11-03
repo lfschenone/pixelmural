@@ -534,6 +534,14 @@ board = {
 					break;
 				case 'Not your pixel':
 					board.paintPixel( response.Pixel.x, response.Pixel.y, response.Pixel.color );
+/*
+					for ( var i in user.oldPixels ) {
+						if ( user.oldPixels[ i ].x === response.Pixel.x && user.oldPixels[ i ].y === response.Pixel.y ) {
+							user.oldPixels.splice( i, 1 );
+							user.newPixels.splice( i, 1 );
+						}
+					}
+*/
 					menu.setAlert( response.message );
 					break;
 			}

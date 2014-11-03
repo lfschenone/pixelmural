@@ -13,4 +13,6 @@
 <span id="alert"></span>
 <a class="button" id="github-link" target="_blank" href="https://github.com/lfschenone/pixel-by-pixel"><img src="images/github.png" title="GitHub repository" /></a>
 <span id="facebook-buttons" class="fb-like" data-href="http://pixel-by-pixel.lfschenone.com/" data-layout="button" data-action="like" data-show-faces="false" data-share="true"></span>
+<fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
 </div>
+<div id="status"></div>

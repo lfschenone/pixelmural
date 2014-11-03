@@ -5,7 +5,7 @@ Bugs
 ----
 * The mouse position is off by two pixels. There is a bugfix in place in the CSS though.
 * Reverted pixels stay in the undo/redo queue
-* The null values sent via ajax are not received as real nulls, but some pseudo falsy
+* The null values sent via ajax are not received as real nulls, but as some pseudo falsy
 
 Tasks
 -----
