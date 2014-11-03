@@ -2,6 +2,14 @@
 
 class Ajax extends Controller {
 
+	static function getPixel() {
+		global $gDatabase;
+		$x = GET( 'x' );
+		$y = GET( 'y' );
+		$Pixel = Pixel::newFromCoords( $x, $y );
+		exit( json_encode( $Pixel ) );
+	}
+
 	static function getArea() {
 		global $gDatabase;
 
@@ -23,7 +31,7 @@ class Ajax extends Controller {
 		$y = GET( 'y' );
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$time = $_SERVER['REQUEST_TIME'];
-		$color = '#' . GET( 'color' );
+		$color = GET( 'color' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
 		if ( !$Pixel ) {
@@ -34,18 +42,19 @@ class Ajax extends Controller {
 			$Pixel->time = $time;
 			$Pixel->color = $color;
 			$Pixel->insert();
-			exit( 'Pixel inserted' );
-		}
-		if ( $Pixel->ip != $ip ) {
-			exit( 'Not your pixel' );
-		}
-		if ( $Pixel->color == $color ) {
+			$RESPONSE['message'] = 'Pixel inserted';
+		} else if ( $Pixel->ip != $ip ) {
+			$RESPONSE['message'] = 'Not your pixel';
+		} else if ( $Pixel->color == $color or $color == null ) {
 			$Pixel->delete();
-			exit( 'Pixel deleted' );
+			$RESPONSE['message'] = 'Pixel deleted';
+		} else {
+			$Pixel->color = $color;
+			$Pixel->update();
+			$RESPONSE['message'] = 'Pixel updated';
 		}
-		$Pixel->color = $color;
-		$Pixel->update();
-		exit( 'Pixel updated' );
+		$RESPONSE['Pixel'] = $Pixel;
+		exit( json_encode( $RESPONSE ) );
 	}
 
 	static function paintArea() {
@@ -55,7 +64,7 @@ class Ajax extends Controller {
 		$y = GET( 'y' );
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$time = $_SERVER['REQUEST_TIME'];
-		$color = '#' . GET( 'color' );
+		$color = GET( 'color' );
 
 		$firstPixel = Pixel::newFromCoords( $x, $y );
 
@@ -97,20 +106,5 @@ class Ajax extends Controller {
 			}
 		}
 		exit( json_encode( $PAINTED ) );
-	}
-
-	static function clearPixel() {
-		$x = GET( 'x' );
-		$y = GET( 'y' );
-		$ip = $_SERVER['REMOTE_ADDR'];
-		$Pixel = Pixel::newFromCoords( $x, $y );
-		if ( !$Pixel ) {
-			exit( 'Pixel not found' );
-		}
-		if ( $Pixel->ip != $ip ) {
-			exit( 'Not your pixel' );
-		}
-		$Pixel->delete();
-		exit( 'Pixel deleted' );
 	}
 }

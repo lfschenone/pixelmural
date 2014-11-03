@@ -1,24 +1,22 @@
-$( function() {
+$( function () {
 
 	//Set the defaults
-	board.setCanvas( document.getElementById('board') );
-	board.setContext( board.canvas.getContext('2d') );
+	board.setCanvas( document.getElementById( 'board' ) );
+	board.setContext( board.canvas.getContext( '2d' ) );
 	board.setWidth( window.innerWidth );
 	board.setHeight( window.innerHeight );
-	grid.setCanvas( document.getElementById('grid') );
-	grid.setContext( grid.canvas.getContext('2d') );
+	grid.setCanvas( document.getElementById( 'grid' ) );
+	grid.setContext( grid.canvas.getContext( '2d' ) );
 	grid.setWidth( board.width );
 	grid.setHeight( board.height );
 
 	//Bind events
-	$( '#board' ).
-		mousedown( mouse.down ).
-		mousemove( mouse.move ).
-		mouseup( mouse.up );
+	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( '#gridButton' ).click( menu.onGridButtonClick );
 	$( '#zoomInButton' ).click( menu.onZoomInButtonClick );
 	$( '#zoomOutButton' ).click( menu.onZoomOutButtonClick );
 	$( '#undoButton' ).click( menu.onUndoButtonClick );
+	$( '#redoButton' ).click( menu.onRedoButtonClick );
 	$( '#moveButton' ).click( menu.onMoveButtonClick );
 	$( '#eyedropButton' ).click( menu.onEyedropButtonClick );
 	$( '#pencilButton' ).click( menu.onPencilButtonClick );
@@ -36,7 +34,7 @@ $( function() {
 	$( '#colorInput' ).spectrum({
 		preferredFormat: 'hex',
 		showButtons: false,
-		move: function( color ) {
+		move: function ( color ) {
 			menu.setColor( color.toHexString() );
 		}
 	});
@@ -46,11 +44,30 @@ user = {
 
 	ip: null,
 
-	previousPixels: [],
+	/**
+	 * Part of the undo/redo functionality
+	 * The rest is in the mouse.paintPixel and mouse.erasePixel methods
+	 */
+	oldPixels: [],
+	newPixels: [],
+	arrayPointer: 0,
 
-	undo: function() {
-		var previousPixel = user.previousPixels.shift();
-		board.paintPixel( previousPixel.x, previousPixel.y, previousPixel.color );
+	undo: function () {
+		if ( user.arrayPointer === 0 ) {
+			return false;
+		}
+		user.arrayPointer--;
+		var oldPixel = user.oldPixels[ user.arrayPointer ];
+		board.paintPixel( oldPixel.x, oldPixel.y, oldPixel.color ).savePixel( oldPixel.x, oldPixel.y, oldPixel.color );
+	},
+
+	redo: function () {
+		if ( user.arrayPointer === user.newPixels.length ) {
+			return false;
+		}
+		var newPixel = user.newPixels[ user.arrayPointer ];
+		user.arrayPointer++;
+		board.paintPixel( newPixel.x, newPixel.y, newPixel.color ).savePixel( newPixel.x, newPixel.y, newPixel.color );
 	}
 }
 
@@ -60,23 +77,27 @@ menu = {
 
 	color: '#ffffff',
 
-	onGridButtonClick: function( event ) {
+	onGridButtonClick: function ( event ) {
 		grid.toggle();
 	},
 
-	onZoomInButtonClick: function( event ) {
+	onZoomInButtonClick: function ( event ) {
 		board.zoomIn();
 	},
 
-	onZoomOutButtonClick: function( event ) {
+	onZoomOutButtonClick: function ( event ) {
 		board.zoomOut();
 	},
 
-	onUndoButtonClick: function( event ) {
+	onUndoButtonClick: function ( event ) {
 		user.undo();
 	},
 
-	onMoveButtonClick: function( event ) {
+	onRedoButtonClick: function ( event ) {
+		user.redo();
+	},
+
+	onMoveButtonClick: function ( event ) {
 		$( '#board' ).css( 'cursor', 'move' );
 		$( '#moveButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'moveBoard1';
@@ -84,7 +105,7 @@ menu = {
 		mouse.upAction = 'moveBoard3';
 	},
 
-	onEyedropButtonClick: function( event ) {
+	onEyedropButtonClick: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#eyedropButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'suckColor';
@@ -92,7 +113,7 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onPencilButtonClick: function( event ) {
+	onPencilButtonClick: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#pencilButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
@@ -100,7 +121,7 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onBucketButtonClick: function( event ) {
+	onBucketButtonClick: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#bucketButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintArea';
@@ -108,22 +129,22 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onEraserButtonClick: function( event ) {
+	onEraserButtonClick: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#eraserButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
-		mouse.downAction = 'clearPixel';
-		mouse.dragAction = 'clearPixel';
+		mouse.downAction = 'erasePixel';
+		mouse.dragAction = 'erasePixel';
 		mouse.upAction = null;
 	},
 
-	setColor: function( color ) {
+	setColor: function ( color ) {
 		menu.color = color;
 		$( '#colorInput' ).val( color );
 	},
 
-	setAlert: function( alert, time ) {
+	setAlert: function ( alert, time ) {
 		$( '#alert' ).text( alert );
-		window.setTimeout( function() {
+		window.setTimeout( function () {
 			$( '#alert' ).empty();
 		}, 1000 );
 	}
@@ -131,7 +152,7 @@ menu = {
 
 keyboard = {
 
-	onKeydown: function( event ) {
+	onKeydown: function ( event ) {
 		//Spacebar
 		if ( event.keyCode == 32 ) {
 			$( '#moveButton' ).click();
@@ -164,6 +185,10 @@ keyboard = {
 		if ( event.keyCode == 82 ) {
 			$( '#eraserButton' ).click();
 		}
+		//X
+		if ( event.keyCode == 88 ) {
+			$( '#redoButton' ).click();
+		}
 		//Z
 		if ( event.keyCode == 90 ) {
 			$( '#undoButton' ).click();
@@ -190,13 +215,13 @@ mouse = {
 	downAction: null,
 	dragAction: null,
 
-	down: function( event ) {
+	down: function ( event ) {
 		mouse.state = 'down';
 		mouse[ mouse.downAction ]( event );
 		return mouse;
 	},
 
-	move: function( event ) {
+	move: function ( event ) {
 
 		mouse.previousX = mouse.currentX;
 		mouse.previousY = mouse.currentY;
@@ -212,7 +237,7 @@ mouse = {
 		return mouse;
 	},
 
-	up: function( event ) {
+	up: function ( event ) {
 		mouse.state = 'up';
 		if ( mouse.upAction ) {
 			mouse[ mouse.upAction ]( event );
@@ -220,14 +245,14 @@ mouse = {
 		return mouse;
 	},
 
-	moveBoard1: function( event ) {
+	moveBoard1: function ( event ) {
 		mouse.diffX = 0;
 		mouse.diffY = 0;
 		board.imageData = board.context.getImageData( 0, 0, board.width, board.height );
 		return mouse;
 	},
 
-	moveBoard2: function( event ) {
+	moveBoard2: function ( event ) {
 		board.topLeftX += mouse.previousX - mouse.currentX;
 		board.topLeftY += mouse.previousY - mouse.currentY;
 
@@ -244,12 +269,12 @@ mouse = {
 		return mouse;
 	},
 
-	moveBoard3: function( event ) {
+	moveBoard3: function ( event ) {
 		board.fill();
 		return mouse;
 	},
 
-	suckColor: function( event ) {
+	suckColor: function ( event ) {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
 		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
@@ -265,57 +290,44 @@ mouse = {
 	/**
 	 * Paint a single pixel
 	 *
-	 * To avoid lag in the UX, we first paint the pixel without checking the database,
+	 * To avoid lag in the UX, we first paint the pixel, we then check the database via an ajax call
 	 * and we then reverse it if necessary
 	 */
-	paintPixel: function( event ) {
+	paintPixel: function ( event ) {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
 		var newColor = menu.color;
 
-		if ( newColor === '#000000' ) {
-			return mouse;
+		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
+		var red = imageData.data[0];
+		var green = imageData.data[1];
+		var blue = imageData.data[2];
+		var alpha = imageData.data[3];
+		var oldColor = null; // Default
+		if ( alpha > 0 ) {
+			oldColor = rgbToHex( red, green, blue );
 		}
 
-		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
-		var r = imageData.data[0];
-		var g = imageData.data[1];
-		var b = imageData.data[2];
-		var oldColor = rgbToHex( r, g, b );
+		//Part of the undo/redo functionality
+		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, { 'x': x, 'y': y, 'color': oldColor } );
+		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, { 'x': x, 'y': y, 'color': newColor } );
+		user.arrayPointer++;
 
-		user.previousPixels.push({ 'x': x, 'y': y, 'color': oldColor });
 
 		if ( newColor === oldColor ) {
-			board.clearPixel( x, y );
+			board.paintPixel( x, y, null ).savePixel( x, y, null );
 		} else {
-			board.paintPixel( x, y, newColor );
+			board.paintPixel( x, y, newColor ).savePixel( x, y, newColor );
 		}
-
-		var data = { 'x': x, 'y': y, 'color': newColor.substring(1) };
-		$.get( 'ajax/paintPixel', data, function( data ) {
-			//console.log( data );
-			switch ( data ) {
-				case 'Pixel inserted':
-					break;
-				case 'Pixel updated':
-					break;
-				case 'Pixel deleted':
-					break;
-				case 'Not your pixel':
-					board.paintPixel( x, y, oldColor );
-					menu.setAlert( data );
-					break;
-			}
-		});
 		return mouse;
 	},
 
-	paintArea: function( event ) {
+	paintArea: function ( event ) {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
 		var color = menu.color;
-		var data = { 'x': x, 'y': y, 'color': color.substring(1) };
-		$.get( 'ajax/paintArea', data, function( data ) {
+		var data = { 'x': x, 'y': y, 'color': color };
+		$.get( 'ajax/paintArea', data, function ( data ) {
 			//console.log( data );
 			switch ( data ) {
 				case 'The background changed only for you':
@@ -337,37 +349,27 @@ mouse = {
 		return mouse;
 	},
 
-	clearPixel: function( event ) {
+	erasePixel: function ( event ) {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
 
 		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
-		var r = imageData.data[0];
-		var g = imageData.data[1];
-		var b = imageData.data[2];
-		var oldColor = rgbToHex( r, g, b );
-
-		if ( oldColor === '#000000' ) {
+		var red = imageData.data[0];
+		var green = imageData.data[1];
+		var blue = imageData.data[2];
+		var alpha = imageData.data[3];
+		if ( alpha === 0 ) {
 			return mouse;
 		}
-		user.previousPixels.push({ 'x': x, 'y': y, 'color': oldColor });
+		var oldColor = rgbToHex( red, green, blue );
 
-		board.clearPixel( x, y );
+		// Part of the undo/redo functionality
+		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, { 'x': x, 'y': y, 'color': oldColor } );
+		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, { 'x': x, 'y': y, 'color': null } );
+		user.arrayPointer++;
 
-		var data = { 'x': x, 'y': y };
-		$.get( 'ajax/clearPixel', data, function( data ) {
-			//console.log( data );
-			switch ( data ) {
-				case 'Pixel not found':
-					break;
-				case 'Pixel deleted':
-					break;
-				case 'Not your pixel':
-					board.paintPixel( x, y, oldColor );
-					menu.setAlert( data );
-					break;
-			}
-		});
+
+		board.paintPixel( x, y, null ).savePixel( x, y, null );
 		return mouse;
 	}
 }
@@ -393,41 +395,55 @@ board = {
 
 	/* Getters */
 
-	getXpixels: function() {
+	getXpixels: function () {
 		return Math.floor( board.width / board.pixelSize );
 	},
 
-	getYpixels: function() {
+	getYpixels: function () {
 		return Math.floor( board.height / board.pixelSize );
+	},
+
+	getPixel: function ( x, y ) {
+		var imageData = board.context.getImageData( x, y, 1, 1 );
+		var red = imageData.data[0];
+		var green = imageData.data[1];
+		var blue = imageData.data[2];
+		var alpha = imageData.data[3];
+		if ( alpha > 0 ) {
+			var oldColor = rgbToHex( red, green, blue );
+		} else {
+			var oldColor = null;
+		}
+		return { 'x': x, 'y': y, 'color': color };
 	},
 
 	/* Setters */
 
-	setCanvas: function( value ) {
+	setCanvas: function ( value ) {
 		board.canvas = value;
 		return board;
 	},
 
-	setContext: function( value ) {
+	setContext: function ( value ) {
 		board.context = value;
 		return board;
 	},
 
-	setWidth: function( value ) {
+	setWidth: function ( value ) {
 		board.width = value;
 		board.canvas.setAttribute( 'width', value );
 		board.xPixels = board.getXpixels();
 		return board;
 	},
 
-	setHeight: function( value ) {
+	setHeight: function ( value ) {
 		board.height = value;
 		board.canvas.setAttribute( 'height', value );
 		board.yPixels = board.getYpixels();
 		return board;
 	},
 
-	setPixelSize: function( value ) {
+	setPixelSize: function ( value ) {
 		board.pixelSize = parseInt( value );
 		if ( board.pixelSize > 64 ) {
 			board.pixelSize = 64; //Max pixel size
@@ -440,7 +456,7 @@ board = {
 		return board;
 	},
 
-	zoomIn: function() {
+	zoomIn: function () {
 		if ( board.pixelSize == 64 ) {
 			return board;
 		}
@@ -451,7 +467,7 @@ board = {
 		return board;
 	},
 
-	zoomOut: function() {
+	zoomOut: function () {
 		if ( board.pixelSize == 1 ) {
 			return board;
 		}
@@ -462,7 +478,7 @@ board = {
 		return board;
 	},
 
-	fill: function() {
+	fill: function () {
 		menu.setAlert( 'Loading pixels, please wait...' );
 		var data = {
 			'x': board.topLeftX,
@@ -470,7 +486,7 @@ board = {
 			'width': board.xPixels,
 			'height': board.yPixels
 		};
-		$.get( 'ajax/getArea', data, function( data ) {
+		$.get( 'ajax/getArea', data, function ( data ) {
 			var pixel;
 			for ( var i = 0; i < data.length; i++ ) {
 				pixel = data[ i ];
@@ -480,33 +496,48 @@ board = {
 		return board;
 	},
 
-	clear: function() {
+	clear: function () {
 		board.context.clear();
 		return board;
 	},
 
-	refill: function() {
+	refill: function () {
 		board.clear().fill();
 		grid.toggle().toggle();
 		return board;
 	},
 
-	paintPixel: function( x, y, color ) {
+	paintPixel: function ( x, y, color ) {
 		rectX = ( x - board.topLeftX ) * board.pixelSize;
 		rectY = ( y - board.topLeftY ) * board.pixelSize;
 		rectW = board.pixelSize;
 		rectH = board.pixelSize;
-		board.context.fillStyle = color;
-		board.context.fillRect( rectX, rectY, rectW, rectH );
+		if ( color === null ) {
+			board.context.clearRect( rectX, rectY, rectW, rectH );
+		} else {
+			board.context.fillStyle = color;
+			board.context.fillRect( rectX, rectY, rectW, rectH );
+		}
 		return board;
 	},
 
-	clearPixel: function( x, y ) {
-		rectX = ( x - board.topLeftX ) * board.pixelSize;
-		rectY = ( y - board.topLeftY ) * board.pixelSize;
-		rectW = board.pixelSize;
-		rectH = board.pixelSize;
-		board.context.clearRect( rectX, rectY, rectW, rectH );
+	savePixel: function ( x, y, color ) {
+		var data = { 'x': x, 'y': y, 'color': color };
+		$.get( 'ajax/paintPixel', data, function ( response ) {
+			//console.log( response );
+			switch ( response.message ) {
+				case 'Pixel inserted':
+					break;
+				case 'Pixel updated':
+					break;
+				case 'Pixel deleted':
+					break;
+				case 'Not your pixel':
+					board.paintPixel( response.Pixel.x, response.Pixel.y, response.Pixel.color );
+					menu.setAlert( response.message );
+					break;
+			}
+		}, 'json' );
 		return board;
 	}
 }
@@ -521,29 +552,29 @@ grid = {
 
 	visible: false,
 
-	setCanvas: function( value ) {
+	setCanvas: function ( value ) {
 		grid.canvas = value
 		return grid
 	},
 
-	setContext: function( value ) {
+	setContext: function ( value ) {
 		grid.context = value
 		return grid
 	},
 
-	setWidth: function( value ) {
+	setWidth: function ( value ) {
 		grid.width = value;
 		grid.canvas.setAttribute( 'width', value );
 		return grid;
 	},
 
-	setHeight: function( value ) {
+	setHeight: function ( value ) {
 		grid.height = value;
 		grid.canvas.setAttribute( 'height', value );
 		return grid;
 	},
 
-	show: function() {
+	show: function () {
 		grid.visible = true;
 		if ( board.pixelSize < 4 ) {
 			return grid; //If the pixels are too small, don't draw the grid
@@ -564,13 +595,13 @@ grid = {
 		return grid;
 	},
 
-	hide: function() {
+	hide: function () {
 		grid.visible = false;
 		grid.context.clear();
 		return grid;
 	},
 
-	toggle: function() {
+	toggle: function () {
 		if ( grid.visible ) {
 			grid.hide();
 		} else {
@@ -579,3 +610,15 @@ grid = {
 		return grid;
 	}
 }
+
+/*
+function Pixel( x, y, color ) {
+	this.x = x;
+	this.y = y;
+	this.color = color;
+
+	this.save = function () {
+		
+	}
+}
+*/
