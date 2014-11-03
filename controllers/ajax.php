@@ -31,6 +31,7 @@ class Ajax extends Controller {
 		$y = GET( 'y' );
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$time = $_SERVER['REQUEST_TIME'];
+		$user = GET( 'user' );
 		$color = GET( 'color' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );

@@ -43,6 +43,8 @@ $( function () {
 user = {
 
 	ip: null,
+	name: '',
+	email: '',
 
 	/**
 	 * Part of the undo/redo functionality
@@ -327,7 +329,7 @@ mouse = {
 		var y = mouse.currentY;
 		var color = menu.color;
 		var data = { 'x': x, 'y': y, 'color': color };
-		$.get( 'ajax/paintArea', data, function ( data ) {
+		$.get( 'Ajax/paintArea', data, function ( data ) {
 			//console.log( data );
 			switch ( data ) {
 				case 'The background changed only for you':
@@ -486,7 +488,7 @@ board = {
 			'width': board.xPixels,
 			'height': board.yPixels
 		};
-		$.get( 'ajax/getArea', data, function ( data ) {
+		$.get( 'Ajax/getArea', data, function ( data ) {
 			var pixel;
 			for ( var i = 0; i < data.length; i++ ) {
 				pixel = data[ i ];
@@ -522,8 +524,8 @@ board = {
 	},
 
 	savePixel: function ( x, y, color ) {
-		var data = { 'x': x, 'y': y, 'color': color };
-		$.get( 'ajax/paintPixel', data, function ( response ) {
+		var data = { 'x': x, 'y': y, 'color': color, 'user': user };
+		$.get( 'Ajax/paintPixel', data, function ( response ) {
 			//console.log( response );
 			switch ( response.message ) {
 				case 'Pixel inserted':
