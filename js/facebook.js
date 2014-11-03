@@ -7,8 +7,10 @@ $( function () {
 		version: 'v2.1'
 	});
 	
+/*
 	FB.Event.subscribe( 'auth.authResponseChange', onAuthResponseChange );
 	FB.Event.subscribe( 'auth.statusChange', onStatusChange );
+*/
 });
 
 /*
