@@ -10,17 +10,14 @@ Bugs
 Tasks
 -----
 * Facebook login
+* Create a Pixel model in JavaScript
 * Change the color of the undo/redo arrows on availability
 * Preview?
 * Perfect the interface
 * Optimize the zoom
 * Grid numbers?
 
-Maintenance tasks
------------------
-* Create a Pixel model in JavaScript
-* Documentation
-
 Further tasks
 -------------
+* Documentation
 * i18n and l10n

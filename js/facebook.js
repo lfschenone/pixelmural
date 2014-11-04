@@ -23,10 +23,10 @@ function loginCallback( response ) {
 }
 
 function onStatusChange( response ) {
-	if ( response.status != 'connected' ) {
-		login( loginCallback );
+	if ( response.status === 'connected' ) {
+		console.log( 'Connected: ' + response );
 	} else {
-		showHome();
+		login( loginCallback );
 	}
 }
 
