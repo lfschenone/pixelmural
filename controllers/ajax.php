@@ -12,7 +12,6 @@ class Ajax extends Controller {
 
 	static function getArea() {
 		global $gDatabase;
-
 		$x = GET( 'x' );
 		$y = GET( 'y' );
 		$width = GET( 'width' );
@@ -26,13 +25,14 @@ class Ajax extends Controller {
 		exit( json_encode( $PIXELS ) );
 	}
 
-	static function paintPixel() {
-		$x = GET( 'x' );
-		$y = GET( 'y' );
+	static function savePixel() {
+		global $gDatabase;
+
+		$x = POST( 'x' );
+		$y = POST( 'y' );
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$time = $_SERVER['REQUEST_TIME'];
-		$user = GET( 'user' );
-		$color = GET( 'color' );
+		$color = POST( 'color' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
 		if ( !$Pixel ) {
@@ -46,7 +46,7 @@ class Ajax extends Controller {
 			$RESPONSE['message'] = 'Pixel inserted';
 		} else if ( $Pixel->ip != $ip ) {
 			$RESPONSE['message'] = 'Not your pixel';
-		} else if ( $Pixel->color == $color or $color == null ) {
+		} else if ( !$color ) {
 			$Pixel->delete();
 			$RESPONSE['message'] = 'Pixel deleted';
 		} else {
@@ -61,51 +61,51 @@ class Ajax extends Controller {
 	static function paintArea() {
 		global $gDatabase;
 
-		$x = GET( 'x' );
-		$y = GET( 'y' );
+		$x = POST( 'x' );
+		$y = POST( 'y' );
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$time = $_SERVER['REQUEST_TIME'];
-		$color = GET( 'color' );
+		$color = POST( 'color' );
 
 		$firstPixel = Pixel::newFromCoords( $x, $y );
-
 		if ( !$firstPixel ) {
-			exit( 'Background changed only for you' );
-		}
+			$RESPONSE['message'] = 'The background changed only for you';
+		} else if ( $firstPixel->ip != $ip ) {
+			$RESPONSE['message'] = 'Not your pixel';
+		} else {
+			$oldColor = $firstPixel->color;
+			$firstPixel->time = $time;
+			$firstPixel->color = $color;
+			$firstPixel->update();
+			$PAINTED = array( $firstPixel );
+			$QUEUE = array( $firstPixel );
 
-		if ( $firstPixel->ip != $ip ) {
-			exit( 'Not your pixel' );
-		}
+			while ( $QUEUE ) {
+				$Pixel = array_shift( $QUEUE );
 
-		$oldColor = $firstPixel->color;
-		$firstPixel->color = $color;
-		$firstPixel->update();
-		$PAINTED = array( $firstPixel );
-		$QUEUE = array( $firstPixel );
-
-		while ( $QUEUE ) {
-			$Pixel = array_shift( $QUEUE );
-
-			//Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
-			//have the same color as the first pixel, and haven't been painted yet
-			$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
-				ip = "' . $ip . '" AND
-				time < ' . $time . ' AND
-				color = "' . $oldColor . '" AND (
-				( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR
-				( x = ' . $Pixel->x . ' - 1 AND y = ' . $Pixel->y . ' ) OR
-				( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' + 1 ) OR
-				( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' - 1 )
-				) LIMIT 4' );
-			while ( $DATA = $Result->fetch_assoc() ) {
-				$Neighbor = new Pixel( $DATA );
-				$Neighbor->time = $time;
-				$Neighbor->color = $color;
-				$Neighbor->update();
-				$PAINTED[] = $Neighbor;
-				$QUEUE[] = $Neighbor;
+				//Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
+				//have the same color as the first pixel, and haven't been painted yet
+				$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
+					ip = "' . $ip . '" AND
+					time < ' . $time . ' AND
+					color = "' . $oldColor . '" AND (
+					( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR
+					( x = ' . $Pixel->x . ' - 1 AND y = ' . $Pixel->y . ' ) OR
+					( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' + 1 ) OR
+					( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' - 1 )
+					) LIMIT 4' );
+				while ( $DATA = $Result->fetch_assoc() ) {
+					$Neighbor = new Pixel( $DATA );
+					$Neighbor->time = $time;
+					$Neighbor->color = $color;
+					$Neighbor->update();
+					$PAINTED[] = $Neighbor;
+					$QUEUE[] = $Neighbor;
+				}
 			}
+			$RESPONSE['message'] = 'Success!';
+			$RESPONSE['PAINTED'] = $PAINTED;
 		}
-		exit( json_encode( $PAINTED ) );
+		exit( json_encode( $RESPONSE ) );
 	}
 }

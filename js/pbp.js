@@ -43,8 +43,6 @@ $( function () {
 user = {
 
 	ip: null,
-	name: '',
-	email: '',
 
 	/**
 	 * Part of the undo/redo functionality
@@ -60,7 +58,7 @@ user = {
 		}
 		user.arrayPointer--;
 		var oldPixel = user.oldPixels[ user.arrayPointer ];
-		board.paintPixel( oldPixel.x, oldPixel.y, oldPixel.color ).savePixel( oldPixel.x, oldPixel.y, oldPixel.color );
+		oldPixel.paint().save();
 	},
 
 	redo: function () {
@@ -69,7 +67,7 @@ user = {
 		}
 		var newPixel = user.newPixels[ user.arrayPointer ];
 		user.arrayPointer++;
-		board.paintPixel( newPixel.x, newPixel.y, newPixel.color ).savePixel( newPixel.x, newPixel.y, newPixel.color );
+		newPixel.paint().save();
 	}
 }
 
@@ -292,14 +290,13 @@ mouse = {
 	/**
 	 * Paint a single pixel
 	 *
-	 * To avoid lag in the UX, we first paint the pixel, we then check the database via an ajax call
-	 * and we then reverse it if necessary
+	 * To avoid lag in the UX, we first paint the pixel and we then check the database to reverse if necessary
 	 */
 	paintPixel: function ( event ) {
-		var x = mouse.currentX;
-		var y = mouse.currentY;
-		var newColor = menu.color;
+		// Build the new pixel
+		var newPixel = new window.Pixel( mouse.currentX, mouse.currentY, menu.color );
 
+		// Build the old pixel
 		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
 		var red = imageData.data[0];
 		var green = imageData.data[1];
@@ -309,52 +306,49 @@ mouse = {
 		if ( alpha > 0 ) {
 			oldColor = rgbToHex( red, green, blue );
 		}
+		var oldPixel = new window.Pixel( mouse.currentX, mouse.currentY, oldColor );
 
-		//Part of the undo/redo functionality
-		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, { 'x': x, 'y': y, 'color': oldColor } );
-		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, { 'x': x, 'y': y, 'color': newColor } );
+		// Part of the undo/redo functionality
+		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
+		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
 		user.arrayPointer++;
 
-
-		if ( newColor === oldColor ) {
-			board.paintPixel( x, y, null ).savePixel( x, y, null );
-		} else {
-			board.paintPixel( x, y, newColor ).savePixel( x, y, newColor );
+		// For convenience, re-painting a pixel erases it
+		if ( newPixel.color === oldPixel.color ) {
+			newPixel.color = null;
 		}
+		newPixel.paint().save();
 		return mouse;
 	},
 
 	paintArea: function ( event ) {
-		var x = mouse.currentX;
-		var y = mouse.currentY;
-		var color = menu.color;
-		var data = { 'x': x, 'y': y, 'color': color };
-		$.get( 'Ajax/paintArea', data, function ( data ) {
-			//console.log( data );
-			switch ( data ) {
-				case 'The background changed only for you':
-					$( board.canvas ).css( 'background', color );
-					menu.setAlert( data )
-					break;
-				case 'Not your pixel':
-					menu.setAlert( data );
-					break;
-				default: //Assume everything went ok
-					data = JSON.parse( data );
-					var pixel;
-					for ( var i = 0; i < data.length; i++ ) {
-						pixel = data[ i ];
-						board.paintPixel( pixel.x, pixel.y, pixel.color );
-					}
+		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, menu.color );
+		$.post( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
+			//console.log( response );
+			if ( response.message === 'The background changed only for you' ) {
+				$( board.canvas ).css( 'background', menu.color );
+				menu.setAlert( response.message )
 			}
-		});
+			if ( response.message === 'Not your pixel' ) {
+				menu.setAlert( response.message );
+			}
+			if ( response.message === 'Success!' ) {
+				var data, Pixel;
+				for ( var i in response.PAINTED ) {
+					data = response.PAINTED[ i ];
+					Pixel = new window.Pixel( data.x, data.y, data.color );
+					Pixel.paint();
+				}
+			}
+		}, 'json' );
 		return mouse;
 	},
 
 	erasePixel: function ( event ) {
-		var x = mouse.currentX;
-		var y = mouse.currentY;
+		// Build the new pixel
+		var newPixel = new window.Pixel( mouse.currentX, mouse.currentY, null );
 
+		// Build the old pixel
 		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
 		var red = imageData.data[0];
 		var green = imageData.data[1];
@@ -366,12 +360,11 @@ mouse = {
 		var oldColor = rgbToHex( red, green, blue );
 
 		// Part of the undo/redo functionality
-		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, { 'x': x, 'y': y, 'color': oldColor } );
-		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, { 'x': x, 'y': y, 'color': null } );
+		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
+		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
 		user.arrayPointer++;
 
-
-		board.paintPixel( x, y, null ).savePixel( x, y, null );
+		newPixel.paint().save();
 		return mouse;
 	}
 }
@@ -489,10 +482,10 @@ board = {
 			'height': board.yPixels
 		};
 		$.get( 'Ajax/getArea', data, function ( data ) {
-			var pixel;
+			var Pixel;
 			for ( var i = 0; i < data.length; i++ ) {
-				pixel = data[ i ];
-				board.paintPixel( pixel.x, pixel.y, pixel.color );
+				Pixel = new window.Pixel( data[ i ].x, data[ i ].y, data[ i ].color );
+				Pixel.paint();
 			}
 		}, 'json' );
 		return board;
@@ -506,48 +499,6 @@ board = {
 	refill: function () {
 		board.clear().fill();
 		grid.toggle().toggle();
-		return board;
-	},
-
-	paintPixel: function ( x, y, color ) {
-		rectX = ( x - board.topLeftX ) * board.pixelSize;
-		rectY = ( y - board.topLeftY ) * board.pixelSize;
-		rectW = board.pixelSize;
-		rectH = board.pixelSize;
-		if ( color === null ) {
-			board.context.clearRect( rectX, rectY, rectW, rectH );
-		} else {
-			board.context.fillStyle = color;
-			board.context.fillRect( rectX, rectY, rectW, rectH );
-		}
-		return board;
-	},
-
-	savePixel: function ( x, y, color ) {
-		var data = { 'x': x, 'y': y, 'color': color, 'user': user };
-		$.get( 'Ajax/paintPixel', data, function ( response ) {
-			//console.log( response );
-			switch ( response.message ) {
-				case 'Pixel inserted':
-					break;
-				case 'Pixel updated':
-					break;
-				case 'Pixel deleted':
-					break;
-				case 'Not your pixel':
-					board.paintPixel( response.Pixel.x, response.Pixel.y, response.Pixel.color );
-/*
-					for ( var i in user.oldPixels ) {
-						if ( user.oldPixels[ i ].x === response.Pixel.x && user.oldPixels[ i ].y === response.Pixel.y ) {
-							user.oldPixels.splice( i, 1 );
-							user.newPixels.splice( i, 1 );
-						}
-					}
-*/
-					menu.setAlert( response.message );
-					break;
-			}
-		}, 'json' );
 		return board;
 	}
 }
@@ -621,14 +572,65 @@ grid = {
 	}
 }
 
-/*
+/**
+ * Pixel model
+ */
 function Pixel( x, y, color ) {
+	/**
+	 * The properties are identical to those of the PHP model and the database columns
+	 */
 	this.x = x;
 	this.y = y;
 	this.color = color;
 
+	/**
+	 * Getters
+	 */
+	this.getProperties = function() {
+		return { 'x': this.x, 'y': this.y, 'color': this.color };
+	}
+
 	this.save = function () {
-		
+		var thisPixel = this;
+		$.post( 'Ajax/savePixel', this.getProperties(), function ( response ) {
+			//console.log( response );
+			// If the user wasn't allowed to paint the pixel, revert it and update the undo/redo arrays
+			if ( response.message === 'Not your pixel' ) {
+				menu.setAlert( response.message );
+				thisPixel.color = response.Pixel.color;
+				thisPixel.paint();
+				for ( var i in user.oldPixels ) {
+					if ( user.oldPixels[ i ].x == response.Pixel.x && user.oldPixels[ i ].y == response.Pixel.y ) {
+						user.oldPixels.splice( i, 1 );
+						user.newPixels.splice( i, 1 );
+						user.arrayPointer--;
+					}
+				}
+			}
+		}, 'json' );
+	}
+
+	this.paint = function () {
+		var rectX = ( this.x - board.topLeftX ) * board.pixelSize;
+		var rectY = ( this.y - board.topLeftY ) * board.pixelSize;
+		var rectW = board.pixelSize;
+		var rectH = board.pixelSize;
+		if ( this.color === null ) {
+			board.context.clearRect( rectX, rectY, rectW, rectH );
+		} else {
+			board.context.fillStyle = this.color;
+			board.context.fillRect( rectX, rectY, rectW, rectH );
+		}
+		return this;
+	}
+
+	this.erase = function () {
+		var rectX = ( this.x - board.topLeftX ) * board.pixelSize;
+		var rectY = ( this.y - board.topLeftY ) * board.pixelSize;
+		var rectW = board.pixelSize;
+		var rectH = board.pixelSize;
+		board.context.clearRect( rectX, rectY, rectW, rectH );
+		this.color = null;
+		return this;
 	}
 }
-*/

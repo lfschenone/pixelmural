@@ -42,7 +42,8 @@ body {
 	background: #aaf;
 }
 
-#facebook-buttons {
+#menu .fb-like,
+#menu .fb-login-button {
 	float: right;
 	overflow: hidden; /* Hides the Facebook flyout */
 	margin: 10px;

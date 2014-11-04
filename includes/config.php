@@ -7,7 +7,7 @@ error_reporting( E_ALL );
 //General settings
 define( 'BASE', 'http://localhost/pixel-by-pixel/' );
 define( 'TITLE', 'Pixel by Pixel' );
-define( 'DEFAULT_CONTROLLER', 'board' );
+define( 'DEFAULT_CONTROLLER', 'Board' );
 define( 'DEFAULT_METHOD', 'view' );
 define( 'CONTACT_EMAIL', 'contact@pixel-by-pixel.app' );
 
