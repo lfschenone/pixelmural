@@ -24,7 +24,7 @@ function loginCallback( response ) {
 
 function onStatusChange( response ) {
 	if ( response.status === 'connected' ) {
-		console.log( 'Connected: ' + response );
+		console.log( 'connected', response );
 	} else {
 		login( loginCallback );
 	}
