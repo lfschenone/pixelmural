@@ -1,17 +1,5 @@
 <?php
 
-function __autoload( $class ) {
-	if ( file_exists( 'controllers/' . $class . '.php' ) ) {
-		include 'controllers/' . $class . '.php';
-	}
-	if ( file_exists( 'models/' . $class . '.php' ) ) {
-		include 'models/' . $class . '.php';
-	}
-	if ( file_exists( 'includes/' . $class . '.php' ) ) {
-		include 'includes/' . $class . '.php';
-	}
-}
-
 function go( $url ) {
 	header( 'Location: ' . $url );
 	exit;
@@ -134,7 +122,7 @@ function url_merge( $key, $value ) {
 		//Turn the array back into a query string
 		$query = http_build_query( $array );
 
-		//Put the url back together
+		//Append the query string to the URL
 		$url = $parts[0] . '?' . $query;
 
 	} else {
