@@ -5,7 +5,7 @@ ini_set( 'display_errors', 1 );
 error_reporting( E_ALL );
 
 //General settings
-define( 'BASE', 'http://localhost/pixel-by-pixel/' );
+define( 'BASE', 'http://localhost/pbp/' );
 define( 'TITLE', 'Pixel by Pixel' );
 define( 'DEFAULT_CONTROLLER', 'Board' );
 define( 'DEFAULT_METHOD', 'view' );
