@@ -332,10 +332,10 @@ mouse = {
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message );
 			}
-			if ( response.message === 'Success!' ) {
+			if ( response.message === 'Area painted' ) {
 				var data, Pixel;
-				for ( var i in response.PAINTED ) {
-					data = response.PAINTED[ i ];
+				for ( var i in response.PIXELS ) {
+					data = response.PIXELS[ i ];
 					Pixel = new window.Pixel( data.x, data.y, data.color );
 					Pixel.paint();
 				}
@@ -358,6 +358,7 @@ mouse = {
 			return mouse;
 		}
 		var oldColor = rgbToHex( red, green, blue );
+		var oldPixel = new window.Pixel( mouse.currentX, mouse.currentY, oldColor );
 
 		// Part of the undo/redo functionality
 		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );

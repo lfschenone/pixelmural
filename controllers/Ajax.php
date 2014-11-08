@@ -103,8 +103,8 @@ class Ajax extends Controller {
 					$QUEUE[] = $Neighbor;
 				}
 			}
-			$RESPONSE['message'] = 'Success!';
-			$RESPONSE['PAINTED'] = $PAINTED;
+			$RESPONSE['message'] = 'Area painted';
+			$RESPONSE['PIXELS'] = $PAINTED;
 		}
 		exit( json_encode( $RESPONSE ) );
 	}
