@@ -594,6 +594,7 @@ function Pixel( x, y, color ) {
 
 	this.save = function () {
 		var thisPixel = this;
+		console.log( this.getProperties() );
 		$.post( 'Ajax/savePixel', this.getProperties(), function ( response ) {
 			console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it and update the undo/redo arrays
