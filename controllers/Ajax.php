@@ -28,11 +28,11 @@ class Ajax extends Controller {
 	static function savePixel() {
 		global $gDatabase;
 
-		$x = POST( 'x' );
-		$y = POST( 'y' );
+		$x = GET( 'x' );
+		$y = GET( 'y' );
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$time = $_SERVER['REQUEST_TIME'];
-		$color = POST( 'color' );
+		$color = GET( 'color' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
 		if ( !$Pixel ) {
@@ -61,11 +61,11 @@ class Ajax extends Controller {
 	static function paintArea() {
 		global $gDatabase;
 
-		$x = POST( 'x' );
-		$y = POST( 'y' );
+		$x = GET( 'x' );
+		$y = GET( 'y' );
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$time = $_SERVER['REQUEST_TIME'];
-		$color = POST( 'color' );
+		$color = GET( 'color' );
 
 		$firstPixel = Pixel::newFromCoords( $x, $y );
 		if ( !$firstPixel ) {
