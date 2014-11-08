@@ -325,7 +325,7 @@ mouse = {
 
 	paintArea: function ( event ) {
 		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, menu.color );
-		$.post( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
+		$.get( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
 			console.log( response );
 			if ( response.message === 'The background changed only for you' ) {
 				$( board.canvas ).css( 'background', menu.color );
@@ -594,8 +594,7 @@ function Pixel( x, y, color ) {
 
 	this.save = function () {
 		var thisPixel = this;
-		console.log( this.getProperties() );
-		$.post( 'Ajax/savePixel', this.getProperties(), function ( response ) {
+		$.get( 'Ajax/savePixel', this.getProperties(), function ( response ) {
 			console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it and update the undo/redo arrays
 			if ( response.message === 'Not your pixel' ) {
