@@ -9,6 +9,7 @@ Bugs
 Tasks
 -----
 * Facebook login
+* Replace GET for POST ajax requests where necessary
 * Preview?
 * Draft pencil?
 * Optimize the zoom

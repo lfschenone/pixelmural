@@ -110,10 +110,11 @@ class Ajax extends Controller {
 	}
 
 	static function sendResponse( $response ) {
-		header( 'Access-Control-Allow-Headers: X-Requested-With, Content-Type, Authorization' );
-		header( 'Access-Control-Allow-Methods: GET, GET, DELETE, OPTIONS' );
+		header( 'Access-Control-Allow-Headers: X-Requested-With, Content-Type' );
+		header( 'Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS' );
 		header( 'Access-Control-Allow-Origin: *' );
 		header( 'Content-Type: application/json' );
 		echo json_encode( $response );
+		exit;
 	}
 }
