@@ -23,6 +23,7 @@ class Ajax extends Controller {
 			$PIXELS[] = new Pixel( $DATA );
 		}
 		header( 'Access-Control-Allow-Origin: *' );
+		header( 'Access-Control-Allow-Origin: Origin, X-Requested-With, Content-Type, Accept' );
 		exit( json_encode( $PIXELS ) );
 	}
 
