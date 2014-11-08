@@ -11,7 +11,7 @@
 <button id="eraserButton"><img src="images/eraser.png" title="Eraser [R]" /></button>
 <input id="colorInput" type="text" value="#ffffff" />
 <span id="alert"></span>
-<a class="button" id="github-link" target="_blank" href="https://github.com/lfschenone/pixel-by-pixel"><img src="images/github.png" title="GitHub repository" /></a>
-<span class="fb-like" data-layout="button" data-share="true"></span>
-<!-- <span class="fb-login-button" data-size="medium" data-auto-logout-link="true"></span> -->
+<a id="githubLink" target="_blank" href="https://github.com/lfschenone/pixel-by-pixel"><img src="images/github.png" title="GitHub repository" /></a>
+<button id="facebookLoginButton" onclick="facebookLogin();"><img src="images/facebook-login.png" title="Login with Facebook"></button>
+<span id="facebookLikeButtons" class="fb-like" data-layout="button" data-share="true" data-size="small"></span>
 </div>

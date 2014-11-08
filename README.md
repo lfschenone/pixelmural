@@ -15,6 +15,7 @@ Tasks
 * Optimize the zoom
 * Optimize pixel loading?
 * Grid numbers?
+* Understand and optimize the spectrum CSS
 
 Further tasks
 -------------

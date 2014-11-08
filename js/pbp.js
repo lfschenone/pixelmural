@@ -485,6 +485,7 @@ board = {
 			'height': board.yPixels
 		};
 		$.get( 'Ajax/getArea', data, function ( response ) {
+			//console.log( response );
 			var Pixel;
 			for ( var i = 0; i < response.length; i++ ) {
 				Pixel = new window.Pixel( response[ i ].x, response[ i ].y, response[ i ].color );

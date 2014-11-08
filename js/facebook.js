@@ -1,43 +1,33 @@
-$( function () {
-
-	FB.init({
-		appId: '707049712677506',
-		//frictionlessRequests: true,
-		xfbml: true,
-		status: true,
-		version: 'v2.1'
-	});
-
-/*
-	FB.getLoginStatus( function( response ) {
-		statusChangeCallback( response );
-	});
-*/
+window.fbAsyncInit = FB.init({
+	appId: '707049712677506',
+	oauth: true,
+	xfbml: true,
+	status: true,
+	cookie: true,
+	version: 'v2.1'
 });
 
-/*
-function statusChangeCallback( response ) {
-	//console.log( response );
-	if ( response.status === 'connected' ) {
-		FB.api( '/me', function( response ) {
-			console.log( response );
-			user.name = response.name;
-			user.email = response.email;
-			user.link = response.link;
-			menu.setAlert( 'Welcome ' + response.first_name + '!' );
-		});
-	} else if ( response.status === 'not_authorized' ) {
-		menu.setAlert( 'Please log into this app.' );
-	} else {
-		menu.setAlert( 'Please log into Facebook.' );
-	}
-}
+FB.getLoginStatus( function( response ) {
 
-// This function is called when someone finishes with the Login Button
-// See the onlogin handler attached to the button in the HTML
-function checkLoginState() {
-	FB.getLoginStatus( function( response ) {
-		statusChangeCallback( response );
-	});
+	if ( response.status === 'connected' ) {
+		$( '#facebookLoginButton' ).remove();
+	}
+});
+
+function facebookLogin() {
+	FB.login( function( response ) {
+
+		if ( response.authResponse ) {
+			console.log( response );
+			access_token = response.authResponse.accessToken;
+			user_id = response.authResponse.userID;
+
+			FB.api( '/me', function( response ) {
+				user_email = response.email;
+				// You can store this data into your database             
+			});
+		} else {
+			// User cancelled login or did not fully authorize	
+		}
+	}, { scope: 'publish_stream,email' });
 }
-*/

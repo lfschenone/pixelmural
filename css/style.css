@@ -22,7 +22,8 @@ body {
 }
 
 #menu button,
-#menu a.button {
+#menu input,
+#menu a {
 	background: white;
 	border: none;
 	cursor: pointer;
@@ -31,10 +32,11 @@ body {
 	margin: 0;
 	outline: none;
 	padding: 5px;
+	vertical-align: middle;
 }
 
 #menu button img,
-#menu a.button img {
+#menu a img {
 	display: block;
 }
 
@@ -42,24 +44,26 @@ body {
 	background: #aaf;
 }
 
-#menu .fb-like,
-#menu .fb-login-button {
-	float: right;
-	overflow: hidden; /* Hides the Facebook flyout */
-	margin: 10px;
-}
-
-#menu #github-link {
-	float: right;
-}
-
-#alert {
+#menu #alert {
 	background: lightyellow;
 	display: inline-block;
 	line-height: 30px;
 	margin: 5px;
 	padding: 0 10px;
 	vertical-align: bottom;
+}
+
+/* Right buttons */
+#menu #githubLink {
+	float: right;
+}
+#menu #facebookLoginButton {
+	float: right;
+	margin: 5px;
+}
+#menu #facebookLikeButtons {
+	float: right;
+	margin: 10px;
 }
 
 #board {
