@@ -22,6 +22,7 @@ class Ajax extends Controller {
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$PIXELS[] = new Pixel( $DATA );
 		}
+		header( 'Access-Control-Allow-Origin: *' );
 		exit( json_encode( $PIXELS ) );
 	}
 

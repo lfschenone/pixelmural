@@ -142,11 +142,13 @@ menu = {
 		$( '#colorInput' ).val( color );
 	},
 
-	setAlert: function ( alert, time ) {
+	setAlert: function ( alert, duration ) {
 		$( '#alert' ).text( alert );
-		window.setTimeout( function () {
-			$( '#alert' ).empty();
-		}, 1000 );
+		if ( duration ) {
+			window.setTimeout( function () {
+				$( '#alert' ).empty();
+			}, duration );
+		}
 	}
 }
 
@@ -327,10 +329,10 @@ mouse = {
 			console.log( response );
 			if ( response.message === 'The background changed only for you' ) {
 				$( board.canvas ).css( 'background', menu.color );
-				menu.setAlert( response.message )
+				menu.setAlert( response.message, 1000 )
 			}
 			if ( response.message === 'Not your pixel' ) {
-				menu.setAlert( response.message );
+				menu.setAlert( response.message, 1000 );
 			}
 			if ( response.message === 'Area painted' ) {
 				var data, Pixel;
@@ -482,12 +484,13 @@ board = {
 			'width': board.xPixels,
 			'height': board.yPixels
 		};
-		$.get( 'Ajax/getArea', data, function ( data ) {
+		$.get( 'Ajax/getArea', data, function ( response ) {
 			var Pixel;
-			for ( var i = 0; i < data.length; i++ ) {
-				Pixel = new window.Pixel( data[ i ].x, data[ i ].y, data[ i ].color );
+			for ( var i = 0; i < response.length; i++ ) {
+				Pixel = new window.Pixel( response[ i ].x, response[ i ].y, response[ i ].color );
 				Pixel.paint();
 			}
+			menu.setAlert( '' );
 		}, 'json' );
 		return board;
 	},
@@ -510,7 +513,7 @@ grid = {
 
 	context: {},
 
-	color: '#777777',
+	color: '#aaaaaa',
 
 	visible: false,
 
@@ -542,7 +545,6 @@ grid = {
 			return grid; //If the pixels are too small, don't draw the grid
 		}
 		grid.context.beginPath();
-
 		for ( var x = 0; x <= board.xPixels; x++ ) {
 			grid.context.moveTo( x * board.pixelSize - 0.5, 0 );
 			grid.context.lineTo( x * board.pixelSize - 0.5, grid.height );
@@ -551,7 +553,6 @@ grid = {
 			grid.context.moveTo( 0, y * board.pixelSize - 0.5 );
 			grid.context.lineTo( grid.width, y * board.pixelSize - 0.5 );
 		}
-
 		grid.context.strokeStyle = grid.color;
 		grid.context.stroke();
 		return grid;
@@ -597,7 +598,7 @@ function Pixel( x, y, color ) {
 			console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it and update the undo/redo arrays
 			if ( response.message === 'Not your pixel' ) {
-				menu.setAlert( response.message );
+				menu.setAlert( response.message, 1000 );
 				thisPixel.color = response.Pixel.color;
 				thisPixel.paint();
 				for ( var i in user.oldPixels ) {
@@ -609,19 +610,19 @@ function Pixel( x, y, color ) {
 				}
 			}
 		}, 'json' );
+		return this;
 	}
 
 	this.paint = function () {
+		if ( this.color === null ) {
+			return this.erase();
+		}
 		var rectX = ( this.x - board.topLeftX ) * board.pixelSize;
 		var rectY = ( this.y - board.topLeftY ) * board.pixelSize;
 		var rectW = board.pixelSize;
 		var rectH = board.pixelSize;
-		if ( this.color === null ) {
-			board.context.clearRect( rectX, rectY, rectW, rectH );
-		} else {
-			board.context.fillStyle = this.color;
-			board.context.fillRect( rectX, rectY, rectW, rectH );
-		}
+		board.context.fillStyle = this.color;
+		board.context.fillRect( rectX, rectY, rectW, rectH );
 		return this;
 	}
 
