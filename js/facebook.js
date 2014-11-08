@@ -1,3 +1,5 @@
+$( function () {
+
 window.fbAsyncInit = FB.init({
 	appId: '707049712677506',
 	oauth: true,
@@ -12,6 +14,8 @@ FB.getLoginStatus( function( response ) {
 	if ( response.status === 'connected' ) {
 		$( '#facebookLoginButton' ).remove();
 	}
+});
+
 });
 
 function facebookLogin() {
