@@ -596,11 +596,12 @@ function Pixel( x, y, color ) {
 		var thisPixel = this;
 		$.get( 'Ajax/savePixel', this.getProperties(), function ( response ) {
 			console.log( response );
-			// If the user wasn't allowed to paint the pixel, revert it and update the undo/redo arrays
+			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message, 1000 );
 				thisPixel.color = response.Pixel.color;
 				thisPixel.paint();
+				// Remove the reverted pixel from the undo/redo arrays
 				for ( var i in user.oldPixels ) {
 					if ( user.oldPixels[ i ].x == response.Pixel.x && user.oldPixels[ i ].y == response.Pixel.y ) {
 						user.oldPixels.splice( i, 1 );
