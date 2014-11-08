@@ -7,7 +7,7 @@ class Ajax extends Controller {
 		$x = GET( 'x' );
 		$y = GET( 'y' );
 		$Pixel = Pixel::newFromCoords( $x, $y );
-		exit( json_encode( $Pixel ) );
+		self::sendResponse( $Pixel );
 	}
 
 	static function getArea() {
@@ -22,9 +22,7 @@ class Ajax extends Controller {
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$PIXELS[] = new Pixel( $DATA );
 		}
-		header( 'Access-Control-Allow-Origin: *' );
-		header( 'Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept' );
-		exit( json_encode( $PIXELS ) );
+		self::sendResponse( $PIXELS );
 	}
 
 	static function savePixel() {
@@ -57,7 +55,7 @@ class Ajax extends Controller {
 			$RESPONSE['message'] = 'Pixel updated';
 		}
 		$RESPONSE['Pixel'] = $Pixel;
-		exit( json_encode( $RESPONSE ) );
+		self::sendResponse( $RESPONSE );
 	}
 
 	static function paintArea() {
@@ -108,6 +106,13 @@ class Ajax extends Controller {
 			$RESPONSE['message'] = 'Area painted';
 			$RESPONSE['PIXELS'] = $PAINTED;
 		}
-		exit( json_encode( $RESPONSE ) );
+		self::sendResponse( $RESPONSE );
+	}
+
+	static function sendResponse( $response ) {
+		header( 'Access-Control-Allow-Origin: *' );
+		header( 'Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept' );
+		header( 'Content-Type: application/json' );
+		echo json_encode( $response );
 	}
 }

@@ -9,7 +9,6 @@ Bugs
 Tasks
 -----
 * Facebook login
-* Send correct MIME type from ajax calls
 * Preview?
 * Draft pencil?
 * Optimize the zoom

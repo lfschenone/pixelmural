@@ -342,7 +342,7 @@ mouse = {
 					Pixel.paint();
 				}
 			}
-		}, 'json' );
+		});
 		return mouse;
 	},
 
@@ -491,7 +491,7 @@ board = {
 				Pixel.paint();
 			}
 			menu.setAlert( '' );
-		}, 'json' );
+		});
 		return board;
 	},
 
@@ -609,7 +609,7 @@ function Pixel( x, y, color ) {
 					}
 				}
 			}
-		}, 'json' );
+		});
 		return this;
 	}
 
