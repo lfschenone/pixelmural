@@ -27,9 +27,9 @@ class User extends Model {
 		throw new Exception( 'Not found', 404 );
 	}
 
-	static function newFromUsername( $username ) {
+	static function newFromName( $name ) {
 		global $gDatabase;
-		$Result = $gDatabase->query( "SELECT * FROM users WHERE username = '$username' LIMIT 1" );
+		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$name' LIMIT 1" );
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
 			return new User( $DATA );
