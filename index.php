@@ -16,7 +16,7 @@ try {
 } catch ( Exception $exception ) {
 	try {
 		$username = $_SERVER['REMOTE_ADDR']; //IPs are treated as usernames
-		$gUser = User::newFromUsername( $username );
+		$gUser = User::newFromName( $username );
 	} catch ( Exception $exception ) {
 		$gUser = new User;
 		$gUser->username = $_SERVER['REMOTE_ADDR'];
