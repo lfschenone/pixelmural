@@ -2,7 +2,7 @@
 
 class User extends Controller {
 
-	static function login() {
+	static function facebookLogin() {
 		global $gDatabase;
 		$x = GET( 'x' );
 		$y = GET( 'y' );
