@@ -13,11 +13,11 @@ $gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 try {
 	$token = SESSION( 'token', COOKIE( 'token' ) );
 	$gUser = User::newFromToken( $token );
-} catch ( Error $error ) {
+} catch ( Exception $exception ) {
 	try {
 		$username = $_SERVER['REMOTE_ADDR']; //IPs are treated as usernames
 		$gUser = User::newFromUsername( $username );
-	} catch ( Error $error ) {
+	} catch ( Exception $exception ) {
 		$gUser = new User;
 		$gUser->username = $_SERVER['REMOTE_ADDR'];
 		$gUser->id = $gUser->insert();
