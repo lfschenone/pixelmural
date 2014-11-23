@@ -10,8 +10,20 @@ Facebook\FacebookSession::setDefaultApplication( FACEBOOK_APP_ID, FACEBOOK_APP_S
 
 $gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 
+try {
+	$token = SESSION( 'token', COOKIE( 'token' ) );
+	$gUser = User::newFromToken( $token );
+} catch ( Error $error ) {
+	try {
+		$username = $_SERVER['REMOTE_ADDR']; //IPs are treated as usernames
+		$gUser = User::newFromUsername( $username );
+	} catch ( Error $error ) {
+		$gUser = new User;
+		$gUser->username = $_SERVER['REMOTE_ADDR'];
+		$gUser->id = $gUser->insert();
+	}
+}
+
 $controller = GET( 'controller', DEFAULT_CONTROLLER );
-
 $method = GET( 'method', DEFAULT_METHOD );
-
 $controller::$method();
