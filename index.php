@@ -10,8 +10,8 @@ Facebook\FacebookSession::setDefaultApplication( FACEBOOK_APP_ID, FACEBOOK_APP_S
 
 $gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 
-$gController = GET( 'controller', DEFAULT_CONTROLLER );
+$controller = GET( 'controller', DEFAULT_CONTROLLER );
 
-$gMethod = GET( 'method', DEFAULT_METHOD );
+$method = GET( 'method', DEFAULT_METHOD );
 
-$gController::$gMethod();
+$controller::$method();
