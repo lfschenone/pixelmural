@@ -6,15 +6,15 @@ class User extends Model {
 	 * The properties are identical to the database columns.
 	 */
 	public $id;
-	public $facebook_id;
-	public $join_time;
-	public $last_seen;
-	public $name;
-	public $email;
-	public $gender;
-	public $locale;
-	public $link;
-	public $timezone;
+	public $facebook_id = null;
+	public $join_time = null;
+	public $last_seen = null;
+	public $name = null;
+	public $email = null;
+	public $gender = null;
+	public $locale = null;
+	public $link = null;
+	public $timezone = null;
 	public $pixel_count = 0;
 
 	static function newFromId( $id ) {
@@ -72,5 +72,71 @@ class User extends Model {
 		}
 		pr( $Response );
 		exit;
+	}
+
+	function insert() {
+		global $gDatabase;
+		$Statement = $gDatabase->prepare( 'INSERT INTO users (
+			join_time,
+			last_seen,
+			name,
+			email,
+			gender,
+			locale,
+			link,
+			timezone,
+			pixel_count
+			) VALUES (?,?,?,?,?,?,?,?,?)'
+		);
+		$Statement->bind_param( 'iissssssi',
+			$this->join_time,
+			$this->last_seen,
+			$this->name,
+			$this->email,
+			$this->gender,
+			$this->locale,
+			$this->link,
+			$this->timezone,
+			$this->pixel_count
+		);
+		$Statement->execute();
+		return $gDatabase->insert_id;
+	}
+
+	function update() {
+		global $gDatabase;
+		$Statement = $gDatabase->prepare( 'UPDATE users SET
+			join_time = ?,
+			last_seen = ?,
+			name = ?,
+			email = ?,
+			gender = ?,
+			locale = ?,
+			link = ?,
+			timezone = ?,
+			pixel_count = ?
+			WHERE id = ?'
+		);
+		$Statement->bind_param( 'iissssssii',
+			$this->join_time,
+			$this->last_seen,
+			$this->name,
+			$this->email,
+			$this->gender,
+			$this->locale,
+			$this->link,
+			$this->timezone,
+			$this->pixel_count,
+			$this->id
+		);
+		$Statement->execute();
+		return true;
+	}
+
+	function delete() {
+		global $gDatabase;
+		$Statement = $gDatabase->prepare( 'DELETE FROM users WHERE id = ? LIMIT 1' );
+		$Statement->bind_param( 'i', $this->id );
+		$Statement->execute();
 	}
 }
