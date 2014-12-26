@@ -10,6 +10,19 @@ class Ajax extends Controller {
 		self::sendResponse( $Pixel );
 	}
 
+	static function getInfo() {
+		global $gDatabase;
+		$x = GET( 'x' );
+		$y = GET( 'y' );
+
+		$Pixel = Pixel::newFromCoords( $x, $y );
+		$Author = $Pixel->getAuthor();
+
+		$RESPONSE['Pixel'] = $Pixel;
+		$RESPONSE['Author'] = $Author;
+		self::sendResponse( $RESPONSE );
+	}
+
 	static function getArea() {
 		global $gDatabase;
 		$x = GET( 'x' );
@@ -26,25 +39,25 @@ class Ajax extends Controller {
 	}
 
 	static function savePixel() {
-		global $gDatabase;
+		global $gDatabase, $gUser;
 
-		$x = POST( 'x' );
-		$y = POST( 'y' );
-		$ip = $_SERVER['REMOTE_ADDR'];
+		$x = GET( 'x' );
+		$y = GET( 'y' );
+		$author_id = $gUser->id;
 		$time = $_SERVER['REQUEST_TIME'];
-		$color = POST( 'color' );
+		$color = GET( 'color' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
 		if ( !$Pixel ) {
 			$Pixel = new Pixel;
 			$Pixel->x = $x;
 			$Pixel->y = $y;
-			$Pixel->ip = $ip;
+			$Pixel->author_id = $author_id;
 			$Pixel->time = $time;
 			$Pixel->color = $color;
 			$Pixel->insert();
 			$RESPONSE['message'] = 'Pixel inserted';
-		} else if ( $Pixel->ip != $ip ) {
+		} else if ( $Pixel->author_id != $author_id and !$gUser->isAdmin() ) {
 			$RESPONSE['message'] = 'Not your pixel';
 		} else if ( !$color ) {
 			$Pixel->delete();
@@ -54,23 +67,24 @@ class Ajax extends Controller {
 			$Pixel->update();
 			$RESPONSE['message'] = 'Pixel updated';
 		}
+		$RESPONSE['gUser'] = $gUser;
 		$RESPONSE['Pixel'] = $Pixel;
 		self::sendResponse( $RESPONSE );
 	}
 
 	static function paintArea() {
-		global $gDatabase;
+		global $gDatabase, $gUser;
 
-		$x = POST( 'x' );
-		$y = POST( 'y' );
-		$ip = $_SERVER['REMOTE_ADDR'];
+		$x = GET( 'x' );
+		$y = GET( 'y' );
+		$author_id = $gUser->id;
 		$time = $_SERVER['REQUEST_TIME'];
-		$color = POST( 'color' );
+		$color = GET( 'color' );
 
 		$firstPixel = Pixel::newFromCoords( $x, $y );
 		if ( !$firstPixel ) {
 			$RESPONSE['message'] = 'The background changed only for you';
-		} else if ( $firstPixel->ip != $ip ) {
+		} else if ( $firstPixel->author_id != $author_id and !$gUser->isAdmin() ) {
 			$RESPONSE['message'] = 'Not your pixel';
 		} else {
 			$oldColor = $firstPixel->color;
@@ -86,7 +100,7 @@ class Ajax extends Controller {
 				//Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
 				//have the same color as the first pixel, and haven't been painted yet
 				$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
-					ip = "' . $ip . '" AND
+					author_id = "' . $author_id . '" AND
 					time < ' . $time . ' AND
 					color = "' . $oldColor . '" AND (
 					( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR

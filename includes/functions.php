@@ -130,3 +130,9 @@ function url_merge( $key, $value ) {
 	}
 	return $url;
 }
+
+function pr( $ARRAY ) {
+	echo '<pre>';
+	print_r( $ARRAY );
+	echo '</pre>';
+}

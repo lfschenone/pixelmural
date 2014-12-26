@@ -14,8 +14,8 @@ class User extends Model {
 	public $gender = null;
 	public $locale = null;
 	public $link = null;
+	public $status = null;
 	public $timezone = null;
-	public $pixel_count = 0;
 
 	static function newFromId( $id ) {
 		global $gDatabase;
@@ -29,6 +29,7 @@ class User extends Model {
 
 	static function newFromName( $name ) {
 		global $gDatabase;
+		$name = $gDatabase->real_escape_string( $name );
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$name' LIMIT 1" );
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
@@ -52,7 +53,6 @@ class User extends Model {
 
 	static function newFromFacebook() {
 		global $gDatabase;
-
 		$Helper = new Facebook\FacebookJavaScriptLoginHelper();
 		try {
 			$Session = $Helper->getSession();
@@ -74,30 +74,41 @@ class User extends Model {
 		exit;
 	}
 
+	function isAdmin() {
+		if ( $this->status === 'admin' ) {
+			return true;
+		}
+		return false;
+	}
+
 	function insert() {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'INSERT INTO users (
+			facebook_id,
 			join_time,
 			last_seen,
+			token,
 			name,
 			email,
 			gender,
 			locale,
 			link,
-			timezone,
-			pixel_count
-			) VALUES (?,?,?,?,?,?,?,?,?)'
+			status,
+			timezone
+			) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
 		);
-		$Statement->bind_param( 'iissssssi',
+		$Statement->bind_param( 'siisssssssi',
+			$this->facebook_id,
 			$this->join_time,
 			$this->last_seen,
+			$this->token,
 			$this->name,
 			$this->email,
 			$this->gender,
 			$this->locale,
 			$this->link,
-			$this->timezone,
-			$this->pixel_count
+			$this->status,
+			$this->timezone
 		);
 		$Statement->execute();
 		return $gDatabase->insert_id;
@@ -106,27 +117,31 @@ class User extends Model {
 	function update() {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'UPDATE users SET
+			facebook_id = ?,
 			join_time = ?,
 			last_seen = ?,
+			token = ?,
 			name = ?,
 			email = ?,
 			gender = ?,
 			locale = ?,
 			link = ?,
-			timezone = ?,
-			pixel_count = ?
+			status = ?,
+			timezone = ?
 			WHERE id = ?'
 		);
-		$Statement->bind_param( 'iissssssii',
+		$Statement->bind_param( 'iiisssssssii',
+			$this->facebook_id,
 			$this->join_time,
 			$this->last_seen,
+			$this->token,
 			$this->name,
 			$this->email,
 			$this->gender,
 			$this->locale,
 			$this->link,
+			$this->status,
 			$this->timezone,
-			$this->pixel_count,
 			$this->id
 		);
 		$Statement->execute();

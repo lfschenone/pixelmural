@@ -4,7 +4,7 @@ class Pixel extends Model {
 
 	public $x;
 	public $y;
-	public $ip;
+	public $author_id;
 	public $time;
 	public $color;
 
@@ -18,20 +18,24 @@ class Pixel extends Model {
 		return null;
 	}
 
+	function getAuthor() {
+		return User::newFromId( $this->author_id );
+	}
+
 	function insert() {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'INSERT INTO pixels (
 			x,
 			y,
-			ip,
+			author_id,
 			time,
 			color
 			) VALUES (?,?,?,?,?)'
 		);
-		$Statement->bind_param( 'iisis',
+		$Statement->bind_param( 'iiiis',
 			$this->x,
 			$this->y,
-			$this->ip,
+			$this->author_id,
 			$this->time,
 			$this->color
 		);
@@ -42,13 +46,13 @@ class Pixel extends Model {
 	function update() {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'UPDATE pixels SET
-			ip = ?,
+			author_id = ?,
 			time = ?,
 			color = ?
 			WHERE x = ? AND y = ?'
 		);
-		$Statement->bind_param( 'sisii',
-			$this->ip,
+		$Statement->bind_param( 'iisii',
+			$this->author_id,
 			$this->time,
 			$this->color,
 			$this->x,

@@ -12,5 +12,6 @@ return array(
     'Controller' => $baseDir . '/includes/Controller.php',
     'Model' => $baseDir . '/includes/Model.php',
     'Pixel' => $baseDir . '/models/Pixel.php',
-    'User' => $baseDir . '/controllers/User.php',
+    'User' => $baseDir . '/models/User.php',
+    'Users' => $baseDir . '/controllers/Users.php',
 );

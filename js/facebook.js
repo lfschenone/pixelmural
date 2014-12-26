@@ -1,37 +1,40 @@
-$( function () {
+window.fbAsyncInit = function () {
 
-window.fbAsyncInit = FB.init({
-	appId: '707049712677506',
-	oauth: true,
-	xfbml: true,
-	status: true,
-	cookie: true,
-	version: 'v2.1'
-});
+	FB.init({
+		appId: '707049712677506',
+		xfbml: true,
+		status: true,
+		cookie: true,
+		version: 'v2.2'
+	});
 
-FB.getLoginStatus( function( response ) {
+	FB.Event.subscribe( 'auth.statusChange', function ( response ) {
+		handleResponse( response );
+	});
+}
 
-	if ( response.status === 'connected' ) {
-		$( '#facebookLoginButton' ).remove();
-	}
-});
-
-});
-
-function facebookLogin() {
-	FB.login( function( response ) {
-
-		if ( response.authResponse ) {
+function handleResponse( response ) {
+	console.log( response );
+    if ( response.status === 'connected' ) {
+		$.get( 'Users/facebookLogin', function ( response ) {
 			console.log( response );
-			access_token = response.authResponse.accessToken;
-			user_id = response.authResponse.userID;
-
-			FB.api( '/me', function( response ) {
-				user_email = response.email;
-				// You can store this data into your database             
-			});
-		} else {
-			// User cancelled login or did not fully authorize	
-		}
-	}, { scope: 'publish_stream,email' });
+		});
+		FB.api( '/me', function ( response ) {
+			console.log( response );
+			user.name = response.name;
+			user.email = response.email;
+		});
+		$( '#facebookLoginButton' ).hide();
+		$( '#facebookLogoutButton' ).show();
+    }
+    if ( response.status === 'not_authorized' ) {
+		//What do?
+    }
+    if ( response.status === 'unknown' ) {
+		$.get( 'Users/facebookLogout', function ( response ) {
+			console.log( response );
+		});
+		$( '#facebookLoginButton' ).show();
+		$( '#facebookLogoutButton' ).hide();
+	}
 }

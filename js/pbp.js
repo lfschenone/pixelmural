@@ -11,6 +11,7 @@ $( function () {
 	grid.setHeight( board.height );
 
 	//Bind events
+	$( '#menu button' ).mouseover( menu.onButtonMouseover ).mouseout( menu.onButtonMouseout );
 	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( '#gridButton' ).click( menu.onGridButtonClick );
 	$( '#zoomInButton' ).click( menu.onZoomInButtonClick );
@@ -22,6 +23,7 @@ $( function () {
 	$( '#pencilButton' ).click( menu.onPencilButtonClick );
 	$( '#bucketButton' ).click( menu.onBucketButtonClick );
 	$( '#eraserButton' ).click( menu.onEraserButtonClick );
+	$( '#infoButton' ).click( menu.onInfoButtonClick );
 	$( document ).keydown( keyboard.onKeydown );
 
 	//Set 'Move' as the default action
@@ -43,6 +45,8 @@ $( function () {
 user = {
 
 	ip: null,
+	name: null,
+	email: null,
 
 	/**
 	 * Part of the undo/redo functionality
@@ -117,7 +121,7 @@ menu = {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#pencilButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
-		mouse.dragAction = null;
+		mouse.dragAction = 'paintPixel';
 		mouse.upAction = null;
 	},
 
@@ -135,6 +139,25 @@ menu = {
 		mouse.downAction = 'erasePixel';
 		mouse.dragAction = 'erasePixel';
 		mouse.upAction = null;
+	},
+
+	onInfoButtonClick: function ( event ) {
+		$( '#board' ).css( 'cursor', 'default' );
+		$( '#infoButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
+		mouse.downAction = 'getInfo';
+		mouse.dragAction = null;
+		mouse.upAction = null;
+	},
+
+	onButtonMouseover: function ( event ) {
+		var button = $( this );
+		var tooltip = button.children().first().attr( 'title' );
+		var tooltipSpan = $( '<span/>' ).addClass( 'tooltip' ).text( tooltip );
+		button.append( tooltipSpan );
+	},
+
+	onButtonMouseout: function ( event ) {
+		$( '.tooltip' ).remove();
 	},
 
 	setColor: function ( color ) {
@@ -158,6 +181,10 @@ keyboard = {
 		//Spacebar
 		if ( event.keyCode == 32 ) {
 			$( '#moveButton' ).click();
+		}
+		//A
+		if ( event.keyCode == 65 ) {
+			$( '#infoButton' ).click();
 		}
 		//B
 		if ( event.keyCode == 66 ) {
@@ -289,10 +316,19 @@ mouse = {
 		return mouse;
 	},
 
+	getInfo: function ( event ) {
+		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, null );
+		$.get( 'Ajax/getInfo', Pixel.getProperties(), function ( response ) {
+			//console.log( response );
+			menu.setAlert( response.Author.name );
+		});
+		return mouse;
+	},
+
 	/**
 	 * Paint a single pixel
 	 *
-	 * To avoid lag in the UX, we first paint the pixel and we then check the database to reverse if necessary
+	 * To avoid lag in the UX, first we paint the pixel and then we check the database to reverse if necessary
 	 */
 	paintPixel: function ( event ) {
 		// Build the new pixel
@@ -316,16 +352,18 @@ mouse = {
 		user.arrayPointer++;
 
 		// For convenience, re-painting a pixel erases it
+/*
 		if ( newPixel.color === oldPixel.color ) {
 			newPixel.color = null;
 		}
+*/
 		newPixel.paint().save();
 		return mouse;
 	},
 
 	paintArea: function ( event ) {
 		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, menu.color );
-		$.post( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
+		$.get( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
 			console.log( response );
 			if ( response.message === 'The background changed only for you' ) {
 				$( board.canvas ).css( 'background', menu.color );
@@ -584,18 +622,32 @@ function Pixel( x, y, color ) {
 	 */
 	this.x = x;
 	this.y = y;
+	this.author_id = null;
+	this.time = null;
 	this.color = color;
 
 	/**
 	 * Getters
 	 */
+	this.get = function() {
+		var thisPixel = this;
+		$.get( 'Ajax/getPixel', this.getProperties(), function ( response ) {
+			//console.log( response );
+			for ( var property in response ) {
+				thisPixel[ property ] = response[ property ];
+			}
+			console.log( thisPixel );
+			return thisPixel;
+		});
+	}
+
 	this.getProperties = function() {
 		return { 'x': this.x, 'y': this.y, 'color': this.color };
 	}
 
 	this.save = function () {
 		var thisPixel = this;
-		$.post( 'Ajax/savePixel', this.getProperties(), function ( response ) {
+		$.get( 'Ajax/savePixel', this.getProperties(), function ( response ) {
 			console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
