@@ -25,17 +25,46 @@ class Ajax extends Controller {
 
 	static function getArea() {
 		global $gDatabase;
-		$x = GET( 'x' );
-		$y = GET( 'y' );
-		$width = GET( 'width' );
-		$height = GET( 'height' );
+		$topLeftX = GET( 'topLeftX' );
+		$topLeftY = GET( 'topLeftY' );
+		$xPixels = GET( 'xPixels' );
+		$yPixels = GET( 'yPixels' );
+		$pixelSize = GET( 'pixelSize' );
 
 		$PIXELS = array();
-		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $x AND x <= ( $x + $width ) AND y >= $y AND y <= ( $y + $height )" );
+		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $topLeftX AND x <= ( $topLeftX + $xPixels ) AND y >= $topLeftY AND y <= ( $topLeftY + $yPixels )" );
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$PIXELS[] = new Pixel( $DATA );
 		}
+
 		self::sendResponse( $PIXELS );
+	}
+
+	static function saveScreen() {
+		global $gDatabase;
+
+		$topLeftX = GET( 'topLeftX' );
+		$topLeftY = GET( 'topLeftY' );
+		$xPixels = GET( 'xPixels' );
+		$yPixels = GET( 'yPixels' );
+		$pixelSize = GET( 'pixelSize' );
+
+		$Image = new Image( $xPixels * $pixelSize, $yPixels * $pixelSize );
+
+		$PIXELS = array();
+		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $topLeftX AND x <= ( $topLeftX + $xPixels ) AND y >= $topLeftY AND y <= ( $topLeftY + $yPixels )" );
+		while ( $DATA = $Result->fetch_assoc() ) {
+			$Pixel = new Pixel( $DATA );
+			$Image->setColorFromHex( $Pixel->color );
+			$x1 = $Pixel->x * $pixelSize;
+			$y1 = $Pixel->y * $pixelSize;
+			$x2 = $x1 + $pixelSize;
+			$y2 = $x2 + $pixelSize;
+			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
+		}
+		$Image->save( 'screens/' . $topLeftX . ',' . $topLeftY . ',' . $pixelSize . '.png' );
+
+		self::sendResponse( 'ok' );
 	}
 
 	static function savePixel() {

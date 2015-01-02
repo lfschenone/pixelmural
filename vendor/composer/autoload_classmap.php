@@ -10,6 +10,7 @@ return array(
     'Ajax' => $baseDir . '/controllers/Ajax.php',
     'Board' => $baseDir . '/controllers/Board.php',
     'Controller' => $baseDir . '/includes/Controller.php',
+    'Image' => $baseDir . '/includes/Image.php',
     'Model' => $baseDir . '/includes/Model.php',
     'Pixel' => $baseDir . '/models/Pixel.php',
     'User' => $baseDir . '/models/User.php',

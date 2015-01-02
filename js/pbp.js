@@ -5,6 +5,9 @@ $( function () {
 	board.setContext( board.canvas.getContext( '2d' ) );
 	board.setWidth( window.innerWidth );
 	board.setHeight( window.innerHeight );
+	board.setTopLeftX( board.getTopLeftX() );
+	board.setTopLeftY( board.getTopLeftY() );
+	board.setPixelSize( board.getPixelSize() );
 	grid.setCanvas( document.getElementById( 'grid' ) );
 	grid.setContext( grid.canvas.getContext( '2d' ) );
 	grid.setWidth( board.width );
@@ -313,6 +316,7 @@ mouse = {
 		var color = rgbToHex( r, g, b );
 		menu.setColor( color );
 		$( '#colorInput' ).spectrum( 'set', color );
+		menu.onPencilButtonClick(); //After sucking the color, switch to the pencil
 		return mouse;
 	},
 
@@ -352,11 +356,10 @@ mouse = {
 		user.arrayPointer++;
 
 		// For convenience, re-painting a pixel erases it
-/*
 		if ( newPixel.color === oldPixel.color ) {
-			newPixel.color = null;
+			//newPixel.color = null;
 		}
-*/
+
 		newPixel.paint().save();
 		return mouse;
 	},
@@ -439,6 +442,30 @@ board = {
 		return Math.floor( board.height / board.pixelSize );
 	},
 
+	getTopLeftX: function() {
+		var topLeftX = parseInt( window.location.hash.slice(1).split(',')[0] );
+		if ( topLeftX === parseInt( topLeftX ) ) {
+			return topLeftX;
+		}
+		return board.topLeftX;
+	},
+
+	getTopLeftY: function() {
+		var topLeftY = parseInt( window.location.hash.slice(1).split(',')[1] );
+		if ( topLeftY === parseInt( topLeftY ) ) {
+			return topLeftY;
+		}
+		return board.topLeftY;
+	},
+
+	getPixelSize: function() {
+		var pixelSize = parseInt( window.location.hash.slice(1).split(',')[2] );
+		if ( pixelSize === parseInt( pixelSize ) ) {
+			return pixelSize;
+		}
+		return board.pixelSize;
+	},
+
 	getPixel: function ( x, y ) {
 		var imageData = board.context.getImageData( x, y, 1, 1 );
 		var red = imageData.data[0];
@@ -479,6 +506,16 @@ board = {
 		return board;
 	},
 
+	setTopLeftX: function ( value ) {
+		board.topLeftX = value;
+		return board;
+	},
+
+	setTopLeftY: function ( value ) {
+		board.topLeftY = value;
+		return board;
+	},
+
 	setPixelSize: function ( value ) {
 		board.pixelSize = parseInt( value );
 		if ( board.pixelSize > 64 ) {
@@ -516,11 +553,13 @@ board = {
 
 	fill: function () {
 		menu.setAlert( 'Loading pixels, please wait...' );
+
 		var data = {
-			'x': board.topLeftX,
-			'y': board.topLeftY,
-			'width': board.xPixels,
-			'height': board.yPixels
+			'topLeftX': board.topLeftX,
+			'topLeftY': board.topLeftY,
+			'xPixels': board.xPixels,
+			'yPixels': board.yPixels,
+			'pixelSize': board.pixelSize
 		};
 		$.get( 'Ajax/getArea', data, function ( response ) {
 			//console.log( response );
@@ -530,7 +569,9 @@ board = {
 				Pixel.paint();
 			}
 			menu.setAlert( '' );
+			window.location.hash = '#' + board.topLeftX + ',' + board.topLeftY + ',' + board.pixelSize;
 		});
+		$.get( 'Ajax/saveScreen', data );
 		return board;
 	},
 
