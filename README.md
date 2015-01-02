@@ -8,13 +8,12 @@ Bugs
 
 Tasks
 -----
-* Facebook login
+* When sharing, share a screenshot
 * Replace GET for POST ajax requests where necessary
 * Preview?
 * Draft pencil?
 * Optimize the zoom
-* Optimize pixel loading?
-* Grid numbers?
+* Optimize pixel loading
 * Understand and optimize the spectrum CSS
 
 Further tasks
