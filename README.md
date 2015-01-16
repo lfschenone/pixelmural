@@ -9,6 +9,7 @@ Bugs
 Tasks
 -----
 * When sharing, share a screenshot
+* When using the bucket, if the area is limited, paint the pixels?
 * Replace GET for POST ajax requests where necessary
 * Preview?
 * Draft pencil?
