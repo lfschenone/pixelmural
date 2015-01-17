@@ -3,6 +3,7 @@ $( function () {
 	//Set the defaults
 	board.setCanvas( document.getElementById( 'board' ) );
 	board.setContext( board.canvas.getContext( '2d' ) );
+	board.setBackground( '#aaaaaa' );
 	board.setWidth( window.innerWidth );
 	board.setHeight( window.innerHeight );
 	board.setTopLeftX( board.getTopLeftX() );
@@ -369,7 +370,7 @@ mouse = {
 		$.get( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
 			console.log( response );
 			if ( response.message === 'The background changed only for you' ) {
-				$( board.canvas ).css( 'background', menu.color );
+				board.setBackground( menu.color );
 				menu.setAlert( response.message, 1000 )
 			}
 			if ( response.message === 'Not your pixel' ) {
@@ -430,7 +431,7 @@ board = {
 	xPixels: 30,
 	yPixels: 15,
 
-	background: 'black',
+	background: '#000000',
 
 	/* Getters */
 
@@ -443,7 +444,7 @@ board = {
 	},
 
 	getTopLeftX: function() {
-		var topLeftX = parseInt( window.location.hash.slice(1).split(',')[0] );
+		var topLeftX = parseInt( window.location.pathname.slice(1).split('/')[0] );
 		if ( topLeftX === parseInt( topLeftX ) ) {
 			return topLeftX;
 		}
@@ -451,7 +452,7 @@ board = {
 	},
 
 	getTopLeftY: function() {
-		var topLeftY = parseInt( window.location.hash.slice(1).split(',')[1] );
+		var topLeftY = parseInt( window.location.pathname.slice(1).split('/')[1] );
 		if ( topLeftY === parseInt( topLeftY ) ) {
 			return topLeftY;
 		}
@@ -459,7 +460,7 @@ board = {
 	},
 
 	getPixelSize: function() {
-		var pixelSize = parseInt( window.location.hash.slice(1).split(',')[2] );
+		var pixelSize = parseInt( window.location.pathname.slice(1).split('/')[2] );
 		if ( pixelSize === parseInt( pixelSize ) ) {
 			return pixelSize;
 		}
@@ -489,6 +490,12 @@ board = {
 
 	setContext: function ( value ) {
 		board.context = value;
+		return board;
+	},
+
+	setBackground: function ( value ) {
+		board.background = value;
+		$( board.canvas ).css( 'background', value );
 		return board;
 	},
 
@@ -569,9 +576,13 @@ board = {
 				Pixel.paint();
 			}
 			menu.setAlert( '' );
-			window.location.hash = '#' + board.topLeftX + ',' + board.topLeftY + ',' + board.pixelSize;
+
+			// Update the URL of the browser
+			history.replaceState( null, null, '/' + board.topLeftX + '/' + board.topLeftY + '/' + board.pixelSize );
+
+			// Update the URL of the Like and Share buttons
+			FB.XFBML.parse();
 		});
-		$.get( 'Ajax/saveScreen', data );
 		return board;
 	},
 

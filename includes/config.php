@@ -7,9 +7,14 @@ error_reporting( E_ALL );
 //General settings
 define( 'BASE', 'http://pixel-by-pixel.lfschenone.com/' );
 define( 'TITLE', 'Pixel by Pixel' );
+define( 'CONTACT_EMAIL', 'contact@pixel-by-pixel.app' );
+
+//Defaults
 define( 'DEFAULT_CONTROLLER', 'Board' );
 define( 'DEFAULT_METHOD', 'view' );
-define( 'CONTACT_EMAIL', 'contact@pixel-by-pixel.app' );
+define( 'DEFAULT_TOPLEFTX', 0 );
+define( 'DEFAULT_TOPLEFTY', 0 );
+define( 'DEFAULT_PIXELSIZE', 4 );
 date_default_timezone_set( 'America/Argentina/Buenos_Aires' );
 
 //Database settings

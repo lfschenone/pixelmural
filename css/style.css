@@ -3,7 +3,6 @@ html {
 }
 
 body {
-	background: grey;
 	font-family: Helvetica;
 	font-size: 15px;
 	font-weight: 300;
@@ -76,7 +75,11 @@ body {
 	float: right;
 	margin: 5px;
 }
-#menu #facebookLikeButtons {
+#menu #facebookLikeButton {
+	float: right;
+	margin: 10px;
+}
+#menu #facebookShareButton {
 	float: right;
 	margin: 10px;
 }

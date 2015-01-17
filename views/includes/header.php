@@ -13,12 +13,14 @@
 <script src="js/pbp.js"></script>
 <script>user.ip = '<?php echo $_SERVER['REMOTE_ADDR']; ?>';</script>
 <meta name="description" content="An infinite canvas for collaborative pixel art. Come leave your mark!" />
-<meta property="og:url" content="<?php echo BASE; ?>" />
+<?php global $topLeftX, $topLeftY, $pixelSize; ?>
+<meta property="og:url" content="<?php echo BASE . $topLeftX . '/' . $topLeftY . '/' . $pixelSize; ?>" />
 <meta property="og:title" content="<?php echo TITLE; ?>" />
 <meta property="og:description" content="An infinite canvas for collaborative pixel art. Come leave your mark!" />
-<meta property="og:image" content="<?php echo BASE; ?>images/mandala.png" />
-<meta property="og:image" content="<?php echo BASE; ?>images/mario.png" />
-<meta property="og:image" content="<?php echo BASE; ?>images/invaders.png" />
+<meta property="og:image" content="<?php echo BASE . 'screens/' . $topLeftX . ',' . $topLeftY . ',' . $pixelSize; ?>.png" />
+<meta property="og:image:type" content="image/png" /> 
+<meta property="og:image:width" content="1200" /> 
+<meta property="og:image:height" content="800" />
 </head>
 <body>
 <div id="fb-root"></div>

@@ -15,5 +15,6 @@
 <a id="githubLink" target="_blank" href="https://github.com/lfschenone/pixel-by-pixel"><img src="images/github.png" title="GitHub repository" /></a>
 <button id="facebookLoginButton" onclick="FB.login();"><img src="images/facebook-login.png" title="Login with Facebook"></button>
 <button id="facebookLogoutButton" onclick="FB.logout();"><img src="images/facebook-logout.png" title="Logout from Facebook"></button>
-<span id="facebookLikeButtons" class="fb-like" data-layout="button" data-share="true" data-size="small"></span>
+<!-- <span id="facebookLikeButton" class="fb-like" data-href="<?php echo BASE; ?>" data-layout="button"></span> -->
+<span id="facebookShareButton" class="fb-share-button" data-layout="button"></span>
 </div>

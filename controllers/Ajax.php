@@ -49,22 +49,9 @@ class Ajax extends Controller {
 		$yPixels = GET( 'yPixels' );
 		$pixelSize = GET( 'pixelSize' );
 
-		$Image = new Image( $xPixels * $pixelSize, $yPixels * $pixelSize );
+		Board::saveScreen( $topLeftX, $topLeftY, $xPixels, $yPixels, $pixelSize );
 
-		$PIXELS = array();
-		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $topLeftX AND x <= ( $topLeftX + $xPixels ) AND y >= $topLeftY AND y <= ( $topLeftY + $yPixels )" );
-		while ( $DATA = $Result->fetch_assoc() ) {
-			$Pixel = new Pixel( $DATA );
-			$Image->setColorFromHex( $Pixel->color );
-			$x1 = $Pixel->x * $pixelSize;
-			$y1 = $Pixel->y * $pixelSize;
-			$x2 = $x1 + $pixelSize;
-			$y2 = $x2 + $pixelSize;
-			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
-		}
-		$Image->save( 'screens/' . $topLeftX . ',' . $topLeftY . ',' . $pixelSize . '.png' );
-
-		self::sendResponse( 'ok' );
+		self::sendResponse();
 	}
 
 	static function savePixel() {

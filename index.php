@@ -30,4 +30,7 @@ $gUser->update();
 
 $controller = GET( 'controller', DEFAULT_CONTROLLER );
 $method = GET( 'method', DEFAULT_METHOD );
+$topLeftX = GET( 'topLeftX', DEFAULT_TOPLEFTX );
+$topLeftY = GET( 'topLeftY', DEFAULT_TOPLEFTY );
+$pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 $controller::$method();
