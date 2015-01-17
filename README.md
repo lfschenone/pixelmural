@@ -1,5 +1,6 @@
 Pixel by Pixel
 ==============
+An infinite canvas for collaborative pixel art.
 
 Bugs
 ----
