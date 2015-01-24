@@ -22,13 +22,15 @@ $( function () {
 	$( '#zoomOutButton' ).click( menu.onZoomOutButtonClick );
 	$( '#undoButton' ).click( menu.onUndoButtonClick );
 	$( '#redoButton' ).click( menu.onRedoButtonClick );
+	$( '#infoButton' ).click( menu.onInfoButtonClick );
 	$( '#moveButton' ).click( menu.onMoveButtonClick );
 	$( '#eyedropButton' ).click( menu.onEyedropButtonClick );
 	$( '#pencilButton' ).click( menu.onPencilButtonClick );
 	$( '#bucketButton' ).click( menu.onBucketButtonClick );
 	$( '#eraserButton' ).click( menu.onEraserButtonClick );
-	$( '#infoButton' ).click( menu.onInfoButtonClick );
+	$( '#githubButton' ).click( menu.onGithubButtonClick );
 	$( document ).keydown( keyboard.onKeydown );
+	$( document ).keyup( keyboard.onKeyup );
 
 	//Set 'Move' as the default action
 	$( '#moveButton' ).click();
@@ -105,6 +107,14 @@ menu = {
 		user.redo();
 	},
 
+	onInfoButtonClick: function ( event ) {
+		$( '#board' ).css( 'cursor', 'default' );
+		$( '#infoButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
+		mouse.downAction = 'getInfo';
+		mouse.dragAction = null;
+		mouse.upAction = null;
+	},
+
 	onMoveButtonClick: function ( event ) {
 		$( '#board' ).css( 'cursor', 'move' );
 		$( '#moveButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
@@ -145,19 +155,23 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onInfoButtonClick: function ( event ) {
-		$( '#board' ).css( 'cursor', 'default' );
-		$( '#infoButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
-		mouse.downAction = 'getInfo';
-		mouse.dragAction = null;
-		mouse.upAction = null;
+	onFacebookLoginClick: function ( event ) {
+		FB.login();
+	},
+
+	onFacebookLogoutClick: function ( event ) {
+		FB.logout();
+	},
+
+	onGithubButtonClick: function ( event ) {
+		location.href = 'https://github.com/lfschenone/pixel-by-pixel';
 	},
 
 	onButtonMouseover: function ( event ) {
 		var button = $( this );
-		var tooltip = button.children().first().attr( 'title' );
-		var tooltipSpan = $( '<span/>' ).addClass( 'tooltip' ).text( tooltip );
-		button.append( tooltipSpan );
+		var title = button.attr( 'title' );
+		var tooltip = $( '<span/>' ).addClass( 'tooltip' ).text( title );
+		button.append( tooltip );
 	},
 
 	onButtonMouseout: function ( event ) {
@@ -182,6 +196,10 @@ menu = {
 keyboard = {
 
 	onKeydown: function ( event ) {
+		//Alt
+		if ( event.keyCode == 18 ) {
+			$( '#eyedropButton' ).click();
+		}
 		//Spacebar
 		if ( event.keyCode == 32 ) {
 			$( '#moveButton' ).click();
@@ -196,7 +214,7 @@ keyboard = {
 		}
 		//E
 		if ( event.keyCode == 69 ) {
-			$( '#eyedropButton' ).click();
+			$( '#eraserButton' ).click();
 		}
 		//G
 		if ( event.keyCode == 71 ) {
@@ -214,10 +232,6 @@ keyboard = {
 		if ( event.keyCode == 80 ) {
 			$( '#pencilButton' ).click();
 		}
-		//R
-		if ( event.keyCode == 82 ) {
-			$( '#eraserButton' ).click();
-		}
 		//X
 		if ( event.keyCode == 88 ) {
 			$( '#redoButton' ).click();
@@ -225,6 +239,13 @@ keyboard = {
 		//Z
 		if ( event.keyCode == 90 ) {
 			$( '#undoButton' ).click();
+		}
+	},
+
+	onKeyup: function ( event ) {
+		//Alt
+		if ( event.keyCode == 18 ) {
+			$( '#pencilButton' ).click();
 		}
 	}
 }
@@ -317,7 +338,6 @@ mouse = {
 		var color = rgbToHex( r, g, b );
 		menu.setColor( color );
 		$( '#colorInput' ).spectrum( 'set', color );
-		menu.onPencilButtonClick(); //After sucking the color, switch to the pencil
 		return mouse;
 	},
 
@@ -369,10 +389,6 @@ mouse = {
 		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, menu.color );
 		$.get( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
 			console.log( response );
-			if ( response.message === 'The background changed only for you' ) {
-				board.setBackground( menu.color );
-				menu.setAlert( response.message, 1000 )
-			}
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message, 1000 );
 			}
@@ -604,7 +620,7 @@ grid = {
 
 	context: {},
 
-	color: '#aaaaaa',
+	color: '#555555',
 
 	visible: false,
 

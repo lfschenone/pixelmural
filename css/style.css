@@ -63,7 +63,7 @@ body {
 }
 
 /* Right buttons */
-#menu #githubLink {
+#menu #githubButton {
 	float: right;
 }
 #menu #facebookLoginButton {
@@ -75,13 +75,9 @@ body {
 	float: right;
 	margin: 5px;
 }
-#menu #facebookLikeButton {
-	float: right;
-	margin: 10px;
-}
 #menu #facebookShareButton {
 	float: right;
-	margin: 10px;
+	margin: 5px;
 }
 
 #board {

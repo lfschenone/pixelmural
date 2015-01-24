@@ -99,7 +99,7 @@ class Ajax extends Controller {
 
 		$firstPixel = Pixel::newFromCoords( $x, $y );
 		if ( !$firstPixel ) {
-			$RESPONSE['message'] = 'The background changed only for you';
+			$RESPONSE['message'] = 'Not your pixel';
 		} else if ( $firstPixel->author_id != $author_id and !$gUser->isAdmin() ) {
 			$RESPONSE['message'] = 'Not your pixel';
 		} else {
