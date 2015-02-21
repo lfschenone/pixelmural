@@ -374,10 +374,13 @@ mouse = {
 	getInfo: function ( event ) {
 		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, null );
 		$.get( 'Ajax/getInfo', Pixel.getProperties(), function ( response ) {
-			console.log( response );
-			//var link = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
+			//console.log( response );
+			var author = response.Author.name;
+			if ( response.Author.link ) {
+				var author = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
+			}
 			var age = roundSeconds ( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
-			menu.setAlert( response.Author.name + ', ' + age + ' ago' );
+			menu.setAlert( 'By ' + author + ', ' + age + ' ago' );
 		});
 		return mouse;
 	},
@@ -420,7 +423,7 @@ mouse = {
 	paintArea: function ( event ) {
 		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, menu.color );
 		$.get( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
-			console.log( response );
+			//console.log( response );
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message, 1000 );
 			}
@@ -736,7 +739,7 @@ function Pixel( x, y, color ) {
 			for ( var property in response ) {
 				thisPixel[ property ] = response[ property ];
 			}
-			console.log( thisPixel );
+			//console.log( thisPixel );
 			return thisPixel;
 		});
 	}
@@ -748,7 +751,7 @@ function Pixel( x, y, color ) {
 	this.save = function () {
 		var thisPixel = this;
 		$.get( 'Ajax/savePixel', this.getProperties(), function ( response ) {
-			console.log( response );
+			//console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message, 1000 );

@@ -14,7 +14,7 @@ window.fbAsyncInit = function () {
 			'href': $( 'meta[property="og:url"]' ).attr( 'content' )
 		};
 		FB.ui( data, function ( response ) {
-			//Do something
+			console.log( response );
 		});
 		return false;
 	});
@@ -28,7 +28,7 @@ function handleResponse( response ) {
 	//console.log( response );
     if ( response.status === 'connected' ) {
 		$.get( 'Users/facebookLogin', function ( response ) {
-			console.log( response );
+			//console.log( response );
 		});
 		FB.api( '/me', function ( response ) {
 			//console.log( response );
@@ -43,7 +43,7 @@ function handleResponse( response ) {
     }
     if ( response.status === 'unknown' ) {
 		$.get( 'Users/facebookLogout', function ( response ) {
-			console.log( response );
+			//console.log( response );
 		});
 		$( '#facebookLoginButton' ).show();
 		$( '#facebookLogoutButton' ).hide();

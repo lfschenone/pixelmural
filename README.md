@@ -6,14 +6,11 @@ Bugs
 ----
 * The mouse position is off by two pixels. There is a bugfix in place in the CSS, but it prevents from using custom cursors accurately.
 * The null values sent via ajax are not received as real nulls, but as some pseudo falsy.
-* The Share tooltip covers the button
 
 Tasks
 -----
+* Set up payments
 * Optimize pixel loading when zooming and moving
-* Tooltips:
-   * Alerts as tooltips next to the pixel
-   * Info tool should display more info
 * When hovering over a pixel, highlight it
 * Replace GET for POST ajax requests where necessary
 * Preview?
