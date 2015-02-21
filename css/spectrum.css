@@ -382,7 +382,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     width: 28px;
     height: 28px;
     border: solid 1px #222;
-    float:left;
+/*     float:left; */
     z-index: 0;
 }
 

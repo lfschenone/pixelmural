@@ -1,17 +1,17 @@
 [
     {
         "name": "facebook/php-sdk-v4",
-        "version": "4.0.13",
-        "version_normalized": "4.0.13.0",
+        "version": "4.0.15",
+        "version_normalized": "4.0.15.0",
         "source": {
             "type": "git",
             "url": "https://github.com/facebook/facebook-php-sdk-v4.git",
-            "reference": "ba732909485ae25484584a11202927ef2c70acd3"
+            "reference": "ebc82667ef953b98e2eca5dfb6784d6466a185cd"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/facebook/facebook-php-sdk-v4/zipball/ba732909485ae25484584a11202927ef2c70acd3",
-            "reference": "ba732909485ae25484584a11202927ef2c70acd3",
+            "url": "https://api.github.com/repos/facebook/facebook-php-sdk-v4/zipball/ebc82667ef953b98e2eca5dfb6784d6466a185cd",
+            "reference": "ebc82667ef953b98e2eca5dfb6784d6466a185cd",
             "shasum": ""
         },
         "require": {
@@ -25,7 +25,7 @@
         "suggest": {
             "guzzlehttp/guzzle": "Allows for implementation of the Guzzle HTTP client"
         },
-        "time": "2014-12-12 19:49:23",
+        "time": "2015-01-06 21:29:27",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

@@ -1,5 +1,14 @@
 $( function () {
 
+	//Initialize spectrum
+	$( '#colorInput' ).spectrum({
+		preferredFormat: 'hex',
+		showButtons: false,
+		move: function ( color ) {
+			menu.setColor( color.toHexString() );
+		}
+	});
+
 	//Set the defaults
 	board.setCanvas( document.getElementById( 'board' ) );
 	board.setContext( board.canvas.getContext( '2d' ) );
@@ -16,6 +25,7 @@ $( function () {
 
 	//Bind events
 	$( '#menu button' ).mouseover( menu.onButtonMouseover ).mouseout( menu.onButtonMouseout );
+	$( '#menu .sp-preview' ).mouseover( menu.onColorInputMouseover ).mouseout( menu.onColorInputMouseout );
 	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( '#gridButton' ).click( menu.onGridButtonClick );
 	$( '#zoomInButton' ).click( menu.onZoomInButtonClick );
@@ -37,15 +47,6 @@ $( function () {
 
 	//Fill the board
 	board.fill();
-
-	//Initialize spectrum
-	$( '#colorInput' ).spectrum({
-		preferredFormat: 'hex',
-		showButtons: false,
-		move: function ( color ) {
-			menu.setColor( color.toHexString() );
-		}
-	});
 });
 
 user = {
@@ -167,6 +168,18 @@ menu = {
 		location.href = 'https://github.com/lfschenone/pixel-by-pixel';
 	},
 
+	onColorInputMouseover: function ( event ) {
+		var div = $( this );
+		var colorInput = div.parent().prev();
+		var title = colorInput.attr( 'title' );
+		var tooltip = $( '<span/>' ).addClass( 'tooltip' ).text( title );
+		div.after( tooltip );
+	},
+
+	onColorInputMouseout: function ( event ) {
+		$( '.tooltip' ).remove();
+	},
+
 	onButtonMouseover: function ( event ) {
 		var button = $( this );
 		var title = button.attr( 'title' );
@@ -184,7 +197,7 @@ menu = {
 	},
 
 	setAlert: function ( alert, duration ) {
-		$( '#alert' ).text( alert );
+		$( '#alert' ).html( alert );
 		if ( duration ) {
 			window.setTimeout( function () {
 				$( '#alert' ).empty();
@@ -256,7 +269,7 @@ mouse = {
 	 * This is the distance from the origin of the coordinate system,
 	 * NOT the distance from the top left corner of the screen.
 	 * The origin of the coordinate system starts at the top left corner of the screen,
-	 * but it can be moved by the user.
+	 * but when the user uses the 'move' tool, it moves
 	 */
 	currentX: null,
 	currentY: null,
@@ -280,8 +293,25 @@ mouse = {
 		mouse.previousX = mouse.currentX;
 		mouse.previousY = mouse.currentY;
 
+/*
+		board.context.fillStyle = 'rgba( 0, 0, 0, 0.5 )';
+		board.context.fillRect( event.clientX, event.clientY, board.pixelSize, board.pixelSize );
+
+		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
+		var pixelColor = rgbToHex( imageData.data[0], imageData.data[1], imageData.data[2] );
+		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, pixelColor );
+		Pixel.paint(); // Return its color to the pixel
+*/
+
 		mouse.currentX = board.topLeftX + Math.floor( event.clientX / board.pixelSize );
 		mouse.currentY = board.topLeftY + Math.floor( event.clientY / board.pixelSize );
+		//console.log( mouse.currentX, mouse.currentY );
+
+/*
+		Pixel.x = mouse.currentX;
+		Pixel.y = mouse.currentY;
+		Pixel.shine();
+*/
 
 		//If the mouse is being dragged
 		if ( mouse.state == 'down' && ( mouse.currentX != mouse.previousX || mouse.currentY != mouse.previousY ) && mouse.dragAction ) {
@@ -344,8 +374,10 @@ mouse = {
 	getInfo: function ( event ) {
 		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, null );
 		$.get( 'Ajax/getInfo', Pixel.getProperties(), function ( response ) {
-			//console.log( response );
-			menu.setAlert( response.Author.name );
+			console.log( response );
+			//var link = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
+			var age = roundSeconds ( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
+			menu.setAlert( response.Author.name + ', ' + age + ' ago' );
 		});
 		return mouse;
 	},
@@ -744,6 +776,19 @@ function Pixel( x, y, color ) {
 		var rectW = board.pixelSize;
 		var rectH = board.pixelSize;
 		board.context.fillStyle = this.color;
+		board.context.fillRect( rectX, rectY, rectW, rectH );
+		return this;
+	}
+
+	this.shine = function () {
+		if ( this.color === null ) {
+			return this.erase();
+		}
+		var rectX = ( this.x - board.topLeftX ) * board.pixelSize;
+		var rectY = ( this.y - board.topLeftY ) * board.pixelSize;
+		var rectW = board.pixelSize;
+		var rectH = board.pixelSize;
+		board.context.fillStyle = '#ffffff';
 		board.context.fillRect( rectX, rectY, rectW, rectH );
 		return this;
 	}

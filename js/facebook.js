@@ -5,7 +5,18 @@ window.fbAsyncInit = function () {
 		xfbml: true,
 		status: true,
 		cookie: true,
-		version: 'v2.2'
+		version: 'v2.0'
+	});
+
+	$( '#facebookShareButton' ).click( function () {
+		var data = {
+			'method': 'share',
+			'href': $( 'meta[property="og:url"]' ).attr( 'content' )
+		};
+		FB.ui( data, function ( response ) {
+			//Do something
+		});
+		return false;
 	});
 
 	FB.Event.subscribe( 'auth.statusChange', function ( response ) {
@@ -14,13 +25,13 @@ window.fbAsyncInit = function () {
 }
 
 function handleResponse( response ) {
-	console.log( response );
+	//console.log( response );
     if ( response.status === 'connected' ) {
 		$.get( 'Users/facebookLogin', function ( response ) {
 			console.log( response );
 		});
 		FB.api( '/me', function ( response ) {
-			console.log( response );
+			//console.log( response );
 			user.name = response.name;
 			user.email = response.email;
 		});

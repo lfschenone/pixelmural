@@ -50,6 +50,7 @@ body {
 	font-size: small;
 	opacity: .7;
 	padding: 10px;
+	pointer-events: none;
 	position: absolute;
 }
 
@@ -62,22 +63,30 @@ body {
 	vertical-align: bottom;
 }
 
+#menu #alert a {
+	background: lightyellow;
+	margin: 0;
+	padding: 0;
+}
+
 /* Right buttons */
-#menu #githubButton {
+#menu #rightButtons {
 	float: right;
 }
+
 #menu #facebookLoginButton {
-	float: right;
 	margin: 5px;
 }
 #menu #facebookLogoutButton {
 	display: none;
-	float: right;
 	margin: 5px;
 }
 #menu #facebookShareButton {
-	float: right;
 	margin: 5px;
+}
+
+#menu #githubButton .tooltip {
+	right: 0;
 }
 
 #board {

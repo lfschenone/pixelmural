@@ -2,6 +2,7 @@
 
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
+use Facebook\FacebookSession;
 
 class FacebookRedirectLoginHelperTest extends PHPUnit_Framework_TestCase
 {
@@ -32,6 +33,21 @@ class FacebookRedirectLoginHelperTest extends PHPUnit_Framework_TestCase
     }
   }
 
+  public function testReRequestUrlContainsState()
+  {
+    $helper = new FacebookRedirectLoginHelper(
+      self::REDIRECT_URL,
+      FacebookTestCredentials::$appId,
+      FacebookTestCredentials::$appSecret
+    );
+    $helper->disableSessionStatusCheck();
+
+    $reRequestUrl = $helper->getReRequestUrl();
+    $state = $_SESSION['FBRLH_state'];
+
+    $this->assertContains('state=' . urlencode($state), $reRequestUrl);
+  }
+
   public function testLogoutURL()
   {
     $helper = new FacebookRedirectLoginHelper(
@@ -54,6 +70,23 @@ class FacebookRedirectLoginHelperTest extends PHPUnit_Framework_TestCase
         strpos($logoutUrl, $key . '=' . urlencode($value)) !== false
       );
     }
+  }
+
+  public function testLogoutURLFailsWithAppSession()
+  {
+    $helper = new FacebookRedirectLoginHelper(
+      self::REDIRECT_URL,
+      FacebookTestCredentials::$appId,
+      FacebookTestCredentials::$appSecret
+    );
+    $helper->disableSessionStatusCheck();
+    $session = FacebookTestHelper::getAppSession();
+    $this->setExpectedException(
+      'Facebook\\FacebookSDKException', 'Cannot generate a Logout URL with an App Session.'
+    );
+    $helper->getLogoutUrl(
+      $session, self::REDIRECT_URL
+    );
   }
   
   public function testCSPRNG()
