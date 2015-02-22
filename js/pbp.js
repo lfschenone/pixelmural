@@ -1,6 +1,6 @@
 $( function () {
 
-	//Initialize spectrum
+	// Initialize spectrum
 	$( '#colorInput' ).spectrum({
 		preferredFormat: 'hex',
 		showButtons: false,
@@ -9,7 +9,7 @@ $( function () {
 		}
 	});
 
-	//Set the defaults
+	// Set the variables that must wait for the DOM to be loaded
 	board.setCanvas( document.getElementById( 'board' ) );
 	board.setContext( board.canvas.getContext( '2d' ) );
 	board.setBackground( '#aaaaaa' );
@@ -23,7 +23,7 @@ $( function () {
 	grid.setWidth( board.width );
 	grid.setHeight( board.height );
 
-	//Bind events
+	// Bind events
 	$( '#menu button' ).mouseover( menu.onButtonMouseover ).mouseout( menu.onButtonMouseout );
 	$( '#menu .sp-preview' ).mouseover( menu.onColorInputMouseover ).mouseout( menu.onColorInputMouseout );
 	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
@@ -42,19 +42,17 @@ $( function () {
 	$( document ).keydown( keyboard.onKeydown );
 	$( document ).keyup( keyboard.onKeyup );
 
-	//Set 'Move' as the default action
+	// Set 'Move' as the default action
 	$( '#moveButton' ).click();
 
-	//Fill the board
+	// Fill the board
 	board.fill();
 });
 
+/**
+ * This object represents the current user
+ */
 user = {
-
-	ip: null,
-	name: null,
-	email: null,
-
 	/**
 	 * Part of the undo/redo functionality
 	 * The rest is in the mouse.paintPixel and mouse.erasePixel methods
@@ -266,7 +264,7 @@ keyboard = {
 mouse = {
 
 	/**
-	 * This is the distance from the origin of the coordinate system,
+	 * The distance from the origin of the coordinate system,
 	 * NOT the distance from the top left corner of the screen.
 	 * The origin of the coordinate system starts at the top left corner of the screen,
 	 * but when the user uses the 'move' tool, it moves
@@ -362,10 +360,10 @@ mouse = {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
 		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
-		var r = imageData.data[0];
-		var g = imageData.data[1];
-		var b = imageData.data[2];
-		var color = rgbToHex( r, g, b );
+		var red = imageData.data[0];
+		var green = imageData.data[1];
+		var blue = imageData.data[2];
+		var color = rgbToHex( red, green, blue );
 		menu.setColor( color );
 		$( '#colorInput' ).spectrum( 'set', color );
 		return mouse;
@@ -375,12 +373,16 @@ mouse = {
 		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, null );
 		$.get( 'Ajax/getInfo', Pixel.getProperties(), function ( response ) {
 			//console.log( response );
-			var author = response.Author.name;
-			if ( response.Author.link ) {
-				var author = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
+			if ( response.Pixel ) {
+				var author = response.Author.name;
+				if ( response.Author.link ) {
+					author = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
+				}
+				var age = roundSeconds( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
+				menu.setAlert( 'By ' + author + ', ' + age + ' ago' );
+			} else {
+				menu.setAlert( 'Free pixel' );
 			}
-			var age = roundSeconds ( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
-			menu.setAlert( 'By ' + author + ', ' + age + ' ago' );
 		});
 		return mouse;
 	},
@@ -388,7 +390,7 @@ mouse = {
 	/**
 	 * Paint a single pixel
 	 *
-	 * To avoid lag in the UX, first we paint the pixel and then we check the database to reverse if necessary
+	 * To avoid lag, first paint the pixel and then check the database to reverse it if necessary
 	 */
 	paintPixel: function ( event ) {
 		// Build the new pixel
@@ -400,13 +402,10 @@ mouse = {
 		var green = imageData.data[1];
 		var blue = imageData.data[2];
 		var alpha = imageData.data[3];
-		var oldColor = null; // Default
-		if ( alpha > 0 ) {
-			oldColor = rgbToHex( red, green, blue );
-		}
+		var oldColor = alpha ? rgbToHex( red, green, blue ) : null;
 		var oldPixel = new window.Pixel( mouse.currentX, mouse.currentY, oldColor );
 
-		// Part of the undo/redo functionality
+		// Register the changes for the undo/redo functionality
 		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
 		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
 		user.arrayPointer++;
@@ -450,12 +449,12 @@ mouse = {
 		var blue = imageData.data[2];
 		var alpha = imageData.data[3];
 		if ( alpha === 0 ) {
-			return mouse;
+			return mouse; // The pixel doesn't exist
 		}
 		var oldColor = rgbToHex( red, green, blue );
 		var oldPixel = new window.Pixel( mouse.currentX, mouse.currentY, oldColor );
 
-		// Part of the undo/redo functionality
+		// Register the changes for the undo/redo functionality
 		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
 		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
 		user.arrayPointer++;
@@ -495,7 +494,7 @@ board = {
 	},
 
 	getTopLeftX: function() {
-		var topLeftX = parseInt( window.location.pathname.slice(1).split('/')[0] );
+		var topLeftX = parseInt( window.location.pathname.split('/').slice( -3, 1 ) );
 		if ( topLeftX === parseInt( topLeftX ) ) {
 			return topLeftX;
 		}
@@ -503,7 +502,7 @@ board = {
 	},
 
 	getTopLeftY: function() {
-		var topLeftY = parseInt( window.location.pathname.slice(1).split('/')[1] );
+		var topLeftY = parseInt( window.location.pathname.split('/').slice( -2, 1 ) );
 		if ( topLeftY === parseInt( topLeftY ) ) {
 			return topLeftY;
 		}
@@ -511,7 +510,7 @@ board = {
 	},
 
 	getPixelSize: function() {
-		var pixelSize = parseInt( window.location.pathname.slice(1).split('/')[2] );
+		var pixelSize = parseInt( window.location.pathname.split('/').slice( -1, 1 ) );
 		if ( pixelSize === parseInt( pixelSize ) ) {
 			return pixelSize;
 		}
@@ -629,7 +628,8 @@ board = {
 			menu.setAlert( '' );
 
 			// Update the URL of the browser
-			history.replaceState( null, null, '/' + board.topLeftX + '/' + board.topLeftY + '/' + board.pixelSize );
+			var BASE = $( 'base' ).attr( 'href' );
+			history.replaceState( null, null, BASE + board.topLeftX + '/' + board.topLeftY + '/' + board.pixelSize );
 
 			// Update the URL of the Like and Share buttons
 			FB.XFBML.parse();
@@ -751,7 +751,7 @@ function Pixel( x, y, color ) {
 	this.save = function () {
 		var thisPixel = this;
 		$.get( 'Ajax/savePixel', this.getProperties(), function ( response ) {
-			//console.log( response );
+			console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message, 1000 );

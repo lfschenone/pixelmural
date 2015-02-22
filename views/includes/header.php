@@ -11,9 +11,7 @@
 <script src="js/prototypes.js"></script>
 <script src="js/spectrum.js"></script>
 <script src="js/pbp.js"></script>
-<script>user.ip = '<?php echo $_SERVER['REMOTE_ADDR']; ?>';</script>
 <meta name="description" content="An infinite canvas for collaborative pixel art. Come leave your mark!" />
-<?php global $topLeftX, $topLeftY, $pixelSize; ?>
 <meta property="og:url" content="<?php echo BASE . $topLeftX . '/' . $topLeftY . '/' . $pixelSize; ?>" />
 <meta property="og:title" content="<?php echo TITLE; ?>" />
 <meta property="og:description" content="An infinite canvas for collaborative pixel art. Come leave your mark!" />

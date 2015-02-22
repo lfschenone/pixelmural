@@ -16,10 +16,11 @@ class Ajax extends Controller {
 		$y = GET( 'y' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
-		$Author = $Pixel->getAuthor();
-
 		$RESPONSE['Pixel'] = $Pixel;
-		$RESPONSE['Author'] = $Author;
+		if ( $Pixel ) {
+			$Author = $Pixel->getAuthor();
+			$RESPONSE['Author'] = $Author;
+		}
 		self::sendResponse( $RESPONSE );
 	}
 
@@ -55,7 +56,7 @@ class Ajax extends Controller {
 	}
 
 	static function savePixel() {
-		global $gDatabase, $gUser;
+		global $gDatabase;
 
 		$x = GET( 'x' );
 		$y = GET( 'y' );
@@ -83,7 +84,6 @@ class Ajax extends Controller {
 			$Pixel->update();
 			$RESPONSE['message'] = 'Pixel updated';
 		}
-		$RESPONSE['gUser'] = $gUser;
 		$RESPONSE['Pixel'] = $Pixel;
 		self::sendResponse( $RESPONSE );
 	}
@@ -113,8 +113,8 @@ class Ajax extends Controller {
 			while ( $QUEUE ) {
 				$Pixel = array_shift( $QUEUE );
 
-				//Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
-				//have the same color as the first pixel, and haven't been painted yet
+				// Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
+				// have the same color as the first pixel, and haven't been painted yet
 				$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
 					author_id = "' . $author_id . '" AND
 					time < ' . $time . ' AND
@@ -139,8 +139,8 @@ class Ajax extends Controller {
 		self::sendResponse( $RESPONSE );
 	}
 
-	static function sendResponse( $response ) {
+	static function sendResponse( $RESPONSE ) {
 		header( 'Content-Type: application/json' );
-		echo json_encode( $response );
+		echo json_encode( $RESPONSE );
 	}
 }

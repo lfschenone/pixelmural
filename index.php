@@ -10,12 +10,16 @@ $gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 
 Facebook\FacebookSession::setDefaultApplication( FACEBOOK_APP_ID, FACEBOOK_APP_SECRET );
 
+/**
+ * Every visitor gets an entry in the users table
+ * Non-anonymous users will have more data associated with their entry, that's all
+ */
 try {
 	$token = SESSION( 'token', COOKIE( 'token' ) );
 	$gUser = User::newFromToken( $token );
 } catch ( Exception $exception ) {
 	try {
-		$name = $_SERVER['REMOTE_ADDR']; //IPs are the names of anonymous users
+		$name = $_SERVER['REMOTE_ADDR']; // IPs are the names of anonymous users
 		$gUser = User::newFromName( $name );
 	} catch ( Exception $Exception ) {
 		$gUser = new User;

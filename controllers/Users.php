@@ -10,7 +10,7 @@ class Users extends Controller {
 			$Session = $Helper->getSession();
 			$FacebookRequest = new Facebook\FacebookRequest( $Session, 'GET', '/me' );
 			$GraphUser = $FacebookRequest->execute()->getGraphObject( Facebook\GraphUser::className() );
-			$Response['GraphUser'] = $GraphUser->asArray();
+			$RESPONSE['GraphUser'] = $GraphUser->asArray();
 
 			try {
 				$gUser = User::newFromName( $GraphUser->getProperty( 'name' ) );
@@ -20,12 +20,13 @@ class Users extends Controller {
 				$gUser->status = 'user';
 				$gUser->id = $gUser->insert();
 			}
-			//Set the token
+
+			// Set the token
 			$gUser->token = md5( uniqid() );
 			$_SESSION['token'] = $gUser->token;
 			setcookie( 'token', $gUser->token, time() + 60 * 60 * 24 * 30, '/' ); //Lasts one month
 
-			//Every time the user logs in, make sure all the stats are up to date
+			// Every time the user logs in, make sure all the stats are up to date
 			$DATA = $GraphUser->asArray();
 			foreach ( $DATA as $key => $value ) {
 				if ( property_exists( 'User', $key ) and $key !== 'id' ) {
@@ -36,14 +37,14 @@ class Users extends Controller {
 			$gUser->last_seen = $_SERVER['REQUEST_TIME'];
 			$gUser->update();
 
-			$Response['gUser'] = $gUser;
+			$RESPONSE['gUser'] = $gUser;
 
 		} catch( Facebook\FacebookRequestException $FacebookRequestException ) {
-			$Response = array( 'code' => $FacebookRequestException->getCode(), 'message' => $FacebookRequestException->getMessage() );
+			$RESPONSE = array( 'code' => $FacebookRequestException->getCode(), 'message' => $FacebookRequestException->getMessage() );
 		} catch( Exception $Exception ) {
-			$Response = array( 'code' => $Exception->getCode(), 'message' => $Exception->getMessage() );
+			$RESPONSE = array( 'code' => $Exception->getCode(), 'message' => $Exception->getMessage() );
 		}
-		Ajax::sendResponse( $Response );
+		Ajax::sendResponse( $RESPONSE );
 	}
 
 	static function facebookLogout() {
