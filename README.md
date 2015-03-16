@@ -7,7 +7,6 @@ Bugs
 * The mouse position is off by two pixels. There is a bugfix in place in the CSS, but it prevents from using custom cursors accurately.
 * The null values sent via ajax are not received as real nulls, but as some pseudo falsy.
 * At some point jQuery is receiving '!' when expecting a #rrggbb hex code. See the console.
-* Links to coordinates don't work
 
 Tasks
 -----

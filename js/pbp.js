@@ -154,14 +154,6 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onFacebookLoginClick: function ( event ) {
-		FB.login();
-	},
-
-	onFacebookLogoutClick: function ( event ) {
-		FB.logout();
-	},
-
 	onGithubButtonClick: function ( event ) {
 		location.href = 'https://github.com/lfschenone/pixel-by-pixel';
 	},
@@ -467,7 +459,6 @@ mouse = {
 board = {
 
 	canvas: {},
-
 	context: {},
 
 	width: 300,
@@ -494,24 +485,24 @@ board = {
 	},
 
 	getTopLeftX: function() {
-		var topLeftX = parseInt( window.location.pathname.split('/').slice( -3, 1 ) );
-		if ( topLeftX === parseInt( topLeftX ) ) {
+		var topLeftX = parseInt( window.location.pathname.split('/').slice( -3, -2 ) );
+		if ( typeof topLeftX === 'number' ) {
 			return topLeftX;
 		}
 		return board.topLeftX;
 	},
 
 	getTopLeftY: function() {
-		var topLeftY = parseInt( window.location.pathname.split('/').slice( -2, 1 ) );
-		if ( topLeftY === parseInt( topLeftY ) ) {
+		var topLeftY = parseInt( window.location.pathname.split('/').slice( -2, -1 ) );
+		if ( typeof topLeftY === 'number' ) {
 			return topLeftY;
 		}
 		return board.topLeftY;
 	},
 
 	getPixelSize: function() {
-		var pixelSize = parseInt( window.location.pathname.split('/').slice( -1, 1 ) );
-		if ( pixelSize === parseInt( pixelSize ) ) {
+		var pixelSize = parseInt( window.location.pathname.split('/').slice( -1 ) );
+		if ( typeof pixelSize === 'number' ) {
 			return pixelSize;
 		}
 		return board.pixelSize;
@@ -655,7 +646,6 @@ board = {
 grid = {
 
 	canvas: {},
-
 	context: {},
 
 	color: '#555555',
