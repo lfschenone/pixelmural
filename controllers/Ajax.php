@@ -3,7 +3,6 @@
 class Ajax extends Controller {
 
 	static function getPixel() {
-		global $gDatabase;
 		$x = GET( 'x' );
 		$y = GET( 'y' );
 		$Pixel = Pixel::newFromCoords( $x, $y );
@@ -11,7 +10,6 @@ class Ajax extends Controller {
 	}
 
 	static function getInfo() {
-		global $gDatabase;
 		$x = GET( 'x' );
 		$y = GET( 'y' );
 
@@ -42,8 +40,6 @@ class Ajax extends Controller {
 	}
 
 	static function saveScreen() {
-		global $gDatabase;
-
 		$topLeftX = GET( 'topLeftX' );
 		$topLeftY = GET( 'topLeftY' );
 		$xPixels = GET( 'xPixels' );
@@ -56,7 +52,7 @@ class Ajax extends Controller {
 	}
 
 	static function savePixel() {
-		global $gDatabase;
+		global $gUser;
 
 		$x = GET( 'x' );
 		$y = GET( 'y' );
@@ -89,7 +85,7 @@ class Ajax extends Controller {
 	}
 
 	static function paintArea() {
-		global $gDatabase, $gUser;
+		global $gUser, $gDatabase;
 
 		$x = GET( 'x' );
 		$y = GET( 'y' );
