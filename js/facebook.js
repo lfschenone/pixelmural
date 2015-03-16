@@ -19,6 +19,14 @@ window.fbAsyncInit = function () {
 		return false;
 	});
 
+	$( '#facebookLoginButton' ).click( function () {
+		FB.login();
+	});
+
+	$( '#facebookLogoutButton' ).click( function () {
+		FB.logout();
+	});
+
 	FB.Event.subscribe( 'auth.statusChange', function ( response ) {
 		handleResponse( response );
 	});

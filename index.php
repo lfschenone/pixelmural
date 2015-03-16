@@ -19,7 +19,7 @@ try {
 	$gUser = User::newFromToken( $token );
 } catch ( Exception $exception ) {
 	try {
-		$name = $_SERVER['REMOTE_ADDR']; // IPs are the names of anonymous users
+		$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
 		$gUser = User::newFromName( $name );
 	} catch ( Exception $Exception ) {
 		$gUser = new User;
