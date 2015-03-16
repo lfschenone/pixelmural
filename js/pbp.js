@@ -1,6 +1,6 @@
 $( function () {
 
-	// Initialize spectrum
+	// Initialize Spectrum
 	$( '#colorInput' ).spectrum({
 		preferredFormat: 'hex',
 		showButtons: false,
