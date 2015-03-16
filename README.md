@@ -10,11 +10,13 @@ Bugs
 Tasks
 -----
 * Set up payments
-* Optimize pixel loading when zooming and moving
 * When hovering over a pixel, highlight it
 * Replace GET for POST ajax requests where necessary
 * Preview?
 * Draft pencil?
+* Further optimise pixel loading when zooming and moving
+  - Only load the new pixels
+  - Minimise the data transfer (remove the # from hex code and use shorthand hex)
 * Understand and optimize Spectrum
 
 Further tasks

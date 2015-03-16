@@ -32,13 +32,13 @@ class Ajax extends Controller {
 		$yPixels = GET( 'yPixels' );
 		$pixelSize = GET( 'pixelSize' );
 
-		$PIXELS = array();
-		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $topLeftX AND x <= ( $topLeftX + $xPixels ) AND y >= $topLeftY AND y <= ( $topLeftY + $yPixels )" );
+		$pixels = '';
+		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x <= ( $topLeftX + $xPixels ) AND y >= $topLeftY AND y <= ( $topLeftY + $yPixels )" );
 		while ( $DATA = $Result->fetch_assoc() ) {
-			$PIXELS[] = new Pixel( $DATA );
+			$pixels .= $DATA['x'] . ',' . $DATA['y'] . ',' . $DATA['color'] . ';';
 		}
 
-		self::sendResponse( $PIXELS );
+		self::sendResponse( $pixels );
 	}
 
 	static function saveScreen() {

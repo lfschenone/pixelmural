@@ -1,5 +1,2 @@
 .DS_Store
-gitignore
-includes/config.php
-screens
-frames
+screens/*.png

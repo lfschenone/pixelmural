@@ -620,9 +620,12 @@ board = {
 		};
 		$.get( 'Ajax/getArea', data, function ( response ) {
 			//console.log( response );
-			var Pixel;
-			for ( var i = 0; i < response.length; i++ ) {
-				Pixel = new window.Pixel( response[ i ].x, response[ i ].y, response[ i ].color );
+			var pixels = response.split( ';' );
+			pixels.pop(); // Remove the last empty element
+			var i, pixel, Pixel;
+			for ( i = 0; i < pixels.length; i++ ) {
+				pixel = pixels[ i ].split( ',' );
+				Pixel = new window.Pixel( pixel[0], pixel[1], pixel[2] );
 				Pixel.paint();
 			}
 			menu.setAlert( '' );
