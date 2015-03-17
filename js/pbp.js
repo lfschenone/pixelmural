@@ -486,7 +486,7 @@ board = {
 
 	getTopLeftX: function() {
 		var topLeftX = parseInt( window.location.pathname.split('/').slice( -3, -2 ) );
-		if ( typeof topLeftX === 'number' ) {
+		if ( !isNaN( topLeftX ) ) {
 			return topLeftX;
 		}
 		return board.topLeftX;
@@ -494,7 +494,7 @@ board = {
 
 	getTopLeftY: function() {
 		var topLeftY = parseInt( window.location.pathname.split('/').slice( -2, -1 ) );
-		if ( typeof topLeftY === 'number' ) {
+		if ( !isNaN( topLeftY ) ) {
 			return topLeftY;
 		}
 		return board.topLeftY;
@@ -502,7 +502,7 @@ board = {
 
 	getPixelSize: function() {
 		var pixelSize = parseInt( window.location.pathname.split('/').slice( -1 ) );
-		if ( typeof pixelSize === 'number' ) {
+		if ( !isNaN( pixelSize ) ) {
 			return pixelSize;
 		}
 		return board.pixelSize;
