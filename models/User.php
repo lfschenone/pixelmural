@@ -9,6 +9,7 @@ class User extends Model {
 	public $facebook_id = null;
 	public $join_time = null;
 	public $last_seen = null;
+	public $share_count = null;
 	public $name = null;
 	public $email = null;
 	public $gender = null;
@@ -87,6 +88,7 @@ class User extends Model {
 			facebook_id,
 			join_time,
 			last_seen,
+			share_count,
 			token,
 			name,
 			email,
@@ -95,12 +97,13 @@ class User extends Model {
 			link,
 			status,
 			timezone
-			) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
+			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
 		);
-		$Statement->bind_param( 'siisssssssi',
+		$Statement->bind_param( 'siiisssssssi',
 			$this->facebook_id,
 			$this->join_time,
 			$this->last_seen,
+			$this->share_count,
 			$this->token,
 			$this->name,
 			$this->email,
@@ -120,6 +123,7 @@ class User extends Model {
 			facebook_id = ?,
 			join_time = ?,
 			last_seen = ?,
+			share_count = ?,
 			token = ?,
 			name = ?,
 			email = ?,
@@ -130,10 +134,11 @@ class User extends Model {
 			timezone = ?
 			WHERE id = ?'
 		);
-		$Statement->bind_param( 'iiisssssssii',
+		$Statement->bind_param( 'iiiisssssssii',
 			$this->facebook_id,
 			$this->join_time,
 			$this->last_seen,
+			$this->share_count,
 			$this->token,
 			$this->name,
 			$this->email,

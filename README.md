@@ -10,19 +10,22 @@ Bugs
 
 Tasks
 -----
-* Block bucket until share
+* Doesn't work on mobiles
+* Fix and perfect Facebook sharing
+* Block the bucket until the user shares
 * Set up payments
 * Bucket undo functionality
+* Get rid of prototypes.js, per bad practice?
+* Break pbp.js into many files
 * When hovering over a pixel, highlight it
 * Replace GET for POST ajax requests where necessary
 * Preview?
 * Draft pencil?
-* Further optimise pixel loading when zooming and moving
-  - Only load the pixels that change
-  - Minimise data transfer by removing the # from the hex codes and using shorthand hex
+* When zooming and moving, only load the pixels that change
+* When loading pixels, minimise data transfer by removing the # from the hex codes and using shorthand hex
 * Further customise Spectrum
 
 Further tasks
 -------------
-* Documentation
 * i18n and l10n
+* Documentation

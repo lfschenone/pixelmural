@@ -36,6 +36,7 @@ class Ajax extends Controller {
 			$pixels .= $DATA['x'] . ',' . $DATA['y'] . ',' . $DATA['color'] . ';';
 		}
 
+		Board::saveScreen( $topLeftX, $topLeftY, $xPixels, $yPixels, $pixelSize );
 		self::sendResponse( $pixels );
 	}
 
@@ -47,7 +48,6 @@ class Ajax extends Controller {
 		$pixelSize = GET( 'pixelSize' );
 
 		Board::saveScreen( $topLeftX, $topLeftY, $xPixels, $yPixels, $pixelSize );
-
 		self::sendResponse();
 	}
 

@@ -1,2 +1,5 @@
 .DS_Store
-screens/*.png
+screens/*
+screens/!.htaccess
+vendor/
+composer.lock

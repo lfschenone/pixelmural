@@ -29,6 +29,12 @@ class Board extends Controller {
 			$y2 = $y1 + $pixelSize - 1;
 			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
 		}
-		$Image->save( 'screens/' . $topLeftX . ',' . $topLeftY . ',' . $pixelSize . '.png' );
+		if ( !file_exists( 'screens/' . $topLeftX ) ) {
+			mkdir( 'screens/' . $topLeftX );
+		}
+		if ( !file_exists( 'screens/' . $topLeftX . '/' . $topLeftY ) ) {
+			mkdir( 'screens/' . $topLeftX . '/' . $topLeftY );
+		}
+		$Image->save( 'screens/' . $topLeftX . '/' . $topLeftY . '/' . $pixelSize . '.png' );
 	}
 }

@@ -15,7 +15,7 @@
 <meta property="og:url" content="<?php echo BASE . $topLeftX . '/' . $topLeftY . '/' . $pixelSize; ?>" />
 <meta property="og:title" content="<?php echo TITLE; ?>" />
 <meta property="og:description" content="An infinite canvas for collaborative pixel art. Come leave your mark!" />
-<meta property="og:image" content="<?php echo BASE . 'screens/' . $topLeftX . ',' . $topLeftY . ',' . $pixelSize; ?>.png" />
+<meta property="og:image" content="<?php echo BASE . 'screens/' . $topLeftX . '/' . $topLeftY . '/' . $pixelSize; ?>.png" />
 <meta property="og:image:type" content="image/png" /> 
 <meta property="og:image:width" content="1200" /> 
 <meta property="og:image:height" content="800" />

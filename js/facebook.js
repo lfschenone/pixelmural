@@ -9,9 +9,10 @@ window.fbAsyncInit = function () {
 	});
 
 	$( '#facebookShareButton' ).click( function () {
+		FB.XFBML.parse(); // Update the URL to the current coordinates
 		var data = {
 			'method': 'share',
-			'href': $( 'meta[property="og:url"]' ).attr( 'content' )
+			'href': location.href
 		};
 		FB.ui( data, function ( response ) {
 			console.log( response );

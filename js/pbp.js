@@ -624,9 +624,6 @@ board = {
 			// Update the URL of the browser
 			var BASE = $( 'base' ).attr( 'href' );
 			history.replaceState( null, null, BASE + board.topLeftX + '/' + board.topLeftY + '/' + board.pixelSize );
-
-			// Update the URL of the Like and Share buttons
-			FB.XFBML.parse();
 		});
 		return board;
 	},
@@ -744,7 +741,7 @@ function Pixel( x, y, color ) {
 	this.save = function () {
 		var thisPixel = this;
 		$.get( 'Ajax/savePixel', this.getProperties(), function ( response ) {
-			console.log( response );
+			//console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message, 1000 );
