@@ -2,4 +2,3 @@
 screens/*
 !screens/.htaccess
 vendor/
-composer.lock

@@ -5,16 +5,17 @@ An infinite canvas for collaborative pixel art.
 Bugs
 ----
 * The mouse position is off by two pixels. There is a bugfix in place in the CSS, but it prevents from using custom cursors accurately.
-* The null values sent via ajax are not received as real nulls, but as some pseudo falsy.
+* Somehow fix the data types sent via ajax.
 * At some point jQuery is receiving '!' when expecting a #rrggbb hex code. See the console.
 
 Tasks
 -----
+* 404, error handling
 * Doesn't work on mobiles
 * Fix and perfect Facebook sharing
 * Block the bucket until the user shares
 * Set up payments
-* Bucket undo functionality
+* What to do when sucking the color of the background?
 * Get rid of prototypes.js, per bad practice?
 * Break pbp.js into many files
 * When hovering over a pixel, highlight it

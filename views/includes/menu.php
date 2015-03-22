@@ -13,9 +13,8 @@
 	<input id="colorInput" type="text" value="#ffffff" title="Color" />
 	<span id="alert"></span>
 	<div id="rightButtons">
-		<button id="facebookShareButton" title="Share on Facebook"><img src="images/facebook-share.png" alt="Share"></button>
-		<button id="facebookLoginButton" title="Login with Facebook"><img src="images/facebook-login.png" alt="Login"></button>
-		<button id="facebookLogoutButton" title="Logout from Facebook"><img src="images/facebook-logout.png" alt="Logout"></button>
-		<button id="githubButton" title="GitHub repository"><img src="images/github.png" alt="GitHub" /></button>
+		<button id="facebookShareButton"><img src="images/facebook-share.png" alt="Share"></button>
+		<button id="facebookLoginButton"><img src="images/facebook-login.png" alt="Login"></button>
+		<button id="facebookLogoutButton"><img src="images/facebook-logout.png" alt="Logout"></button>
 	</div>
 </div>

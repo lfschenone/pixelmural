@@ -72,21 +72,11 @@ body {
 /* Right buttons */
 #menu #rightButtons {
 	float: right;
-}
-
-#menu #facebookLoginButton {
 	margin: 5px;
 }
+
 #menu #facebookLogoutButton {
 	display: none;
-	margin: 5px;
-}
-#menu #facebookShareButton {
-	margin: 5px;
-}
-
-#menu #githubButton .tooltip {
-	right: 0;
 }
 
 #board {

@@ -99,11 +99,12 @@ class Ajax extends Controller {
 		} else if ( $firstPixel->author_id != $author_id and !$gUser->isAdmin() ) {
 			$RESPONSE['message'] = 'Not your pixel';
 		} else {
+			$oldData[] = clone $firstPixel; // Save the data of the old pixels for the the undo/redo functionality
 			$oldColor = $firstPixel->color;
-			$firstPixel->time = $time;
+			$firstPixel->time = (string) $time;
 			$firstPixel->color = $color;
 			$firstPixel->update();
-			$PAINTED = array( $firstPixel );
+			$newData = array( $firstPixel );
 			$QUEUE = array( $firstPixel );
 
 			while ( $QUEUE ) {
@@ -112,7 +113,7 @@ class Ajax extends Controller {
 				// Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
 				// have the same color as the first pixel, and haven't been painted yet
 				$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
-					author_id = "' . $author_id . '" AND
+					author_id = "' . $firstPixel->author_id . '" AND
 					time < ' . $time . ' AND
 					color = "' . $oldColor . '" AND (
 					( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR
@@ -122,15 +123,17 @@ class Ajax extends Controller {
 					) LIMIT 4' );
 				while ( $DATA = $Result->fetch_assoc() ) {
 					$Neighbor = new Pixel( $DATA );
+					$oldData[] = clone $Neighbor;
 					$Neighbor->time = $time;
 					$Neighbor->color = $color;
 					$Neighbor->update();
-					$PAINTED[] = $Neighbor;
+					$newData[] = $Neighbor;
 					$QUEUE[] = $Neighbor;
 				}
 			}
 			$RESPONSE['message'] = 'Area painted';
-			$RESPONSE['PIXELS'] = $PAINTED;
+			$RESPONSE['oldData'] = $oldData;
+			$RESPONSE['newData'] = $newData;
 		}
 		self::sendResponse( $RESPONSE );
 	}

@@ -12,9 +12,9 @@ $( function () {
 	// Set the variables that must wait for the DOM to be loaded
 	board.setCanvas( document.getElementById( 'board' ) );
 	board.setContext( board.canvas.getContext( '2d' ) );
-	board.setBackground( '#aaaaaa' );
 	board.setWidth( window.innerWidth );
 	board.setHeight( window.innerHeight );
+	board.setBackground( '#aaaaaa' );
 	board.setTopLeftX( board.getTopLeftX() );
 	board.setTopLeftY( board.getTopLeftY() );
 	board.setPixelSize( board.getPixelSize() );
@@ -38,7 +38,6 @@ $( function () {
 	$( '#pencilButton' ).click( menu.onPencilButtonClick );
 	$( '#bucketButton' ).click( menu.onBucketButtonClick );
 	$( '#eraserButton' ).click( menu.onEraserButtonClick );
-	$( '#githubButton' ).click( menu.onGithubButtonClick );
 	$( document ).keydown( keyboard.onKeydown );
 	$( document ).keyup( keyboard.onKeyup );
 
@@ -61,13 +60,25 @@ user = {
 	newPixels: [],
 	arrayPointer: 0,
 
+	register: function ( oldPixel, newPixel ) {
+		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
+		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
+		user.arrayPointer++;
+	},
+
 	undo: function () {
 		if ( user.arrayPointer === 0 ) {
 			return false;
 		}
 		user.arrayPointer--;
 		var oldPixel = user.oldPixels[ user.arrayPointer ];
-		oldPixel.paint().save();
+		if ( $.isArray( oldPixel ) ) {
+			oldPixel.forEach( function ( pixel ) {
+				pixel.paint().save();
+			});
+		} else {
+			oldPixel.paint().save();
+		}
 	},
 
 	redo: function () {
@@ -76,7 +87,13 @@ user = {
 		}
 		var newPixel = user.newPixels[ user.arrayPointer ];
 		user.arrayPointer++;
-		newPixel.paint().save();
+		if ( $.isArray( newPixel ) ) {
+			newPixel.forEach( function ( pixel ) {
+				pixel.paint().save();
+			});
+		} else {
+			newPixel.paint().save();
+		}
 	}
 }
 
@@ -154,10 +171,6 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onGithubButtonClick: function ( event ) {
-		location.href = 'https://github.com/lfschenone/pixel-by-pixel';
-	},
-
 	onColorInputMouseover: function ( event ) {
 		var div = $( this );
 		var colorInput = div.parent().prev();
@@ -173,8 +186,10 @@ menu = {
 	onButtonMouseover: function ( event ) {
 		var button = $( this );
 		var title = button.attr( 'title' );
-		var tooltip = $( '<span/>' ).addClass( 'tooltip' ).text( title );
-		button.append( tooltip );
+		if ( title ) {
+			var tooltip = $( '<span/>' ).addClass( 'tooltip' ).text( title );
+			button.append( tooltip );
+		}
 	},
 
 	onButtonMouseout: function ( event ) {
@@ -183,7 +198,7 @@ menu = {
 
 	setColor: function ( color ) {
 		menu.color = color;
-		$( '#colorInput' ).val( color );
+		$( '#colorInput' ).spectrum( 'set', color );
 	},
 
 	setAlert: function ( alert, duration ) {
@@ -199,55 +214,55 @@ menu = {
 keyboard = {
 
 	onKeydown: function ( event ) {
-		//Alt
-		if ( event.keyCode == 18 ) {
+		// Alt
+		if ( event.keyCode === 18 ) {
 			$( '#eyedropButton' ).click();
 		}
-		//Spacebar
-		if ( event.keyCode == 32 ) {
+		// Spacebar
+		if ( event.keyCode === 32 ) {
 			$( '#moveButton' ).click();
 		}
-		//A
-		if ( event.keyCode == 65 ) {
+		// A
+		if ( event.keyCode === 65 ) {
 			$( '#infoButton' ).click();
 		}
-		//B
-		if ( event.keyCode == 66 ) {
+		// B
+		if ( event.keyCode === 66 ) {
 			$( '#bucketButton' ).click();
 		}
-		//E
-		if ( event.keyCode == 69 ) {
+		// E
+		if ( event.keyCode === 69 ) {
 			$( '#eraserButton' ).click();
 		}
-		//G
-		if ( event.keyCode == 71 ) {
+		// G
+		if ( event.keyCode === 71 ) {
 			$( '#gridButton' ).click();
 		}
-		//I
-		if ( event.keyCode == 73 ) {
+		// I
+		if ( event.keyCode === 73 ) {
 			$( '#zoomInButton' ).click();
 		}
-		//O
-		if ( event.keyCode == 79 ) {
+		// O
+		if ( event.keyCode === 79 ) {
 			$( '#zoomOutButton' ).click();
 		}
-		//P
-		if ( event.keyCode == 80 ) {
+		// P
+		if ( event.keyCode === 80 ) {
 			$( '#pencilButton' ).click();
 		}
-		//X
-		if ( event.keyCode == 88 ) {
+		// X
+		if ( event.keyCode === 88 ) {
 			$( '#redoButton' ).click();
 		}
-		//Z
-		if ( event.keyCode == 90 ) {
+		// Z
+		if ( event.keyCode === 90 ) {
 			$( '#undoButton' ).click();
 		}
 	},
 
 	onKeyup: function ( event ) {
-		//Alt
-		if ( event.keyCode == 18 ) {
+		// Alt
+		if ( event.keyCode === 18 ) {
 			$( '#pencilButton' ).click();
 		}
 	}
@@ -336,7 +351,7 @@ mouse = {
 		board.context.clear();
 		board.context.putImageData( board.imageData, mouse.diffX, mouse.diffY );
 
-		//Bug fix
+		// Bug fix
 		mouse.currentX = board.topLeftX + Math.floor( event.clientX / board.pixelSize );
 		mouse.currentY = board.topLeftY + Math.floor( event.clientY / board.pixelSize );
 
@@ -352,18 +367,22 @@ mouse = {
 		var x = mouse.currentX;
 		var y = mouse.currentY;
 		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
-		var red = imageData.data[0];
+		var red   = imageData.data[0];
 		var green = imageData.data[1];
-		var blue = imageData.data[2];
-		var color = rgbToHex( red, green, blue );
-		menu.setColor( color );
-		$( '#colorInput' ).spectrum( 'set', color );
+		var blue  = imageData.data[2];
+		var alpha = imageData.data[3];
+		if ( alpha ) {
+			var color = rgbToHex( red, green, blue );
+			menu.setColor( color );
+		} else {
+			$( '#eraserButton' ).click();
+		}
 		return mouse;
 	},
 
 	getInfo: function ( event ) {
-		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, null );
-		$.get( 'Ajax/getInfo', Pixel.getProperties(), function ( response ) {
+		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
+		$.get( 'Ajax/getInfo', data, function ( response ) {
 			//console.log( response );
 			if ( response.Pixel ) {
 				var author = response.Author.name;
@@ -382,25 +401,25 @@ mouse = {
 	/**
 	 * Paint a single pixel
 	 *
-	 * To avoid lag, first paint the pixel and then check the database to reverse it if necessary
+	 * To avoid lag, first paint the pixel and then check the database to reverse if necessary
 	 */
 	paintPixel: function ( event ) {
 		// Build the new pixel
-		var newPixel = new window.Pixel( mouse.currentX, mouse.currentY, menu.color );
+		var newData = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.color };
+		var newPixel = new window.Pixel( newData );
 
 		// Build the old pixel
 		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
-		var red = imageData.data[0];
+		var red   = imageData.data[0];
 		var green = imageData.data[1];
-		var blue = imageData.data[2];
+		var blue  = imageData.data[2];
 		var alpha = imageData.data[3];
 		var oldColor = alpha ? rgbToHex( red, green, blue ) : null;
-		var oldPixel = new window.Pixel( mouse.currentX, mouse.currentY, oldColor );
+		var oldData = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': oldColor };
+		var oldPixel = new window.Pixel( oldData );
 
 		// Register the changes for the undo/redo functionality
-		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
-		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
-		user.arrayPointer++;
+		user.register( oldPixel, newPixel );
 
 		// For convenience, re-painting a pixel erases it
 		if ( newPixel.color === oldPixel.color ) {
@@ -412,19 +431,31 @@ mouse = {
 	},
 
 	paintArea: function ( event ) {
-		var Pixel = new window.Pixel( mouse.currentX, mouse.currentY, menu.color );
-		$.get( 'Ajax/paintArea', Pixel.getProperties(), function ( response ) {
+		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.color };
+		$.get( 'Ajax/paintArea', data, function ( response ) {
 			//console.log( response );
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message, 1000 );
 			}
 			if ( response.message === 'Area painted' ) {
-				var data, Pixel;
-				for ( var i in response.PIXELS ) {
-					data = response.PIXELS[ i ];
-					Pixel = new window.Pixel( data.x, data.y, data.color );
-					Pixel.paint();
+				var newData,
+					newPixel,
+					newPixels = [],
+					oldData,
+					oldPixel,
+					oldPixels = [];
+				for ( var i = 0; i < response.newData.length; i++ ) {
+					newData = response.newData[ i ];
+					newPixel = new window.Pixel( newData );
+					newPixel.paint();
+					newPixels.push( newPixel );
+
+					oldData = response.oldData[ i ];
+					oldPixel = new window.Pixel( oldData );
+					oldPixels.push( oldPixel );
 				}
+				// Register the changes for the undo/redo functionality
+				user.register( oldPixels, newPixels );
 			}
 		});
 		return mouse;
@@ -432,24 +463,24 @@ mouse = {
 
 	erasePixel: function ( event ) {
 		// Build the new pixel
-		var newPixel = new window.Pixel( mouse.currentX, mouse.currentY, null );
+		var newData = { 'x': mouse.currentX, 'y': mouse.currentY };
+		var newPixel = new window.Pixel( newData );
 
 		// Build the old pixel
 		var imageData = board.context.getImageData( event.clientX, event.clientY, 1, 1 );
-		var red = imageData.data[0];
+		var red   = imageData.data[0];
 		var green = imageData.data[1];
-		var blue = imageData.data[2];
+		var blue  = imageData.data[2];
 		var alpha = imageData.data[3];
 		if ( alpha === 0 ) {
 			return mouse; // The pixel doesn't exist
 		}
 		var oldColor = rgbToHex( red, green, blue );
-		var oldPixel = new window.Pixel( mouse.currentX, mouse.currentY, oldColor );
+		var oldData = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': oldColor };
+		var oldPixel = new window.Pixel( oldData );
 
 		// Register the changes for the undo/redo functionality
-		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
-		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
-		user.arrayPointer++;
+		user.register( oldPixel, newPixel );
 
 		newPixel.paint().save();
 		return mouse;
@@ -472,7 +503,7 @@ board = {
 	xPixels: 30,
 	yPixels: 15,
 
-	background: '#000000',
+	background: null,
 
 	/* Getters */
 
@@ -509,17 +540,17 @@ board = {
 	},
 
 	getPixel: function ( x, y ) {
-		var imageData = board.context.getImageData( x, y, 1, 1 );
-		var red = imageData.data[0];
+		var imageData = board.context.getImageData( x * board.pixelSize, y * board.pixelSize, 1, 1 );
+		var red   = imageData.data[0];
 		var green = imageData.data[1];
-		var blue = imageData.data[2];
+		var blue  = imageData.data[2];
 		var alpha = imageData.data[3];
-		if ( alpha > 0 ) {
-			var oldColor = rgbToHex( red, green, blue );
+		if ( alpha ) {
+			var color = rgbToHex( red, green, blue );
 		} else {
-			var oldColor = null;
+			var color = null;
 		}
-		return { 'x': x, 'y': y, 'color': color };
+		return new window.Pixel( x, y, color );
 	},
 
 	/* Setters */
@@ -611,12 +642,14 @@ board = {
 		};
 		$.get( 'Ajax/getArea', data, function ( response ) {
 			//console.log( response );
-			var pixels = response.split( ';' );
-			pixels.pop(); // Remove the last empty element
-			var i, pixel, Pixel;
-			for ( i = 0; i < pixels.length; i++ ) {
-				pixel = pixels[ i ].split( ',' );
-				Pixel = new window.Pixel( pixel[0], pixel[1], pixel[2] );
+			var i,
+				pixelsData = response.slice( 0, -1 ).split( ';' ),
+				pixelData,
+				Pixel;
+			for ( i = 0; i < pixelsData.length; i++ ) {
+				pixelData = pixelsData[ i ].split( ',' );
+				pixelData = { 'x': pixelData[0], 'y': pixelData[1], 'color': pixelData[2] };
+				Pixel = new window.Pixel( pixelData );
 				Pixel.paint();
 			}
 			menu.setAlert( '' );
@@ -709,22 +742,23 @@ grid = {
 /**
  * Pixel model
  */
-function Pixel( x, y, color ) {
+function Pixel( data ) {
 	/**
 	 * The properties are identical to those of the PHP model and the database columns
 	 */
-	this.x = x;
-	this.y = y;
-	this.author_id = null;
-	this.time = null;
-	this.color = color;
+	this.x = 'x' in data ? data.x : null;
+	this.y = 'y' in data ? data.y : null;
+	this.author_id = 'author_id' in data ? data.author_id : null;
+	this.time = 'time' in data ? data.time : null;
+	this.color = 'color' in data ? data.color : null;
 
 	/**
 	 * Getters
 	 */
-	this.get = function() {
-		var thisPixel = this;
-		$.get( 'Ajax/getPixel', this.getProperties(), function ( response ) {
+	this.get = function () {
+		var thisPixel = this,
+			data = { 'x': this.x, 'y': this.y, 'color': this.color };
+		$.get( 'Ajax/getPixel', data, function ( response ) {
 			//console.log( response );
 			for ( var property in response ) {
 				thisPixel[ property ] = response[ property ];
@@ -734,13 +768,10 @@ function Pixel( x, y, color ) {
 		});
 	}
 
-	this.getProperties = function() {
-		return { 'x': this.x, 'y': this.y, 'color': this.color };
-	}
-
 	this.save = function () {
-		var thisPixel = this;
-		$.get( 'Ajax/savePixel', this.getProperties(), function ( response ) {
+		var thisPixel = this,
+			data = { 'x': this.x, 'y': this.y, 'color': this.color };
+		$.get( 'Ajax/savePixel', data, function ( response ) {
 			//console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
@@ -748,7 +779,7 @@ function Pixel( x, y, color ) {
 				thisPixel.color = response.Pixel.color;
 				thisPixel.paint();
 				// Remove the reverted pixel from the undo/redo arrays
-				for ( var i in user.oldPixels ) {
+				for ( var i = 0; i < user.oldPixels.length; i++ ) {
 					if ( user.oldPixels[ i ].x == response.Pixel.x && user.oldPixels[ i ].y == response.Pixel.y ) {
 						user.oldPixels.splice( i, 1 );
 						user.newPixels.splice( i, 1 );
