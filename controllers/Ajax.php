@@ -125,7 +125,7 @@ class Ajax extends Controller {
 				while ( $DATA = $Result->fetch_assoc() ) {
 					$Neighbor = new Pixel( $DATA );
 					$oldData[] = clone $Neighbor;
-					$Neighbor->time = $time;
+					$Neighbor->time = (string) $time;
 					$Neighbor->color = $color;
 					$Neighbor->update();
 					$newData[] = $Neighbor;

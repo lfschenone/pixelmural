@@ -15,7 +15,7 @@ window.fbAsyncInit = function () {
 			'href': location.href
 		};
 		FB.ui( data, function ( response ) {
-			console.log( response );
+			//console.log( response );
 		});
 	});
 

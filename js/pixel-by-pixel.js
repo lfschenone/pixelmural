@@ -493,8 +493,13 @@ board = {
 		return board.pixelSize;
 	},
 
+	/**
+	 * Builds a pixel object out of the coordinates and the color,
+	 * but sucks the color directly from the canvas (not the database),
+	 * so it only works for visible pixels
+	 */
 	getPixel: function ( x, y ) {
-		var imageData = board.context.getImageData( x * board.pixelSize, y * board.pixelSize, 1, 1 );
+		var imageData = board.context.getImageData( ( x - board.topLeftX ) * board.pixelSize, ( y - board.topLeftY ) * board.pixelSize, 1, 1 );
 		var red   = imageData.data[0];
 		var green = imageData.data[1];
 		var blue  = imageData.data[2];
@@ -721,7 +726,7 @@ function Pixel( data ) {
 				oldPixel.paint();
 
 				// Display the author of the pixel
-				var picture = '<img src="images/anon.jpg" />'
+				var picture = '<img class="picture" src="images/anon.jpg" />'
 				var author = response.Author.name;
 				if ( response.Author.facebook_id ) {
 					picture = '<img class="picture" src="http://graph.facebook.com/' + response.Author.facebook_id + '/picture" />'
