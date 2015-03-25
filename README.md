@@ -31,5 +31,5 @@ Further tasks
 
 Code conventions
 ----------------
-* Objects and Classes go Captitalised
+* Objects and classes go Capitalised
 * CSS ids and classes go-with-dashes

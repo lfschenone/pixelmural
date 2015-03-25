@@ -733,7 +733,7 @@ function Pixel( data ) {
 					author = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
 				}
 				var age = roundSeconds( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
-				menu.setAlert( picture + '<div class="author">By ' + author + '</div><div class="age">' + age + ' ago</div>' );
+				menu.setAlert( picture + '<div class="author">By ' + author + '</div><div class="age">' + age + ' ago</div>', 4000 );
 
 				// Remove the reverted pixel from the undo/redo arrays
 				for ( var i = 0; i < user.oldPixels.length; i++ ) {
