@@ -60,6 +60,10 @@ body {
 	top: 0; right: 0;
 }
 
+#facebook-logout-button {
+	display: none;
+}
+
 #alert {
 	background: lightyellow;
 	display: none;
