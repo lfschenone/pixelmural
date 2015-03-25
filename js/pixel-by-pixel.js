@@ -726,7 +726,7 @@ function Pixel( data ) {
 				oldPixel.paint();
 
 				// Display the author of the pixel
-				var picture = '<img class="picture" src="images/anon.jpg" />'
+				var picture = '<img class="picture" src="images/anon.png" />'
 				var author = response.Author.name;
 				if ( response.Author.facebook_id ) {
 					picture = '<img class="picture" src="http://graph.facebook.com/' + response.Author.facebook_id + '/picture" />'
