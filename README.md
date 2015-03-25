@@ -4,20 +4,18 @@ An infinite canvas for collaborative pixel art.
 
 Bugs
 ----
-* The mouse position is off by two pixels. There is a bugfix in place in the CSS, but it prevents from using custom cursors accurately.
+* The mouse position is off by two pixels. There is a bugfix in place, but it's ugly.
 * Somehow fix the data types sent via ajax.
-* At some point jQuery is receiving '!' when expecting a #rrggbb hex code. See the console.
+* The spectrum source throws a warning, see the console.
 
 Tasks
 -----
 * 404, error handling
 * Doesn't work on mobiles
-* Fix and perfect Facebook sharing
+* Improve Facebook sharing
 * Block the bucket until the user shares
 * Set up payments
-* What to do when sucking the color of the background?
-* Get rid of prototypes.js, per bad practice?
-* Break pbp.js into many files
+* Break pixel-by-pixel.js into many files?
 * When hovering over a pixel, highlight it
 * Replace GET for POST ajax requests where necessary
 * Preview?
@@ -30,3 +28,8 @@ Further tasks
 -------------
 * i18n and l10n
 * Documentation
+
+Code conventions
+----------------
+* Objects and Classes go Captitalised
+* CSS ids and classes go-with-dashes

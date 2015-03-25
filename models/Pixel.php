@@ -2,6 +2,9 @@
 
 class Pixel extends Model {
 
+	/**
+	 * The properties match the table columns
+	 */
 	public $x;
 	public $y;
 	public $author_id;
@@ -15,7 +18,7 @@ class Pixel extends Model {
 		if ( $DATA ) {
 			return new Pixel( $DATA );
 		}
-		return null;
+		return null; // Should return an empty pixel?
 	}
 
 	function getAuthor() {

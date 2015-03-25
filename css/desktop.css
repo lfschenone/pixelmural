@@ -1,0 +1,91 @@
+html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body {
+	background: #ddd;
+	box-sizing: border-box;
+	font-family: Helvetica;
+	font-size: 15px;
+	font-weight: 300;
+	margin: 0;
+	padding: 50px;
+	height: 100%;
+}
+
+.menu {
+	padding: 5px;
+	position: absolute;
+}
+
+.menu button,
+.menu input {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	display: inline-block;
+	font: inherit;
+	margin: 0;
+	outline: none;
+	padding: 5px;
+	vertical-align: middle;
+}
+
+.menu button img {
+	display: block;
+}
+
+.menu button.active {
+	background: #aaf;
+}
+
+.menu .tooltip {
+	background: black;
+	color: white;
+	font-size: small;
+	padding: 10px;
+	pointer-events: none;
+	position: absolute;
+	z-index: 1;
+}
+
+#tools-menu {
+	top: 0; left: 0;
+}
+
+#facebook-menu {
+	margin: 5px;
+	top: 0; right: 0;
+}
+
+#alert {
+	background: lightyellow;
+	display: none;
+	margin: 10px;
+	padding: 10px;
+	position: absolute;
+	right: 0; bottom: 0;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#alert .picture {
+	float: left;
+	margin-right: 10px;
+}
+
+#alert .author {
+	margin-bottom: 5px;
+	overflow: hidden;
+}
+
+#grid {
+	pointer-events: none;
+	position: absolute;
+	top: 50px; left: 50px;
+}

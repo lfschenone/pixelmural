@@ -8,8 +8,8 @@ window.fbAsyncInit = function () {
 		version: 'v2.0'
 	});
 
-	$( '#facebookShareButton' ).click( function () {
-		FB.XFBML.parse(); // Update the URL to the current coordinates
+	$( '#facebook-share-button' ).click( function () {
+		FB.XFBML.parse(); // Update the shared URL to the current coordinates
 		var data = {
 			'method': 'share',
 			'href': location.href
@@ -17,44 +17,37 @@ window.fbAsyncInit = function () {
 		FB.ui( data, function ( response ) {
 			console.log( response );
 		});
-		return false;
 	});
 
-	$( '#facebookLoginButton' ).click( function () {
+	$( '#facebook-login-button' ).click( function () {
 		FB.login();
 	});
 
-	$( '#facebookLogoutButton' ).click( function () {
+	$( '#facebook-logout-button' ).click( function () {
 		FB.logout();
 	});
 
 	FB.Event.subscribe( 'auth.statusChange', function ( response ) {
-		handleResponse( response );
+		//console.log( response );
+	    if ( response.status === 'connected' ) {
+			$.get( 'Users/facebookLogin', function ( response ) {
+				//console.log( response );
+			});
+			FB.api( '/me', function ( response ) {
+				//console.log( response );
+			});
+			$( '#facebook-login-button' ).hide();
+			$( '#facebook-logout-button' ).show();
+	    }
+	    if ( response.status === 'not_authorized' ) {
+			// What do?
+	    }
+	    if ( response.status === 'unknown' ) {
+			$.get( 'Users/facebookLogout', function ( response ) {
+				//console.log( response );
+			});
+			$( '#facebook-login-button' ).show();
+			$( '#facebook-logout-button' ).hide();
+		}
 	});
-}
-
-function handleResponse( response ) {
-	//console.log( response );
-    if ( response.status === 'connected' ) {
-		$.get( 'Users/facebookLogin', function ( response ) {
-			//console.log( response );
-		});
-		FB.api( '/me', function ( response ) {
-			//console.log( response );
-			user.name = response.name;
-			user.email = response.email;
-		});
-		$( '#facebookLoginButton' ).hide();
-		$( '#facebookLogoutButton' ).show();
-    }
-    if ( response.status === 'not_authorized' ) {
-		//What do?
-    }
-    if ( response.status === 'unknown' ) {
-		$.get( 'Users/facebookLogout', function ( response ) {
-			//console.log( response );
-		});
-		$( '#facebookLoginButton' ).show();
-		$( '#facebookLogoutButton' ).hide();
-	}
 }

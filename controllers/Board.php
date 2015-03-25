@@ -13,9 +13,9 @@ class Board extends Controller {
 	static function saveScreen( $topLeftX, $topLeftY, $xPixels, $yPixels, $pixelSize ) {
 		global $gDatabase;
 
-		// Create a grey image
+		// Create a white image
 		$Image = new Image( $xPixels * $pixelSize, $yPixels * $pixelSize );
-		$Image->setColorFromHex( '#aaaaaa' );
+		$Image->setColorFromHex( '#ffffff' );
 		$Image->fill();
 
 		$PIXELS = array();

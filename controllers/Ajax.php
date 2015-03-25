@@ -72,6 +72,7 @@ class Ajax extends Controller {
 			$RESPONSE['message'] = 'Pixel inserted';
 		} else if ( $Pixel->author_id != $author_id and !$gUser->isAdmin() ) {
 			$RESPONSE['message'] = 'Not your pixel';
+			$RESPONSE['Author'] = $Pixel->getAuthor();
 		} else if ( !$color ) {
 			$Pixel->delete();
 			$RESPONSE['message'] = 'Pixel deleted';

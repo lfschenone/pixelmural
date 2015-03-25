@@ -3,20 +3,21 @@
 class User extends Model {
 
 	/**
-	 * The properties are identical to the database columns.
+	 * The properties match the table columns
 	 */
 	public $id;
-	public $facebook_id = null;
-	public $join_time = null;
-	public $last_seen = null;
-	public $share_count = null;
-	public $name = null;
-	public $email = null;
-	public $gender = null;
-	public $locale = null;
-	public $link = null;
-	public $status = null;
-	public $timezone = null;
+	public $facebook_id;
+	public $join_time;
+	public $last_seen;
+	public $pixel_count;
+	public $share_count;
+	public $name;
+	public $email;
+	public $gender;
+	public $locale;
+	public $link;
+	public $status;
+	public $timezone;
 
 	static function newFromId( $id ) {
 		global $gDatabase;
@@ -28,10 +29,20 @@ class User extends Model {
 		throw new Exception( 'Not found', 404 );
 	}
 
+	static function newFromFacebookId( $facebook_id ) {
+		global $gDatabase;
+		$Result = $gDatabase->query( "SELECT * FROM users WHERE facebook_id = $facebook_id LIMIT 1" );
+		$DATA = $Result->fetch_assoc();
+		if ( $DATA ) {
+			return new User( $DATA );
+		}
+		throw new Exception( 'Not found', 404 );
+	}
+
 	static function newFromName( $name ) {
 		global $gDatabase;
 		$name = $gDatabase->real_escape_string( $name );
-		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$name' LIMIT 1" );
+		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$name' LIMIT 1" ); // Careful! Two users may have the same name
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
 			return new User( $DATA );
@@ -44,35 +55,13 @@ class User extends Model {
 		if ( !$token ) {
 			throw new Exception( 'Bad request', 400 );
 		}
+		$token = $gDatabase->real_escape_string( $token );
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE token = '$token' LIMIT 1" );
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
 		throw new Exception( 'Not found', 404 );
-	}
-
-	static function newFromFacebook() {
-		global $gDatabase;
-		$Helper = new Facebook\FacebookJavaScriptLoginHelper();
-		try {
-			$Session = $Helper->getSession();
-			$FacebookRequest = new Facebook\FacebookRequest( $Session, 'GET', '/me' );
-			$GraphUser = $FacebookRequest->execute()->getGraphObject( Facebook\GraphUser::className() );
-			$DATA = $GraphUser->asArray();
-			foreach ( $DATA as $key => $value ) {
-				if ( property_exists( 'User', $key ) ) {
-					$this->$key = $value;
-				}
-			}
-			$Response = $this;
-		} catch( Facebook\FacebookRequestException $Exception ) {
-			$Response = array( 'message' => 2, 'exception' => $Exception );
-		} catch( Exception $Exception ) {
-			$Response = array( 'message' => 3, 'exception' => $Exception );
-		}
-		pr( $Response );
-		exit;
 	}
 
 	function isAdmin() {
@@ -88,6 +77,7 @@ class User extends Model {
 			facebook_id,
 			join_time,
 			last_seen,
+			pixel_count,
 			share_count,
 			token,
 			name,
@@ -97,12 +87,13 @@ class User extends Model {
 			link,
 			status,
 			timezone
-			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
+			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
 		);
-		$Statement->bind_param( 'siiisssssssi',
+		$Statement->bind_param( 'siiiisssssssi',
 			$this->facebook_id,
 			$this->join_time,
 			$this->last_seen,
+			$this->pixel_count,
 			$this->share_count,
 			$this->token,
 			$this->name,
@@ -123,6 +114,7 @@ class User extends Model {
 			facebook_id = ?,
 			join_time = ?,
 			last_seen = ?,
+			pixel_count = ?,
 			share_count = ?,
 			token = ?,
 			name = ?,
@@ -134,10 +126,11 @@ class User extends Model {
 			timezone = ?
 			WHERE id = ?'
 		);
-		$Statement->bind_param( 'iiiisssssssii',
+		$Statement->bind_param( 'iiiissssssssii',
 			$this->facebook_id,
 			$this->join_time,
 			$this->last_seen,
+			$this->pixel_count,
 			$this->share_count,
 			$this->token,
 			$this->name,

@@ -13,7 +13,7 @@ class Users extends Controller {
 			$RESPONSE['GraphUser'] = $GraphUser->asArray();
 
 			try {
-				$gUser = User::newFromName( $GraphUser->getProperty( 'name' ) );
+				$gUser = User::newFromFacebookId( $GraphUser->getProperty( 'id' ) );
 			} catch ( Exception $Exception ) {
 				$gUser = new User;
 				$gUser->join_time = $_SERVER['REQUEST_TIME'];
