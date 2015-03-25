@@ -667,11 +667,12 @@ grid = {
 	show: function () {
 		grid.visible = true;
 		if ( board.pixelSize < 4 ) {
-			return grid; // If the pixels are too small, don't draw the grid
+			menu.setAlert( 'Pixels are too small for the grid', 1000 );
+			return grid;
 		}
 		grid.context.beginPath();
 		for ( var x = 0; x <= board.xPixels; x++ ) {
-			grid.context.moveTo( x * board.pixelSize - 0.5, 0 ); // The 0.5 is to avoid getting blury lines
+			grid.context.moveTo( x * board.pixelSize - 0.5, 0 ); // The 0.5 avoids getting blury lines
 			grid.context.lineTo( x * board.pixelSize - 0.5, grid.height );
 		}
 		for ( var y = 0; y <= board.yPixels; y++ ) {
@@ -709,7 +710,8 @@ function Pixel( data ) {
 	this.color = 'color' in data ? data.color : null;
 
 	this.get = function () {
-		$.get( 'Ajax/getPixel', this, function ( response ) {
+		var data = { 'x': this.x, 'y': this.y };
+		$.get( 'Ajax/getPixel', data, function ( response ) {
 			//console.log( response );
 			return new window.Pixel( response );
 		});
@@ -726,14 +728,14 @@ function Pixel( data ) {
 				oldPixel.paint();
 
 				// Display the author of the pixel
-				var picture = '<img class="picture" src="images/anon.png" />'
+				var picture = '<img src="images/anon.png" />'
 				var author = response.Author.name;
 				if ( response.Author.facebook_id ) {
-					picture = '<img class="picture" src="http://graph.facebook.com/' + response.Author.facebook_id + '/picture" />'
+					picture = '<img src="http://graph.facebook.com/' + response.Author.facebook_id + '/picture" />'
 					author = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
 				}
 				var age = roundSeconds( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
-				menu.setAlert( picture + '<div class="author">By ' + author + '</div><div class="age">' + age + ' ago</div>', 4000 );
+				menu.setAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>', 4000 );
 
 				// Remove the reverted pixel from the undo/redo arrays
 				for ( var i = 0; i < user.oldPixels.length; i++ ) {
@@ -746,10 +748,6 @@ function Pixel( data ) {
 			}
 		});
 		return this;
-	}
-
-	this.info = function () {
-		
 	}
 
 	this.paint = function () {
