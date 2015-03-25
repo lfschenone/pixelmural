@@ -3,7 +3,7 @@
 <head>
 	<title><?php echo TITLE; ?></title>
 	<base href="<?php echo BASE; ?>" />
-	<link rel="icon" href="favicon.ico" />
+	<link rel="icon" href="images/favicon.ico" />
 	<link rel="stylesheet" href="css/desktop.css" />
 	<link rel="stylesheet" href="css/spectrum.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>

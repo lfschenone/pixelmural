@@ -9,8 +9,8 @@ class User extends Model {
 	public $facebook_id;
 	public $join_time;
 	public $last_seen;
-	public $pixel_count;
-	public $share_count;
+	public $pixel_count = 0;
+	public $share_count = 0;
 	public $name;
 	public $email;
 	public $gender;
@@ -26,7 +26,7 @@ class User extends Model {
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
-		throw new Exception( 'Not found', 404 );
+		return null;
 	}
 
 	static function newFromFacebookId( $facebook_id ) {
@@ -36,7 +36,7 @@ class User extends Model {
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
-		throw new Exception( 'Not found', 404 );
+		return null;
 	}
 
 	static function newFromName( $name ) {
@@ -47,13 +47,13 @@ class User extends Model {
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
-		throw new Exception( 'Not found', 404 );
+		return null;
 	}
 
 	static function newFromToken( $token ) {
 		global $gDatabase;
 		if ( !$token ) {
-			throw new Exception( 'Bad request', 400 );
+			return null;
 		}
 		$token = $gDatabase->real_escape_string( $token );
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE token = '$token' LIMIT 1" );
@@ -61,7 +61,7 @@ class User extends Model {
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
-		throw new Exception( 'Not found', 404 );
+		return null;
 	}
 
 	function isAdmin() {
@@ -143,7 +143,6 @@ class User extends Model {
 			$this->id
 		);
 		$Statement->execute();
-		return true;
 	}
 
 	function delete() {

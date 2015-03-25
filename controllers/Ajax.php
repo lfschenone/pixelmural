@@ -102,7 +102,6 @@ class Ajax extends Controller {
 		} else {
 			$oldData[] = clone $firstPixel; // Save the data of the old pixels for the the undo/redo functionality
 			$oldColor = $firstPixel->color;
-			$firstPixel->time = (string) $time;
 			$firstPixel->color = $color;
 			$firstPixel->update();
 			$newData = array( $firstPixel );
@@ -125,7 +124,6 @@ class Ajax extends Controller {
 				while ( $DATA = $Result->fetch_assoc() ) {
 					$Neighbor = new Pixel( $DATA );
 					$oldData[] = clone $Neighbor;
-					$Neighbor->time = (string) $time;
 					$Neighbor->color = $color;
 					$Neighbor->update();
 					$newData[] = $Neighbor;
