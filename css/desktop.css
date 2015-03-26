@@ -20,8 +20,7 @@ body {
 	position: absolute;
 }
 
-.menu button,
-.menu input {
+.menu button {
 	background: transparent;
 	border: none;
 	cursor: pointer;
@@ -48,18 +47,35 @@ body {
 	padding: 10px;
 	pointer-events: none;
 	position: absolute;
-	z-index: 1;
+	z-index: 2;
 }
 
 #tools-menu {
 	top: 0; left: 0;
 }
 
+#colors-menu {
+	left: 0;
+}
+#colors-menu input {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	display: inline-block;
+	font: inherit;
+	margin: 0;
+	outline: none;
+	padding: 5px;
+	vertical-align: middle;	
+}
+#colors-menu .active {
+	outline: 5px solid #aaf;
+}
+
 #facebook-menu {
 	margin: 5px;
 	top: 0; right: 0;
 }
-
 #facebook-logout-button {
 	display: none;
 }
@@ -76,6 +92,7 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    z-index: 2;
 }
 #alert img {
 	display: block;
@@ -92,4 +109,5 @@ body {
 	pointer-events: none;
 	position: absolute;
 	top: 50px; left: 50px;
+	z-index: 1;
 }

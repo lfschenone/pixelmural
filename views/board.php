@@ -35,7 +35,17 @@
 		<button id="eraser-button" title="Eraser [E]"><img src="images/eraser.png" alt="Eraser" /></button>
 		<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket" /></button>
 		<button id="grid-button" title="Grid [G]"><img src="images/grid.png" alt="Grid" /></button>
-		<input id="color-input" type="text" value="#000000" title="Color" />
+	</div>
+
+	<div id="colors-menu" class="menu">
+		<input class="color-input" type="text" value="#000000" />
+		<input class="color-input" type="text" value="#0000ff" />
+		<input class="color-input" type="text" value="#00ff00" />
+		<input class="color-input" type="text" value="#00ffff" />
+		<input class="color-input" type="text" value="#ff0000" />
+		<input class="color-input" type="text" value="#ff00ff" />
+		<input class="color-input" type="text" value="#ffff00" />
+		<input class="color-input" type="text" value="#ffffff" />
 	</div>
 
 	<div id="facebook-menu" class="menu">

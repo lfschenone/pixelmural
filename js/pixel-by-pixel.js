@@ -1,13 +1,21 @@
 $( function () {
 
 	// Initialize Spectrum
-	$( '#color-input' ).spectrum({
+	$( '.color-input' ).spectrum({
 		preferredFormat: 'hex',
 		showButtons: false,
-		move: function ( color ) {
-			menu.setColor( color.toHexString() );
+		show: function ( color ) {
+			menu.color = color.toHexString();
+			$( this ).next().addClass( 'active' ).siblings().removeClass( 'active' );
+		},
+		change: function ( color ) {
+			menu.color = color.toHexString();
+		},
+		hide: function ( color ) {
+			menu.color = color.toHexString();
 		}
 	});
+	$( '.color-input:first-child' ).next().addClass( 'active' ); // Set the first color as active
 
 	// Set the variables that must wait for the DOM to be loaded
 	board.setCanvas( document.getElementById( 'board' ) );
@@ -25,7 +33,6 @@ $( function () {
 
 	// Bind events
 	$( '.menu button' ).mouseover( menu.onButtonMouseover ).mouseout( menu.onButtonMouseout );
-	$( '.menu .sp-preview' ).mouseover( menu.onColorInputMouseover ).mouseout( menu.onColorInputMouseout );
 	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( '#grid-button' ).click( menu.onGridButtonClick );
 	$( '#zoom-in-button' ).click( menu.onZoomInButtonClick );
@@ -171,18 +178,6 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onColorInputMouseover: function ( event ) {
-		var div = $( this );
-		var colorInput = div.parent().prev();
-		var title = colorInput.attr( 'title' );
-		var tooltip = $( '<span/>' ).addClass( 'tooltip' ).text( title );
-		div.after( tooltip );
-	},
-
-	onColorInputMouseout: function ( event ) {
-		$( '.tooltip' ).remove();
-	},
-
 	onButtonMouseover: function ( event ) {
 		var button = $( this );
 		var title = button.attr( 'title' );
@@ -194,11 +189,6 @@ menu = {
 
 	onButtonMouseout: function ( event ) {
 		$( '.tooltip' ).remove();
-	},
-
-	setColor: function ( color ) {
-		menu.color = color;
-		$( '#color-input' ).spectrum( 'set', color );
 	},
 
 	setAlert: function ( html, duration ) {
