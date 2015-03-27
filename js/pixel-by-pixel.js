@@ -391,6 +391,11 @@ mouse = {
 	 */
 	erasePixel: function ( event ) {
 		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY );
+
+		if ( oldPixel.color === null ) {
+			return mouse; // The pixel doesn't exist, no need to continue
+		}
+
 		var newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY });
 
 		// Register the changes for the undo/redo functionality

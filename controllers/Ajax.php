@@ -98,7 +98,7 @@ class Ajax extends Controller {
 				if ( $color ) {
 					$Pixel->color = $color;
 					$Pixel->update();
-					$RESPONSE['message'] = 'Pixel updated';
+					$RESPONSE['message'] = 'Pixel updated' . $gUser->id . ' vs ' . $Pixel->author_id;
 				} else {
 					$Pixel->delete();
 					$RESPONSE['message'] = 'Pixel deleted';
