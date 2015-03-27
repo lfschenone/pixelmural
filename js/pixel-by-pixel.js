@@ -5,14 +5,14 @@ $( function () {
 		preferredFormat: 'hex',
 		showButtons: false,
 		show: function ( color ) {
-			menu.color = color.toHexString();
+			menu.activeColor = color.toHexString();
 			$( this ).next().addClass( 'active' ).siblings().removeClass( 'active' );
 		},
 		change: function ( color ) {
-			menu.color = color.toHexString();
+			menu.activeColor = color.toHexString();
 		},
 		hide: function ( color ) {
-			menu.color = color.toHexString();
+			menu.activeColor = color.toHexString();
 		}
 	});
 	$( '.color-input:first-child' ).next().addClass( 'active' ); // Set the first color as active
@@ -108,7 +108,7 @@ menu = {
 
 	alert: '',
 
-	color: '#000000',
+	activeColor: '#000000',
 
 	onGridButtonClick: function ( event ) {
 		grid.toggle();
@@ -341,10 +341,11 @@ mouse = {
 	suckColor: function ( event ) {
 		var Pixel = board.getPixel( mouse.currentX, mouse.currentY );
 		if ( Pixel.color ) {
-			menu.setColor( Pixel.color );
+			menu.activeColor = Pixel.color;
 		} else {
-			menu.setColor( board.background );
+			menu.activeColor = board.background;
 		}
+		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
 		return mouse;
 	},
 
@@ -371,7 +372,7 @@ mouse = {
 	 */
 	paintPixel: function ( event ) {
 		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY );
-		var newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.color });
+		var newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
 
 		// Register the changes for the undo/redo functionality
 		user.register( oldPixel, newPixel );
@@ -400,7 +401,7 @@ mouse = {
 	},
 
 	paintArea: function ( event ) {
-		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.color };
+		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor };
 		$.get( 'Ajax/paintArea', data, function ( response ) {
 			//console.log( response );
 			if ( response.message === 'Not your pixel' ) {
