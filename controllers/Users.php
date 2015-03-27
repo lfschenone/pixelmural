@@ -12,9 +12,10 @@ class Users extends Controller {
 			$GraphUser = $FacebookRequest->execute()->getGraphObject( Facebook\GraphUser::className() );
 			$RESPONSE['GraphUser'] = $GraphUser->asArray();
 
-			try {
-				$gUser = User::newFromFacebookId( $GraphUser->getProperty( 'id' ) );
-			} catch ( Exception $Exception ) {
+			$gUser = User::newFromFacebookId( $GraphUser->getProperty( 'id' ) );
+
+			// If no user matches that Facebook id, create one
+			if ( !$gUser ) {
 				$gUser = new User;
 				$gUser->join_time = $_SERVER['REQUEST_TIME'];
 				$gUser->status = 'user';
@@ -33,7 +34,7 @@ class Users extends Controller {
 					$gUser->$key = $value;
 				}
 			}
-			$gUser->facebook_id = $DATA['id'];
+			$gUser->facebook_id = $DATA['id']; // Because we already have an 'id' field -_-
 			$gUser->last_seen = $_SERVER['REQUEST_TIME'];
 			$gUser->update();
 

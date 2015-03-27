@@ -14,7 +14,7 @@ Facebook\FacebookSession::setDefaultApplication( FACEBOOK_APP_ID, FACEBOOK_APP_S
 $token = SESSION( 'token', COOKIE( 'token' ) );
 $gUser = User::newFromToken( $token );
 
-// If there is still no user, check by ip if it's a returning user
+// If there is no user, check by ip if it's a returning user
 if ( !$gUser ) {
 	$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
 	$gUser = User::newFromName( $name );

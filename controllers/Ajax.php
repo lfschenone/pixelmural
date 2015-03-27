@@ -35,19 +35,53 @@ class Ajax extends Controller {
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$pixels .= $DATA['x'] . ',' . $DATA['y'] . ',' . $DATA['color'] . ';';
 		}
-
-		Board::saveScreen( $topLeftX, $topLeftY, $xPixels, $yPixels, $pixelSize );
 		self::sendResponse( $pixels );
 	}
 
+	/**
+	 * Saves a screenshot of 1200px x 630px (recommended image size by Facebook),
+	 * centered around the view that the requesting user currently has
+	 */
 	static function saveScreen() {
+		global $gDatabase;
+
+		// These values describe the view of the current user
 		$topLeftX = GET( 'topLeftX' );
 		$topLeftY = GET( 'topLeftY' );
 		$xPixels = GET( 'xPixels' );
 		$yPixels = GET( 'yPixels' );
 		$pixelSize = GET( 'pixelSize' );
 
-		Board::saveScreen( $topLeftX, $topLeftY, $xPixels, $yPixels, $pixelSize );
+		// Now we must calculate the details of the screenshot
+		$width = 1200;
+		$height = 630;
+		$xPixels = ceil( $width / $pixelSize );
+		$yPixels = ceil( $height / $pixelSize );
+
+		// Create a white image
+		$Image = new Image( $width, $height );
+		$Image->setColorFromHex( '#ffffff' );
+		$Image->fill();
+
+		$PIXELS = array();
+		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $topLeftX AND x <= ( $topLeftX + $xPixels ) AND y >= $topLeftY AND y <= ( $topLeftY + $yPixels )" );
+		while ( $DATA = $Result->fetch_assoc() ) {
+			$Pixel = new Pixel( $DATA );
+			$Image->setColorFromHex( $Pixel->color );
+			$x1 = ( $Pixel->x - $topLeftX ) * $pixelSize;
+			$y1 = ( $Pixel->y - $topLeftY ) * $pixelSize;
+			$x2 = $x1 + $pixelSize - 1;
+			$y2 = $y1 + $pixelSize - 1;
+			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
+		}
+		if ( !file_exists( 'screens/' . $topLeftX ) ) {
+			mkdir( 'screens/' . $topLeftX );
+		}
+		if ( !file_exists( 'screens/' . $topLeftX . '/' . $topLeftY ) ) {
+			mkdir( 'screens/' . $topLeftX . '/' . $topLeftY );
+		}
+		$Image->save( 'screens/' . $topLeftX . '/' . $topLeftY . '/' . $pixelSize . '.png' );
+		exit;
 		self::sendResponse();
 	}
 
@@ -137,7 +171,7 @@ class Ajax extends Controller {
 		self::sendResponse( $RESPONSE );
 	}
 
-	static function sendResponse( $RESPONSE ) {
+	static function sendResponse( $RESPONSE = null ) {
 		header( 'Content-Type: application/json' );
 		echo json_encode( $RESPONSE );
 	}

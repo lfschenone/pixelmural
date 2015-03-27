@@ -7,13 +7,14 @@ Bugs
 * The mouse position is off by two pixels. There is a bugfix in place, but it's ugly.
 * Somehow fix the data types sent via ajax.
 * The spectrum source throws a warning, see the console.
+* The bucket doesn't paint all the pixels it should, sometimes. The bug stems from the SQL statement that uses 'time' as a variable, when it shouldn't (controllers/Ajax.php, line 115).
 
 Tasks
 -----
 * Preview
 * 404, error handling
 * Doesn't work on mobiles
-* Improve Facebook sharing
+* Perfect Facebook sharing
 * Block the bucket until the user shares
 * Set up payments
 * Break pixel-by-pixel.js into many files?

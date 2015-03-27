@@ -106,29 +106,8 @@ function is_even( $number ) {
 	return true;
 }
 
-function url_merge( $key, $value ) {
-	$url = $_SERVER['REQUEST_URI'];
-	$parts = explode( '?', $url, 2 );
-
-	//If $parts[1] exists, it means that there was a query string
-	if ( array_key_exists( 1, $parts ) ) {
-
-		//Turn the query string into an array
-		parse_str( $parts[1], $array );
-
-		//Merge the array with the new key and value
-		$array = array_merge( $array, array( $key => $value ) );
-
-		//Turn the array back into a query string
-		$query = http_build_query( $array );
-
-		//Append the query string to the URL
-		$url = $parts[0] . '?' . $query;
-
-	} else {
-		$url = $parts[0] . '?' . $key . '=' . urlencode( $value );
-	}
-	return $url;
+function is_mobile() {
+	return preg_match( "/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"] );
 }
 
 function pr( $ARRAY ) {

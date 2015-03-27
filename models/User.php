@@ -39,10 +39,14 @@ class User extends Model {
 		return null;
 	}
 
+	/**
+	 * Careful! This is not 100% guaranteed to match a single user,
+	 * different users may have the same name at Facebook.
+	 */
 	static function newFromName( $name ) {
 		global $gDatabase;
 		$name = $gDatabase->real_escape_string( $name );
-		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$name' LIMIT 1" ); // Careful! Two users may have the same name
+		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$name' LIMIT 1" );
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
 			return new User( $DATA );

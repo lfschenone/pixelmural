@@ -18,8 +18,8 @@
 	<meta property="og:description" content="<?php echo DESCRIPTION; ?>" />
 	<meta property="og:image" content="<?php echo BASE . 'screens/' . $topLeftX . '/' . $topLeftY . '/' . $pixelSize; ?>.png" />
 	<meta property="og:image:type" content="image/png" /> 
-	<meta property="og:image:width" content="1180" /> 
-	<meta property="og:image:height" content="600" /> 
+	<meta property="og:image:width" content="1200" /> 
+	<meta property="og:image:height" content="630" /> 
 </head>
 <body>
 	<div id="fb-root"></div>
