@@ -81,7 +81,6 @@ class Ajax extends Controller {
 			mkdir( 'screens/' . $topLeftX . '/' . $topLeftY );
 		}
 		$Image->save( 'screens/' . $topLeftX . '/' . $topLeftY . '/' . $pixelSize . '.png' );
-		exit;
 		self::sendResponse();
 	}
 
@@ -90,30 +89,33 @@ class Ajax extends Controller {
 
 		$x = GET( 'x' );
 		$y = GET( 'y' );
-		$author_id = $gUser->id;
-		$time = $_SERVER['REQUEST_TIME'];
 		$color = GET( 'color' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
-		if ( !$Pixel ) {
+
+		if ( $Pixel ) {
+			if ( $gUser->canEdit( $Pixel ) ) {
+				if ( $color ) {
+					$Pixel->color = $color;
+					$Pixel->update();
+					$RESPONSE['message'] = 'Pixel updated';
+				} else {
+					$Pixel->delete();
+					$RESPONSE['message'] = 'Pixel deleted';
+				}
+			} else {
+				$RESPONSE['Author'] = $Pixel->getAuthor();
+				$RESPONSE['message'] = 'Not your pixel';
+			}
+		} else if ( $color ) {
 			$Pixel = new Pixel;
 			$Pixel->x = $x;
 			$Pixel->y = $y;
-			$Pixel->author_id = $author_id;
-			$Pixel->time = $time;
+			$Pixel->author_id = $gUser->id;
+			$Pixel->time = time();
 			$Pixel->color = $color;
 			$Pixel->insert();
 			$RESPONSE['message'] = 'Pixel inserted';
-		} else if ( $Pixel->author_id != $author_id and !$gUser->isAdmin() ) {
-			$RESPONSE['message'] = 'Not your pixel';
-			$RESPONSE['Author'] = $Pixel->getAuthor();
-		} else if ( !$color ) {
-			$Pixel->delete();
-			$RESPONSE['message'] = 'Pixel deleted';
-		} else {
-			$Pixel->color = $color;
-			$Pixel->update();
-			$RESPONSE['message'] = 'Pixel updated';
 		}
 		$RESPONSE['Pixel'] = $Pixel;
 		self::sendResponse( $RESPONSE );

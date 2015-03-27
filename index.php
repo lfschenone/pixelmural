@@ -20,7 +20,7 @@ if ( !$gUser ) {
 	$gUser = User::newFromName( $name );
 }
 
-// If there is still no user, create one
+// If there is still no user, create a new one
 if ( !$gUser ) {
 	$gUser = new User;
 	$gUser->name = $_SERVER['REMOTE_ADDR'];

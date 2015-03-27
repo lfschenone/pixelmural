@@ -18,11 +18,24 @@ class Pixel extends Model {
 		if ( $DATA ) {
 			return new Pixel( $DATA );
 		}
-		return null; // Should return an empty pixel?
+		return null;
 	}
 
 	function getAuthor() {
 		return User::newFromId( $this->author_id );
+	}
+
+	function fetch() {
+		global $gDatabase;
+		if ( !$this->x or !$this->y ) {
+			return false;
+		}
+		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x = $x AND y = $y LIMIT 1" );
+		$DATA = $Result->fetch_assoc();
+		if ( $DATA ) {
+			return new Pixel( $DATA );
+		}
+		return false;
 	}
 
 	function insert() {

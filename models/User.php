@@ -75,6 +75,13 @@ class User extends Model {
 		return false;
 	}
 
+	function canEdit( $Pixel ) {
+		if ( $this->id === $Pixel->author_id or $this->isAdmin() ) {
+			return true;
+		}
+		return false;
+	}
+
 	function insert() {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'INSERT INTO users (
