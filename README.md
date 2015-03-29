@@ -1,13 +1,13 @@
 Pixel by Pixel
 ==============
-An infinite canvas for collaborative pixel art.
+An infinite canvas of collaborative pixel art.
 
 Bugs
 ----
 * The mouse position is off by two pixels. There is a bugfix in place, but it's ugly.
 * Somehow fix the data types sent via ajax.
 * The spectrum source throws a warning, see the console.
-* The bucket doesn't paint all the pixels it should, sometimes. The bug stems from the SQL statement that uses 'time' as a variable, when it shouldn't (controllers/Ajax.php, line 115).
+* The bucket doesn't paint all the pixels it should, sometimes. The bug probably comes from the SQL statement that uses 'time' as a variable (controllers/Ajax.php, line 115).
 
 Tasks
 -----
