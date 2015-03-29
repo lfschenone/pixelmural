@@ -9,6 +9,7 @@ window.fbAsyncInit = function () {
 	});
 
 	$( '#facebook-share-button' ).click( function ( event ) {
+		//console.log( event );
 		$.get( 'index.php?controller=Ajax&method=saveScreen&topLeftX=' + board.topLeftX + '&topLeftY=' + board.topLeftY + '&xPixels=' + board.xPixels + '&yPixels=' + board.yPixels + '&pixelSize=' + board.pixelSize, function ( response ) {
 			//console.log( response );
 			FB.XFBML.parse(); // Update URL to be shared to the latest coordinates

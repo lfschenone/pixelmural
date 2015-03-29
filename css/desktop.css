@@ -40,6 +40,10 @@ body {
 	background: #aaf;
 }
 
+.menu button.disabled {
+	
+}
+
 .menu .tooltip {
 	background: black;
 	color: white;

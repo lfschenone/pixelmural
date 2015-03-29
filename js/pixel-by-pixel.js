@@ -158,7 +158,7 @@ menu = {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#pencil-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
-		mouse.dragAction = 'paintPixel';
+		mouse.dragAction = null;
 		mouse.upAction = null;
 	},
 
@@ -379,7 +379,7 @@ mouse = {
 
 		// For convenience, re-painting a pixel erases it
 		if ( newPixel.color === oldPixel.color ) {
-			//newPixel.color = null;
+			newPixel.color = null;
 		}
 
 		newPixel.paint().save();
