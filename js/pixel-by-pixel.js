@@ -60,6 +60,23 @@ $( function () {
  */
 user = {
 	/**
+	 * These properties match the table columns and the properties of the PHP model
+	 */
+	id: null,
+	facebook_id: null,
+	join_time: null,
+	last_seen: null,
+	pixel_count: 0,
+	share_count: 0,
+	name: null,
+	email: null,
+	gender: null,
+	locale: null,
+	link: null,
+	status: null,
+	timezone: null,
+
+	/**
 	 * Part of the undo/redo functionality
 	 * The rest is in the mouse.paintPixel and mouse.erasePixel methods
 	 */
@@ -101,6 +118,13 @@ user = {
 		} else {
 			newPixel.paint().save();
 		}
+	},
+
+	isAnon: function () {
+		if ( user.status === 'anon' ) {
+			return true;
+		}
+		return false;
 	}
 }
 
@@ -158,7 +182,7 @@ menu = {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#pencil-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
-		mouse.dragAction = null;
+		mouse.dragAction = 'paintPixel2';
 		mouse.upAction = null;
 	},
 
@@ -374,16 +398,26 @@ mouse = {
 		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY );
 		var newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
 
-		// Register the changes for the undo/redo functionality
-		user.register( oldPixel, newPixel );
-
 		// For convenience, re-painting a pixel erases it
-		if ( newPixel.color === oldPixel.color ) {
+		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
 			newPixel.color = null;
 		}
 
+		// Register the changes for the undo/redo functionality
+		user.register( oldPixel, newPixel );
+
 		newPixel.paint().save();
 		return mouse;
+	},
+
+	/**
+	 * Paint a single pixel, part two
+	 */
+	paintPixel2: function ( event ) {
+		if ( user.isAnon() ) {
+			return mouse; // Anons can't drag
+		}
+		return mouse.paintPixel();
 	},
 
 	/**

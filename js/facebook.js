@@ -33,6 +33,9 @@ window.fbAsyncInit = function () {
 	    if ( response.status === 'connected' ) {
 			$.get( 'Users/facebookLogin', function ( response ) {
 				//console.log( response );
+				for ( var property in response.user ) {
+					user[ property ] = response.user[ property ];
+				}
 			});
 			FB.api( '/me', function ( response ) {
 				//console.log( response );
@@ -46,6 +49,9 @@ window.fbAsyncInit = function () {
 	    if ( response.status === 'unknown' ) {
 			$.get( 'Users/facebookLogout', function ( response ) {
 				//console.log( response );
+				for ( var property in response.user ) {
+					user[ property ] = response.user[ property ];
+				}
 			});
 			$( '#facebook-login-button' ).show();
 			$( '#facebook-logout-button' ).hide();

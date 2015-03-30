@@ -38,7 +38,7 @@ class Users extends Controller {
 			$gUser->last_seen = $_SERVER['REQUEST_TIME'];
 			$gUser->update();
 
-			$RESPONSE['gUser'] = $gUser;
+			$RESPONSE['user'] = $gUser;
 
 		} catch( Facebook\FacebookRequestException $FacebookRequestException ) {
 			$RESPONSE = array( 'code' => $FacebookRequestException->getCode(), 'message' => $FacebookRequestException->getMessage() );
@@ -52,5 +52,20 @@ class Users extends Controller {
 		global $gDatabase, $gUser;
 		session_destroy();
 		setcookie( 'token', '', 0, '/' );
+
+		// Now update the user info
+		$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
+		$gUser = User::newFromName( $name );
+		
+		// If no user exists with that name, create a new one
+		if ( !$gUser ) {
+			$gUser = new User;
+			$gUser->name = $_SERVER['REMOTE_ADDR'];
+			$gUser->join_time = $_SERVER['REQUEST_TIME'];
+			$gUser->status = 'anon';
+			$gUser->id = $gUser->insert();
+		}
+		$RESPONSE['user'] = $gUser;
+		Ajax::sendResponse( $RESPONSE );
 	}
 }
