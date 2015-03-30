@@ -10,7 +10,7 @@ window.fbAsyncInit = function () {
 
 	$( '#facebook-share-button' ).click( function ( event ) {
 		//console.log( event );
-		$.get( 'index.php?controller=Ajax&method=saveScreen&topLeftX=' + board.topLeftX + '&topLeftY=' + board.topLeftY + '&xPixels=' + board.xPixels + '&yPixels=' + board.yPixels + '&pixelSize=' + board.pixelSize, function ( response ) {
+		$.get( 'ajax.php?method=saveScreen&topLeftX=' + board.topLeftX + '&topLeftY=' + board.topLeftY + '&xPixels=' + board.xPixels + '&yPixels=' + board.yPixels + '&pixelSize=' + board.pixelSize, function ( response ) {
 			//console.log( response );
 			FB.XFBML.parse(); // Update URL to be shared to the latest coordinates
 			var data = { 'method': 'share', 'href': location.href };
@@ -31,7 +31,7 @@ window.fbAsyncInit = function () {
 	FB.Event.subscribe( 'auth.statusChange', function ( response ) {
 		//console.log( response );
 	    if ( response.status === 'connected' ) {
-			$.get( 'Users/facebookLogin', function ( response ) {
+			$.get( 'ajax.php?method=facebookLogin', function ( response ) {
 				//console.log( response );
 				for ( var property in response.user ) {
 					user[ property ] = response.user[ property ];
@@ -47,7 +47,7 @@ window.fbAsyncInit = function () {
 			// What do?
 	    }
 	    if ( response.status === 'unknown' ) {
-			$.get( 'Users/facebookLogout', function ( response ) {
+			$.get( 'ajax.php?method=facebookLogout', function ( response ) {
 				//console.log( response );
 				for ( var property in response.user ) {
 					user[ property ] = response.user[ property ];

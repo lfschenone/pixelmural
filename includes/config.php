@@ -11,8 +11,6 @@ define( 'DESCRIPTION', 'An infinite canvas of collaborative pixel art. Come leav
 define( 'CONTACT_EMAIL', 'contact@pixel-by-pixel.net' );
 
 // Defaults
-define( 'DEFAULT_CONTROLLER', 'Board' );
-define( 'DEFAULT_METHOD', 'view' );
 define( 'DEFAULT_TOPLEFTX', 0 );
 define( 'DEFAULT_TOPLEFTY', 0 );
 define( 'DEFAULT_PIXELSIZE', 4 );

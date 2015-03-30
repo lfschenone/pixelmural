@@ -6,7 +6,7 @@ class Ajax extends Controller {
 		$x = GET( 'x' );
 		$y = GET( 'y' );
 		$Pixel = Pixel::newFromCoords( $x, $y );
-		self::sendResponse( $Pixel );
+		return $Pixel;
 	}
 
 	static function getInfo() {
@@ -19,7 +19,7 @@ class Ajax extends Controller {
 			$Author = $Pixel->getAuthor();
 			$RESPONSE['Author'] = $Author;
 		}
-		self::sendResponse( $RESPONSE );
+		return $RESPONSE;
 	}
 
 	static function getArea() {
@@ -35,7 +35,7 @@ class Ajax extends Controller {
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$pixels .= $DATA['x'] . ',' . $DATA['y'] . ',' . $DATA['color'] . ';';
 		}
-		self::sendResponse( $pixels );
+		return $pixels;
 	}
 
 	/**
@@ -81,7 +81,7 @@ class Ajax extends Controller {
 			mkdir( 'screens/' . $topLeftX . '/' . $topLeftY );
 		}
 		$Image->save( 'screens/' . $topLeftX . '/' . $topLeftY . '/' . $pixelSize . '.png' );
-		self::sendResponse();
+		return null;
 	}
 
 	static function savePixel() {
@@ -118,7 +118,7 @@ class Ajax extends Controller {
 			$RESPONSE['message'] = 'Pixel inserted';
 		}
 		$RESPONSE['Pixel'] = $Pixel;
-		self::sendResponse( $RESPONSE );
+		return $RESPONSE;
 	}
 
 	static function paintArea() {
@@ -170,11 +170,73 @@ class Ajax extends Controller {
 			$RESPONSE['oldData'] = $oldData;
 			$RESPONSE['newData'] = $newData;
 		}
-		self::sendResponse( $RESPONSE );
+		return $RESPONSE;
 	}
 
-	static function sendResponse( $RESPONSE = null ) {
-		header( 'Content-Type: application/json' );
-		echo json_encode( $RESPONSE );
+	static function facebookLogin() {
+		global $gDatabase, $gUser;
+
+		$Helper = new Facebook\FacebookJavaScriptLoginHelper();
+		try {
+			$Session = $Helper->getSession();
+			$FacebookRequest = new Facebook\FacebookRequest( $Session, 'GET', '/me' );
+			$GraphUser = $FacebookRequest->execute()->getGraphObject( Facebook\GraphUser::className() );
+			$RESPONSE['GraphUser'] = $GraphUser->asArray();
+
+			$gUser = User::newFromFacebookId( $GraphUser->getProperty( 'id' ) );
+
+			// If no user matches that Facebook id, create one
+			if ( !$gUser ) {
+				$gUser = new User;
+				$gUser->join_time = $_SERVER['REQUEST_TIME'];
+				$gUser->status = 'user';
+				$gUser->id = $gUser->insert();
+			}
+
+			// Set the token
+			$gUser->token = md5( uniqid() );
+			$_SESSION['token'] = $gUser->token;
+			setcookie( 'token', $gUser->token, time() + 60 * 60 * 24 * 30, '/' ); //Lasts one month
+
+			// Every time the user logs in, make sure all the stats are up to date
+			$DATA = $GraphUser->asArray();
+			foreach ( $DATA as $key => $value ) {
+				if ( property_exists( 'User', $key ) and $key !== 'id' ) {
+					$gUser->$key = $value;
+				}
+			}
+			$gUser->facebook_id = $DATA['id']; // Because we already have an 'id' field -_-
+			$gUser->last_seen = $_SERVER['REQUEST_TIME'];
+			$gUser->update();
+
+			$RESPONSE['user'] = $gUser;
+
+		} catch( Facebook\FacebookRequestException $FacebookRequestException ) {
+			$RESPONSE = array( 'code' => $FacebookRequestException->getCode(), 'message' => $FacebookRequestException->getMessage() );
+		} catch( Exception $Exception ) {
+			$RESPONSE = array( 'code' => $Exception->getCode(), 'message' => $Exception->getMessage() );
+		}
+		return $RESPONSE;
+	}
+
+	static function facebookLogout() {
+		global $gDatabase, $gUser;
+		session_destroy();
+		setcookie( 'token', '', 0, '/' );
+
+		// Now update the user info
+		$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
+		$gUser = User::newFromName( $name );
+		
+		// If no user exists with that name, create a new one
+		if ( !$gUser ) {
+			$gUser = new User;
+			$gUser->name = $_SERVER['REMOTE_ADDR'];
+			$gUser->join_time = $_SERVER['REQUEST_TIME'];
+			$gUser->status = 'anon';
+			$gUser->id = $gUser->insert();
+		}
+		$RESPONSE['user'] = $gUser;
+		return $RESPONSE;
 	}
 }

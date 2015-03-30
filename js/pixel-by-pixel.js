@@ -375,7 +375,7 @@ mouse = {
 
 	getInfo: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
-		$.get( 'Ajax/getInfo', data, function ( response ) {
+		$.get( 'ajax.php?method=getInfo', data, function ( response ) {
 			//console.log( response );
 			if ( response.Pixel ) {
 				var author = response.Author.name;
@@ -441,8 +441,8 @@ mouse = {
 
 	paintArea: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor };
-		$.get( 'Ajax/paintArea', data, function ( response ) {
-			//console.log( response );
+		$.get( 'ajax.php?method=paintArea', data, function ( response ) {
+			console.log( response );
 			if ( response.message === 'Not your pixel' ) {
 				menu.setAlert( response.message, 1000 );
 			}
@@ -626,7 +626,7 @@ board = {
 			'yPixels': board.yPixels,
 			'pixelSize': board.pixelSize
 		};
-		$.get( 'Ajax/getArea', data, function ( response ) {
+		$.get( 'ajax.php?method=getArea', data, function ( response ) {
 			//console.log( response );
 			var i,
 				pixelsData = response.slice( 0, -1 ).split( ';' ),
@@ -741,7 +741,7 @@ function Pixel( data ) {
 
 	this.get = function () {
 		var data = { 'x': this.x, 'y': this.y };
-		$.get( 'Ajax/getPixel', data, function ( response ) {
+		$.get( 'ajax.php?method=getPixel', data, function ( response ) {
 			//console.log( response );
 			return new window.Pixel( response );
 		});
@@ -749,7 +749,7 @@ function Pixel( data ) {
 
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
-		$.get( 'Ajax/savePixel', data, function ( response ) {
+		$.get( 'ajax.php?method=savePixel', data, function ( response ) {
 			//console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
