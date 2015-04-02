@@ -23,8 +23,8 @@ $( function () {
 	board.setWidth( $( 'body' ).width() );
 	board.setHeight( $( 'body' ).height() );
 	board.setBackground( '#ffffff' );
-	board.setTopLeftX( board.getTopLeftX() );
-	board.setTopLeftY( board.getTopLeftY() );
+	board.setCenterX( board.getCenterX() );
+	board.setCenterY( board.getCenterY() );
 	board.setPixelSize( board.getPixelSize() );
 	grid.setCanvas( document.getElementById( 'grid' ) );
 	grid.setContext( grid.canvas.getContext( '2d' ) );
@@ -203,8 +203,8 @@ menu = {
 	},
 
 	onButtonMouseover: function ( event ) {
-		var button = $( this );
-		var title = button.attr( 'title' );
+		var button = $( this ),
+			title = button.attr( 'title' );
 		if ( title ) {
 			var tooltip = $( '<span/>' ).addClass( 'tooltip' ).text( title );
 			button.append( tooltip );
@@ -285,10 +285,7 @@ keyboard = {
 mouse = {
 
 	/**
-	 * The distance from the origin of the coordinate system,
-	 * NOT the distance from the top left corner of the screen.
-	 * The origin of the coordinate system starts at the top left corner of the screen,
-	 * but when the user uses the 'move' tool, it moves
+	 * The distance from the origin of the coordinate system in virtual pixels (not real ones)
 	 */
 	currentX: null,
 	currentY: null,
@@ -300,6 +297,7 @@ mouse = {
 
 	downAction: null,
 	dragAction: null,
+	upAction: null,
 
 	down: function ( event ) {
 		mouse.state = 'down';
@@ -308,15 +306,14 @@ mouse = {
 	},
 
 	move: function ( event ) {
-
 		mouse.previousX = mouse.currentX;
 		mouse.previousY = mouse.currentY;
 
-		mouse.currentX = board.topLeftX + Math.floor( ( event.pageX - board.canvas.offsetLeft - 1 ) / board.pixelSize ); // - 1 is a bugfix
-		mouse.currentY = board.topLeftY + Math.floor( ( event.pageY - board.canvas.offsetTop - 2 ) / board.pixelSize ); // - 2 is a bugfix
+		mouse.currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( event.offsetX / board.pixelSize );
+		mouse.currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( event.offsetY / board.pixelSize );
 
 		// If the mouse is being dragged
-		if ( mouse.state == 'down' && ( mouse.currentX != mouse.previousX || mouse.currentY != mouse.previousY ) && mouse.dragAction ) {
+		if ( mouse.state === 'down' && ( mouse.currentX !== mouse.previousX || mouse.currentY !== mouse.previousY ) && mouse.dragAction ) {
 			mouse[ mouse.dragAction ]( event );
 		}
 
@@ -339,8 +336,8 @@ mouse = {
 	},
 
 	moveBoard2: function ( event ) {
-		board.topLeftX += mouse.previousX - mouse.currentX;
-		board.topLeftY += mouse.previousY - mouse.currentY;
+		board.centerX += mouse.previousX - mouse.currentX;
+		board.centerY += mouse.previousY - mouse.currentY;
 
 		mouse.diffX += ( mouse.currentX - mouse.previousX ) * board.pixelSize;
 		mouse.diffY += ( mouse.currentY - mouse.previousY ) * board.pixelSize;
@@ -348,9 +345,9 @@ mouse = {
 		board.clear();
 		board.context.putImageData( board.imageData, mouse.diffX, mouse.diffY );
 
-		// Bug fix
-		mouse.currentX = board.topLeftX + Math.floor( ( event.pageX - board.canvas.offsetLeft - 1 ) / board.pixelSize );
-		mouse.currentY = board.topLeftY + Math.floor( ( event.pageY - board.canvas.offsetTop - 2 ) / board.pixelSize );
+		// Bug fix: without this, the board flickers when moving
+		mouse.currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( event.offsetX / board.pixelSize );
+		mouse.currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( event.offsetY / board.pixelSize );
 
 		return mouse;
 	},
@@ -363,12 +360,12 @@ mouse = {
 	},
 
 	suckColor: function ( event ) {
-		var Pixel = board.getPixel( mouse.currentX, mouse.currentY );
-		if ( Pixel.color ) {
-			menu.activeColor = Pixel.color;
-		} else {
-			menu.activeColor = board.background;
-		}
+		var imageData = board.context.getImageData( event.offsetX, event.offsetY, 1, 1 );
+			red   = imageData.data[0],
+			green = imageData.data[1],
+			blue  = imageData.data[2],
+			alpha = imageData.data[3],
+			menu.activeColor = alpha ? rgbToHex( red, green, blue ) : board.background;
 		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
 		return mouse;
 	},
@@ -395,8 +392,8 @@ mouse = {
 	 * Paint a single pixel
 	 */
 	paintPixel: function ( event ) {
-		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY );
-		var newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
+		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY ),
+			newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
 
 		// For convenience, re-painting a pixel erases it
 		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
@@ -479,8 +476,8 @@ board = {
 	width: 300,
 	height: 150,
 
-	topLeftX: 0,
-	topLeftY: 0,
+	centerX: 0,
+	centerY: 0,
 
 	pixelSize: 4,
 
@@ -499,20 +496,20 @@ board = {
 		return Math.floor( board.height / board.pixelSize );
 	},
 
-	getTopLeftX: function() {
-		var topLeftX = parseInt( window.location.pathname.split('/').slice( -3, -2 ) );
-		if ( !isNaN( topLeftX ) ) {
-			return topLeftX;
+	getCenterX: function() {
+		var centerX = parseInt( window.location.pathname.split('/').slice( -3, -2 ) );
+		if ( !isNaN( centerX ) ) {
+			return centerX;
 		}
-		return board.topLeftX;
+		return board.centerX;
 	},
 
-	getTopLeftY: function() {
-		var topLeftY = parseInt( window.location.pathname.split('/').slice( -2, -1 ) );
-		if ( !isNaN( topLeftY ) ) {
-			return topLeftY;
+	getCenterY: function() {
+		var centerY = parseInt( window.location.pathname.split('/').slice( -2, -1 ) );
+		if ( !isNaN( centerY ) ) {
+			return centerY;
 		}
-		return board.topLeftY;
+		return board.centerY;
 	},
 
 	getPixelSize: function() {
@@ -524,18 +521,20 @@ board = {
 	},
 
 	/**
-	 * Builds a pixel object out of the coordinates and the color,
-	 * but sucks the color directly from the canvas (not the database),
+	 * Builds a basic pixel object out of the coordinates and the color,
+	 * but sucks the color directly from the canvas (not the database)
 	 * so it only works for visible pixels
 	 */
 	getPixel: function ( x, y ) {
-		var imageData = board.context.getImageData( ( x - board.topLeftX ) * board.pixelSize, ( y - board.topLeftY ) * board.pixelSize, 1, 1 );
-		var red   = imageData.data[0];
-		var green = imageData.data[1];
-		var blue  = imageData.data[2];
-		var alpha = imageData.data[3];
-		var color = alpha ? rgbToHex( red, green, blue ) : null;
-		var Pixel = new window.Pixel({ 'x': x, 'y': y, 'color': color });
+		var rectX = Math.abs( board.centerX - Math.floor( board.xPixels / 2 ) - x ) * board.pixelSize,
+			rectY = Math.abs( board.centerY - Math.floor( board.yPixels / 2 ) - y ) * board.pixelSize,
+			imageData = board.context.getImageData( rectX, rectY, 1, 1 ),
+			red   = imageData.data[0],
+			green = imageData.data[1],
+			blue  = imageData.data[2],
+			alpha = imageData.data[3],
+			color = alpha ? rgbToHex( red, green, blue ) : null,
+			Pixel = new window.Pixel({ 'x': x, 'y': y, 'color': color });
 		return Pixel;
 	},
 
@@ -571,13 +570,13 @@ board = {
 		return board;
 	},
 
-	setTopLeftX: function ( value ) {
-		board.topLeftX = value;
+	setCenterX: function ( value ) {
+		board.centerX = value;
 		return board;
 	},
 
-	setTopLeftY: function ( value ) {
-		board.topLeftY = value;
+	setCenterY: function ( value ) {
+		board.centerY = value;
 		return board;
 	},
 
@@ -595,23 +594,19 @@ board = {
 	},
 
 	zoomIn: function () {
-		if ( board.pixelSize == 64 ) {
+		if ( board.pixelSize === 64 ) {
 			return board;
 		}
 		board.setPixelSize( board.pixelSize * 2 );
-		board.topLeftX += Math.floor( board.xPixels / 2 );
-		board.topLeftY += Math.floor( board.yPixels / 2 );
 		board.refill();
 		return board;
 	},
 
 	zoomOut: function () {
-		if ( board.pixelSize == 1 ) {
+		if ( board.pixelSize === 1 ) {
 			return board;
 		}
 		board.setPixelSize( board.pixelSize / 2 );
-		board.topLeftX -= Math.floor( board.xPixels / 4 );
-		board.topLeftY -= Math.floor( board.yPixels / 4 );
 		board.refill();
 		return board;
 	},
@@ -619,13 +614,12 @@ board = {
 	fill: function () {
 		menu.setAlert( 'Loading pixels, please wait...' );
 
-		var data = {
-			'topLeftX': board.topLeftX,
-			'topLeftY': board.topLeftY,
-			'xPixels': board.xPixels,
-			'yPixels': board.yPixels,
-			'pixelSize': board.pixelSize
-		};
+		var x1 = board.centerX - board.xPixels / 2,
+			y1 = board.centerY - board.yPixels / 2,
+			x2 = board.centerX + board.xPixels / 2,
+			y2 = board.centerY + board.yPixels / 2,
+			data = { 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2 };
+
 		$.get( 'ajax.php?method=getArea', data, function ( response ) {
 			//console.log( response );
 			var i,
@@ -642,7 +636,7 @@ board = {
 
 			// Update the URL of the browser
 			var BASE = $( 'base' ).attr( 'href' );
-			history.replaceState( null, null, BASE + board.topLeftX + '/' + board.topLeftY + '/' + board.pixelSize );
+			history.replaceState( null, null, BASE + board.centerX + '/' + board.centerY + '/' + board.pixelSize );
 		});
 		return board;
 	},
@@ -739,9 +733,9 @@ function Pixel( data ) {
 	this.time = 'time' in data ? data.time : null;
 	this.color = 'color' in data ? data.color : null;
 
-	this.get = function () {
+	this.fetch = function () {
 		var data = { 'x': this.x, 'y': this.y };
-		$.get( 'ajax.php?method=getPixel', data, function ( response ) {
+		$.get( 'ajax.php?method=fetchPixel', data, function ( response ) {
 			//console.log( response );
 			return new window.Pixel( response );
 		});
@@ -750,7 +744,7 @@ function Pixel( data ) {
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
 		$.get( 'ajax.php?method=savePixel', data, function ( response ) {
-			console.log( response );
+			//console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
 				// Repaint the pixel
@@ -758,10 +752,10 @@ function Pixel( data ) {
 				oldPixel.paint();
 
 				// Display the author of the pixel
-				var picture = '<img src="images/anon.png" />'
-				var author = response.Author.name;
+				var picture = '<img src="images/anon.png" />',
+					author = response.Author.name;
 				if ( response.Author.facebook_id ) {
-					picture = '<img src="http://graph.facebook.com/' + response.Author.facebook_id + '/picture" />'
+					picture = '<img src="http://graph.facebook.com/' + response.Author.facebook_id + '/picture" />';
 					author = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
 				}
 				var age = roundSeconds( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
@@ -769,7 +763,7 @@ function Pixel( data ) {
 
 				// Remove the reverted pixel from the undo/redo arrays
 				for ( var i = 0; i < user.oldPixels.length; i++ ) {
-					if ( user.oldPixels[ i ].x == oldPixel.x && user.oldPixels[ i ].y == oldPixel.y ) {
+					if ( user.oldPixels[ i ].x === oldPixel.x && user.oldPixels[ i ].y === oldPixel.y ) {
 						user.oldPixels.splice( i, 1 );
 						user.newPixels.splice( i, 1 );
 						user.arrayPointer--;
@@ -784,20 +778,20 @@ function Pixel( data ) {
 		if ( this.color === null ) {
 			return this.erase();
 		}
-		var rectX = ( this.x - board.topLeftX ) * board.pixelSize;
-		var rectY = ( this.y - board.topLeftY ) * board.pixelSize;
-		var rectW = board.pixelSize;
-		var rectH = board.pixelSize;
+		var rectX = Math.abs( board.centerX - Math.floor( board.xPixels / 2 ) - this.x ) * board.pixelSize,
+			rectY = Math.abs( board.centerY - Math.floor( board.yPixels / 2 ) - this.y ) * board.pixelSize,
+			rectW = board.pixelSize,
+			rectH = board.pixelSize;
 		board.context.fillStyle = this.color;
 		board.context.fillRect( rectX, rectY, rectW, rectH );
 		return this;
 	}
 
 	this.erase = function () {
-		var rectX = ( this.x - board.topLeftX ) * board.pixelSize;
-		var rectY = ( this.y - board.topLeftY ) * board.pixelSize;
-		var rectW = board.pixelSize;
-		var rectH = board.pixelSize;
+		var rectX = Math.abs( board.centerX - Math.floor( board.xPixels / 2 ) - this.x ) * board.pixelSize,
+			rectY = Math.abs( board.centerY - Math.floor( board.yPixels / 2 ) - this.y ) * board.pixelSize,
+			rectW = board.pixelSize,
+			rectH = board.pixelSize;
 		board.context.clearRect( rectX, rectY, rectW, rectH );
 		this.color = null;
 		return this;

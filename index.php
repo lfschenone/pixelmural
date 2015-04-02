@@ -5,8 +5,8 @@ session_start();
 include 'includes/config.php';
 include 'includes/functions.php';
 
-$topLeftX = GET( 'topLeftX', DEFAULT_TOPLEFTX );
-$topLeftY = GET( 'topLeftY', DEFAULT_TOPLEFTY );
+$centerX = GET( 'centerX', DEFAULT_CENTERX );
+$centerY = GET( 'centerY', DEFAULT_CENTERY );
 $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 
 ?><!DOCTYPE HTML>
@@ -24,10 +24,10 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 	<script src="js/pixel-by-pixel.js"></script>
 	<script src="js/facebook.js"></script>
 	<meta name="description" content="<?php echo DESCRIPTION; ?>" />
-	<meta property="og:url" content="<?php echo BASE . $topLeftX . '/' . $topLeftY . '/' . $pixelSize; ?>" />
+	<meta property="og:url" content="<?php echo BASE . $centerX . '/' . $centerY . '/' . $pixelSize; ?>" />
 	<meta property="og:title" content="<?php echo TITLE; ?>" />
 	<meta property="og:description" content="<?php echo DESCRIPTION; ?>" />
-	<meta property="og:image" content="<?php echo BASE . 'screens/' . $topLeftX . '/' . $topLeftY . '/' . $pixelSize; ?>.png" />
+	<meta property="og:image" content="<?php echo BASE . 'screens/' . $centerX . '/' . $centerY . '/' . $pixelSize; ?>.png" />
 	<meta property="og:image:type" content="image/png" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />

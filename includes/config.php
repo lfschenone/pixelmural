@@ -11,8 +11,8 @@ define( 'DESCRIPTION', 'An infinite canvas of collaborative pixel art. Come leav
 define( 'CONTACT_EMAIL', 'contact@pixel-by-pixel.net' );
 
 // Defaults
-define( 'DEFAULT_TOPLEFTX', 0 );
-define( 'DEFAULT_TOPLEFTY', 0 );
+define( 'DEFAULT_CENTERX', 0 );
+define( 'DEFAULT_CENTERY', 0 );
 define( 'DEFAULT_PIXELSIZE', 4 );
 date_default_timezone_set( 'America/Argentina/Buenos_Aires' );
 

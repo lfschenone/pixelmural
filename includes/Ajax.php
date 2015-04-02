@@ -2,11 +2,11 @@
 
 class Ajax extends Controller {
 
-	static function getPixel() {
+	static function fetchPixel() {
 		$x = GET( 'x' );
 		$y = GET( 'y' );
 		$Pixel = Pixel::newFromCoords( $x, $y );
-		return $Pixel;
+		return $Pixel; // May be null
 	}
 
 	static function getInfo() {
@@ -24,14 +24,13 @@ class Ajax extends Controller {
 
 	static function getArea() {
 		global $gDatabase;
-		$topLeftX = GET( 'topLeftX' );
-		$topLeftY = GET( 'topLeftY' );
-		$xPixels = GET( 'xPixels' );
-		$yPixels = GET( 'yPixels' );
-		$pixelSize = GET( 'pixelSize' );
+		$x1 = GET( 'x1' );
+		$y1 = GET( 'y1' );
+		$x2 = GET( 'x2' );
+		$y2 = GET( 'y2' );
 
 		$pixels = '';
-		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x <= ( $topLeftX + $xPixels ) AND y >= $topLeftY AND y <= ( $topLeftY + $yPixels )" );
+		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $x1 AND x < $x2 AND y >= $y1 AND y < $y2" );
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$pixels .= $DATA['x'] . ',' . $DATA['y'] . ',' . $DATA['color'] . ';';
 		}
@@ -98,7 +97,7 @@ class Ajax extends Controller {
 				if ( $color ) {
 					$Pixel->color = $color;
 					$Pixel->update();
-					$RESPONSE['message'] = 'Pixel updated' . $gUser->id . ' vs ' . $Pixel->author_id;
+					$RESPONSE['message'] = 'Pixel updated';
 				} else {
 					$Pixel->delete();
 					$RESPONSE['message'] = 'Pixel deleted';

@@ -11,7 +11,6 @@ Bugs
 
 Tasks
 -----
-* Make it so that the coordinates in the URL are in the center instead of the top left corner
 * Transmit pixel data in base64
 * Preview
 * 404, error handling
