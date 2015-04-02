@@ -6,13 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'About' => $baseDir . '/controllers/About.php',
-    'Ajax' => $baseDir . '/controllers/Ajax.php',
-    'Board' => $baseDir . '/controllers/Board.php',
+    'Ajax' => $baseDir . '/includes/Ajax.php',
     'Controller' => $baseDir . '/includes/Controller.php',
     'Image' => $baseDir . '/includes/Image.php',
     'Model' => $baseDir . '/includes/Model.php',
-    'Pixel' => $baseDir . '/models/Pixel.php',
-    'User' => $baseDir . '/models/User.php',
-    'Users' => $baseDir . '/controllers/Users.php',
+    'Pixel' => $baseDir . '/includes/Pixel.php',
+    'User' => $baseDir . '/includes/User.php',
 );

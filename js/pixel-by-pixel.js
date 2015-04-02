@@ -750,7 +750,7 @@ function Pixel( data ) {
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
 		$.get( 'ajax.php?method=savePixel', data, function ( response ) {
-			//console.log( response );
+			console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
 				// Repaint the pixel

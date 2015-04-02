@@ -1,6 +1,6 @@
 Pixel by Pixel
 ==============
-An infinite canvas of collaborative pixel art.
+An infinite canvas of collaborative pixel art
 
 Bugs
 ----
@@ -11,6 +11,8 @@ Bugs
 
 Tasks
 -----
+* Make it so that the coordinates in the URL are in the center instead of the top left corner
+* Transmit pixel data in base64
 * Preview
 * 404, error handling
 * Doesn't work on mobiles
@@ -22,7 +24,6 @@ Tasks
 * Replace GET for POST ajax requests where necessary
 * Draft pencil?
 * When zooming and moving, only load the pixels that change
-* When loading pixels, minimise data transfer by removing the # from the hex codes and using shorthand hex
 * Further customise Spectrum
 
 Further tasks

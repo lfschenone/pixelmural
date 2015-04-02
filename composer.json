@@ -3,6 +3,6 @@
 		"facebook/php-sdk-v4": "4.0.*"
 	},
 	"autoload": {
-		"classmap": [ "controllers/", "models/", "includes/" ]
+		"classmap": [ "includes/" ]
 	}
 }

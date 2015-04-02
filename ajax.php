@@ -1,6 +1,7 @@
 <?php
 /**
  * Entry point for all AJAX requests
+ * May become api.php in the future
  */
 
 session_start();
@@ -18,7 +19,7 @@ Facebook\FacebookSession::setDefaultApplication( FACEBOOK_APP_ID, FACEBOOK_APP_S
 // Build the global user object
 $token = SESSION( 'token', COOKIE( 'token' ) );
 $gUser = User::newFromToken( $token );
-// If there is no user, check if it's a returning visitor
+// If no user was built, check if it's a returning visitor
 if ( !$gUser ) {
 	$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
 	$gUser = User::newFromName( $name );

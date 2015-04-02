@@ -41,7 +41,7 @@ class User extends Model {
 
 	/**
 	 * Careful! This is not 100% guaranteed to match a single user,
-	 * different users may have the same name at Facebook.
+	 * different users may have the same Facebook name.
 	 */
 	static function newFromName( $name ) {
 		global $gDatabase;

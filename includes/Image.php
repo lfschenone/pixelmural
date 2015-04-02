@@ -45,7 +45,7 @@ class Image {
 		$this->destroy();
 	}
 
-	//Drawers
+	// Drawers
 
 	function drawPoint( $x, $y ) {
 		return imageline( $this->image, $x, $y, $x, $y, $this->color );
@@ -75,7 +75,7 @@ class Image {
 		return imagefilledrectangle( $this->image, $x1, $y1, $x2, $y2, $this->color );
 	}
 
-	//Getters
+	// Getters
 
 	function getWidth() {
 		return imagesx( $this->image );
@@ -85,7 +85,7 @@ class Image {
 		return imagesy( $this->image );
 	}
 
-	//Setters
+	// Setters
 
 	function setColor( $red, $green, $blue, $alpha = 0 ) {
 		if ( $alpha ) {
