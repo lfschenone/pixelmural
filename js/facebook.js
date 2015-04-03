@@ -10,7 +10,8 @@ window.fbAsyncInit = function () {
 
 	$( '#facebook-share-button' ).click( function ( event ) {
 		//console.log( event );
-		$.get( 'ajax.php?method=saveScreen&topLeftX=' + board.topLeftX + '&topLeftY=' + board.topLeftY + '&xPixels=' + board.xPixels + '&yPixels=' + board.yPixels + '&pixelSize=' + board.pixelSize, function ( response ) {
+		var data = { 'centerX': board.centerX, 'centerY': board.centerY, 'pixelSize': board.pixelSize };
+		$.get( 'ajax.php?method=saveScreen', data, function ( response ) {
 			//console.log( response );
 			FB.XFBML.parse(); // Update URL to be shared to the latest coordinates
 			var data = { 'method': 'share', 'href': location.href };

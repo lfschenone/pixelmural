@@ -1,4 +1,4 @@
-function rgbToHex( r, g, b ) {
+function rgb2hex( r, g, b ) {
     return '#' + ( ( 1 << 24 ) + ( r << 16 ) + ( g << 8 ) + b ).toString( 16 ).slice( 1 );
 }
 
@@ -26,14 +26,7 @@ function roundSeconds( seconds ) {
 }
 
 function plural( amount, singular, plural ) {
-	if ( singular === undefined ) {
-		singular = '';
-	}
-	if ( plural === undefined ) {
-		plural = 's';
-	}
-	if ( amount == 1 ) {
-		return singular;
-	}
-	return plural;
+	( singular === undefined ) ? '' : singular;
+	( plural === undefined ) ? 's' : plural;
+	return ( amount === 1 ) ? singular : plural;
 }

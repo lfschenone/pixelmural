@@ -29,57 +29,59 @@ class Ajax extends Controller {
 		$x2 = GET( 'x2' );
 		$y2 = GET( 'y2' );
 
-		$pixels = '';
-		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $x1 AND x < $x2 AND y >= $y1 AND y < $y2" );
+		$PIXELS = array();
+		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
 		while ( $DATA = $Result->fetch_assoc() ) {
-			$pixels .= $DATA['x'] . ',' . $DATA['y'] . ',' . $DATA['color'] . ';';
+			$PIXELS[] = (int) $DATA['x'];
+			$PIXELS[] = (int) $DATA['y'];
+			$PIXELS[] = $DATA['color'];
 		}
-		return $pixels;
+		return $PIXELS;
 	}
 
 	/**
-	 * Saves a screenshot of 1200px x 630px (recommended image size by Facebook),
-	 * centered around the view that the requesting user currently has
+	 * Saves a screenshot of 1200px x 630px (recommended image size by Facebook)
+	 * centered around the view of the user
 	 */
 	static function saveScreen() {
 		global $gDatabase;
 
-		// These values describe the view of the current user
-		$topLeftX = GET( 'topLeftX' );
-		$topLeftY = GET( 'topLeftY' );
-		$xPixels = GET( 'xPixels' );
-		$yPixels = GET( 'yPixels' );
+		$centerX = GET( 'centerX' );
+		$centerY = GET( 'centerY' );
 		$pixelSize = GET( 'pixelSize' );
 
-		// Now we must calculate the details of the screenshot
+		// Calculate the rest of the screenshot details
 		$width = 1200;
 		$height = 630;
 		$xPixels = ceil( $width / $pixelSize );
 		$yPixels = ceil( $height / $pixelSize );
+		$x1 = $centerX - $xPixels / 2; // ceil() or floor() ?
+		$y1 = $centerY - $yPixels / 2;
+		$x2 = $centerX + $xPixels / 2;
+		$y2 = $centerY + $yPixels / 2;
 
-		// Create a white image
+		// Create a transparent image
 		$Image = new Image( $width, $height );
-		$Image->setColorFromHex( '#ffffff' );
-		$Image->fill();
+		$Image->makeTransparent();
 
-		$PIXELS = array();
-		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $topLeftX AND x <= ( $topLeftX + $xPixels ) AND y >= $topLeftY AND y <= ( $topLeftY + $yPixels )" );
+		// Fill the image with the pixels
+		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$Pixel = new Pixel( $DATA );
+			$x1 = abs( $centerX - floor( $xPixels / 2 ) - $Pixel->x ) * $pixelSize;
+			$y1 = abs( $centerY - floor( $yPixels / 2 ) - $Pixel->y ) * $pixelSize;
+			$x2 = $x1 + $pixelSize;
+			$y2 = $y1 + $pixelSize;
 			$Image->setColorFromHex( $Pixel->color );
-			$x1 = ( $Pixel->x - $topLeftX ) * $pixelSize;
-			$y1 = ( $Pixel->y - $topLeftY ) * $pixelSize;
-			$x2 = $x1 + $pixelSize - 1;
-			$y2 = $y1 + $pixelSize - 1;
 			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
 		}
-		if ( !file_exists( 'screens/' . $topLeftX ) ) {
-			mkdir( 'screens/' . $topLeftX );
+		if ( !file_exists( 'screens/' . $centerX ) ) {
+			mkdir( 'screens/' . $centerX );
 		}
-		if ( !file_exists( 'screens/' . $topLeftX . '/' . $topLeftY ) ) {
-			mkdir( 'screens/' . $topLeftX . '/' . $topLeftY );
+		if ( !file_exists( 'screens/' . $centerX . '/' . $centerY ) ) {
+			mkdir( 'screens/' . $centerX . '/' . $centerY );
 		}
-		$Image->save( 'screens/' . $topLeftX . '/' . $topLeftY . '/' . $pixelSize . '.png' );
+		$Image->save( 'screens/' . $centerX . '/' . $centerY . '/' . $pixelSize . '.png' );
 		return null;
 	}
 

@@ -7,22 +7,23 @@ Bugs
 * The mouse position is off by two pixels. There is a bugfix in place, but it's ugly.
 * Somehow fix the data types sent via ajax.
 * The spectrum source throws a warning, see the console.
-* The bucket doesn't paint all the pixels it should, sometimes. The bug probably comes from the SQL statement that uses 'time' as a variable (controllers/Ajax.php, line 115).
+* Sometimes the bucket doesn't paint all the pixels it should. The bug probably comes from the SQL statement.
 
 Tasks
 -----
-* Transmit pixel data in base64
 * Preview
 * 404, error handling
-* Doesn't work on mobiles
+* Mobile version
+* Cookies to remember things like the grid and colors
 * Perfect Facebook sharing
 * Block the bucket until the user shares
 * Set up payments
 * Break pixel-by-pixel.js into many files?
 * When hovering over a pixel, highlight it?
-* Replace GET for POST ajax requests where necessary
+* Replace GET for POST ajax requests where adequate
 * Draft pencil?
 * When zooming and moving, only load the pixels that change
+* Further optimise data transfer
 * Further customise Spectrum
 
 Further tasks

@@ -283,7 +283,6 @@ keyboard = {
 }
 
 mouse = {
-
 	/**
 	 * The distance from the origin of the coordinate system in virtual pixels (not real ones)
 	 */
@@ -309,14 +308,13 @@ mouse = {
 		mouse.previousX = mouse.currentX;
 		mouse.previousY = mouse.currentY;
 
-		mouse.currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( event.offsetX / board.pixelSize );
-		mouse.currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( event.offsetY / board.pixelSize );
+		mouse.currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( ( event.offsetX - 1 /* bugfix */ ) / board.pixelSize );
+		mouse.currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( ( event.offsetY - 2 /* bugfix */ ) / board.pixelSize );
 
 		// If the mouse is being dragged
 		if ( mouse.state === 'down' && ( mouse.currentX !== mouse.previousX || mouse.currentY !== mouse.previousY ) && mouse.dragAction ) {
 			mouse[ mouse.dragAction ]( event );
 		}
-
 		return mouse;
 	},
 
@@ -345,7 +343,7 @@ mouse = {
 		board.clear();
 		board.context.putImageData( board.imageData, mouse.diffX, mouse.diffY );
 
-		// Bug fix: without this, the board flickers when moving
+		// Bugfix: without this, the board flickers when moving
 		mouse.currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( event.offsetX / board.pixelSize );
 		mouse.currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( event.offsetY / board.pixelSize );
 
@@ -365,7 +363,7 @@ mouse = {
 			green = imageData.data[1],
 			blue  = imageData.data[2],
 			alpha = imageData.data[3],
-			menu.activeColor = alpha ? rgbToHex( red, green, blue ) : board.background;
+			menu.activeColor = alpha ? rgb2hex( red, green, blue ) : board.background;
 		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
 		return mouse;
 	},
@@ -533,7 +531,7 @@ board = {
 			green = imageData.data[1],
 			blue  = imageData.data[2],
 			alpha = imageData.data[3],
-			color = alpha ? rgbToHex( red, green, blue ) : null,
+			color = alpha ? rgb2hex( red, green, blue ) : null,
 			Pixel = new window.Pixel({ 'x': x, 'y': y, 'color': color });
 		return Pixel;
 	},
@@ -614,21 +612,19 @@ board = {
 	fill: function () {
 		menu.setAlert( 'Loading pixels, please wait...' );
 
-		var x1 = board.centerX - board.xPixels / 2,
+		var x1 = board.centerX - board.xPixels / 2, // Math.ceil() or Math.floor() ?
 			y1 = board.centerY - board.yPixels / 2,
 			x2 = board.centerX + board.xPixels / 2,
 			y2 = board.centerY + board.yPixels / 2,
 			data = { 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2 };
 
 		$.get( 'ajax.php?method=getArea', data, function ( response ) {
-			//console.log( response );
+			console.log( response );
 			var i,
-				pixelsData = response.slice( 0, -1 ).split( ';' ),
 				pixelData,
 				Pixel;
-			for ( i = 0; i < pixelsData.length; i++ ) {
-				pixelData = pixelsData[ i ].split( ',' );
-				pixelData = { 'x': pixelData[0], 'y': pixelData[1], 'color': pixelData[2] };
+			for ( i = 0; i < response.length; i += 3 ) {
+				pixelData = { 'x': response[ i ], 'y': response[ i + 1 ], 'color': response[ i + 2 ] };
 				Pixel = new window.Pixel( pixelData );
 				Pixel.paint();
 			}
