@@ -471,16 +471,16 @@ board = {
 	canvas: {},
 	context: {},
 
-	width: 300,
-	height: 150,
+	width: 600,
+	height: 300,
 
 	centerX: 0,
 	centerY: 0,
 
-	pixelSize: 4,
+	pixelSize: 2,
 
-	xPixels: 30,
-	yPixels: 15,
+	xPixels: 60,
+	yPixels: 30,
 
 	background: null,
 
@@ -619,7 +619,7 @@ board = {
 			data = { 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2 };
 
 		$.get( 'ajax.php?method=getArea', data, function ( response ) {
-			console.log( response );
+			//console.log( response );
 			var i,
 				pixelData,
 				Pixel;
