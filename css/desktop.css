@@ -46,9 +46,10 @@ body {
 
 .menu .tooltip {
 	background: black;
+	border-radius: 10px;
 	color: white;
 	font-size: small;
-	padding: 10px;
+	padding: 10px 5px;
 	pointer-events: none;
 	position: absolute;
 	z-index: 2;

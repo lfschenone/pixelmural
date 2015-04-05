@@ -19,7 +19,6 @@ Tasks
 * Block the bucket until the user shares
 * Set up payments
 * Break pixel-by-pixel.js into many files?
-* When hovering over a pixel, highlight it?
 * Replace GET for POST ajax requests where adequate
 * Draft pencil?
 * When zooming and moving, only load the pixels that change
