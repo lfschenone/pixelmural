@@ -34,6 +34,7 @@ body {
 
 .menu button img {
 	display: block;
+	height: 30px;
 }
 
 .menu button.active {
@@ -45,13 +46,14 @@ body {
 }
 
 .menu .tooltip {
-	background: black;
+	background: #aaa;
 	border-radius: 10px;
 	color: white;
 	font-size: small;
-	padding: 10px 5px;
+	padding: 5px 10px;
 	pointer-events: none;
 	position: absolute;
+	white-space: nowrap;
 	z-index: 2;
 }
 
@@ -81,15 +83,19 @@ body {
 	margin: 5px;
 	top: 0; right: 0;
 }
+#facebook-menu img {
+	height: intrinsic;
+}
 #facebook-logout-button {
 	display: none;
 }
 
 #alert {
 	background: lightyellow;
+	border-radius: 10px;
 	display: none;
 	margin: 10px;
-	padding: 20px;
+	padding: 10px 20px;
 	position: absolute;
 	right: 0; bottom: 0;
     -webkit-user-select: none;

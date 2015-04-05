@@ -41,8 +41,9 @@ $( function () {
 	$( '#redo-button' ).click( menu.onRedoButtonClick );
 	$( '#info-button' ).click( menu.onInfoButtonClick );
 	$( '#move-button' ).click( menu.onMoveButtonClick );
-	$( '#eyedrop-button' ).click( menu.onEyedropButtonClick );
+	$( '#dropper-button' ).click( menu.onDropperButtonClick );
 	$( '#pencil-button' ).click( menu.onPencilButtonClick );
+	$( '#brush-button' ).click( menu.onBrushButtonClick );
 	$( '#bucket-button' ).click( menu.onBucketButtonClick );
 	$( '#eraser-button' ).click( menu.onEraserButtonClick );
 	$( document ).keydown( keyboard.onKeydown );
@@ -170,9 +171,9 @@ menu = {
 		mouse.upAction = 'moveBoard3';
 	},
 
-	onEyedropButtonClick: function ( event ) {
+	onDropperButtonClick: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
-		$( '#eyedrop-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
+		$( '#dropper-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'suckColor';
 		mouse.dragAction = 'suckColor';
 		mouse.upAction = null;
@@ -182,7 +183,15 @@ menu = {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#pencil-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
-		mouse.dragAction = 'paintPixel2';
+		mouse.dragAction = null;
+		mouse.upAction = null;
+	},
+
+	onBrushButtonClick: function ( event ) {
+		$( '#board' ).css( 'cursor', 'default' );
+		$( '#brush-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
+		mouse.downAction = 'paintPixel';
+		mouse.dragAction = 'paintPixel';
 		mouse.upAction = null;
 	},
 
@@ -202,19 +211,6 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onButtonMouseover: function ( event ) {
-		var button = $( this ),
-			title = button.attr( 'title' );
-		if ( title ) {
-			var tooltip = $( '<span/>' ).addClass( 'tooltip' ).text( title );
-			button.append( tooltip );
-		}
-	},
-
-	onButtonMouseout: function ( event ) {
-		$( '.tooltip' ).remove();
-	},
-
 	setAlert: function ( html, duration ) {
 		$( '#alert' ).html( html ).show();
 		if ( duration ) {
@@ -230,7 +226,7 @@ keyboard = {
 	onKeydown: function ( event ) {
 		// Alt
 		if ( event.keyCode === 18 ) {
-			$( '#eyedrop-button' ).click();
+			$( '#dropper-button' ).click();
 		}
 		// Spacebar
 		if ( event.keyCode === 32 ) {
@@ -403,16 +399,6 @@ mouse = {
 
 		newPixel.paint().save();
 		return mouse;
-	},
-
-	/**
-	 * Paint a single pixel, part two
-	 */
-	paintPixel2: function ( event ) {
-		if ( user.isAnon() ) {
-			return mouse; // Anons can't drag
-		}
-		return mouse.paintPixel();
 	},
 
 	/**

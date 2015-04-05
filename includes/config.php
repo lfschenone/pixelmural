@@ -13,7 +13,7 @@ define( 'CONTACT_EMAIL', 'contact@pixel-by-pixel.net' );
 // Defaults
 define( 'DEFAULT_CENTERX', 0 );
 define( 'DEFAULT_CENTERY', 0 );
-define( 'DEFAULT_PIXELSIZE', 4 );
+define( 'DEFAULT_PIXELSIZE', 2 );
 date_default_timezone_set( 'America/Argentina/Buenos_Aires' );
 
 // Database
