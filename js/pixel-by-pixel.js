@@ -278,11 +278,11 @@ menu = {
 		}
 
 		if ( user.isAnon() ) {
-			$( '#brush-button' ).addClass( 'disabled' );
+			$( '#brush-button' ).addClass( 'disabled' ).attr( 'title', 'Log in with Facebook to use the brush' );
 		}
 
 		if ( user.share_count == 0 ) { // Non-strict comparison because ajax returns '0' rather than 0
-			$( '#bucket-button' ).addClass( 'disabled' );
+			$( '#bucket-button' ).addClass( 'disabled' ).attr( 'title', 'Share on Facebook to user the bucket' );
 		}
 
 		if ( board.pixelSize < 4 ) {
