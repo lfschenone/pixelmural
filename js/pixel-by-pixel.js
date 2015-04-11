@@ -277,7 +277,7 @@ menu = {
 			$( '#redo-button' ).addClass( 'disabled' );
 		}
 
-		if ( user.isAnon() && !user.isAdmin() ) {
+		if ( user.isAnon() ) {
 			$( '#brush-button' ).addClass( 'disabled' );
 		}
 
@@ -289,7 +289,7 @@ menu = {
 			$( '#grid-button' ).addClass( 'disabled' );
 		}
 
-		if ( !user.isAnon() && !user.isAdmin() ) {
+		if ( !user.isAnon() ) {
 			$( '#facebook-login-button' ).addClass( 'disabled' );
 		}
 
