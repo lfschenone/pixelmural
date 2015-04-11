@@ -134,6 +134,13 @@ user = {
 			return true;
 		}
 		return false;
+	},
+
+	isAdmin: function () {
+		if ( user.status === 'admin' ) {
+			return true;
+		}
+		return false;
 	}
 }
 
@@ -270,7 +277,7 @@ menu = {
 			$( '#redo-button' ).addClass( 'disabled' );
 		}
 
-		if ( user.isAnon() ) {
+		if ( user.isAnon() && !user.isAdmin() ) {
 			$( '#brush-button' ).addClass( 'disabled' );
 		}
 
@@ -282,7 +289,7 @@ menu = {
 			$( '#grid-button' ).addClass( 'disabled' );
 		}
 
-		if ( !user.isAnon() ) {
+		if ( !user.isAnon() && !user.isAdmin() ) {
 			$( '#facebook-login-button' ).addClass( 'disabled' );
 		}
 
