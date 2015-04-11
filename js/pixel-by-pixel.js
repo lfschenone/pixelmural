@@ -32,117 +32,32 @@ $( function () {
 	grid.setHeight( board.height );
 
 	// Bind events
-	$( '.menu button' ).mouseover( menu.onMenuButtonMouseover ).mouseout( menu.onMenuButtonMouseout );
+	$( '.menu button' ).mouseover( menu.showTooltip ).mouseout( menu.hideTooltip );
 	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
-	$( '#grid-button' ).click( menu.onGridButtonClick );
-	$( '#zoom-in-button' ).click( menu.onZoomInButtonClick );
-	$( '#zoom-out-button' ).click( menu.onZoomOutButtonClick );
-	$( '#undo-button' ).click( menu.onUndoButtonClick );
-	$( '#redo-button' ).click( menu.onRedoButtonClick );
-	$( '#info-button' ).click( menu.onInfoButtonClick );
-	$( '#move-button' ).click( menu.onMoveButtonClick );
-	$( '#dropper-button' ).click( menu.onDropperButtonClick );
-	$( '#pencil-button' ).click( menu.onPencilButtonClick );
-	$( '#brush-button' ).click( menu.onBrushButtonClick );
-	$( '#bucket-button' ).click( menu.onBucketButtonClick );
-	$( '#eraser-button' ).click( menu.onEraserButtonClick );
-	$( document ).keydown( keyboard.onKeydown );
-	$( document ).keyup( keyboard.onKeyup );
+	$( '#grid-button' ).click( menu.clickGridButton );
+	$( '#zoom-in-button' ).click( menu.clickZoomInButton );
+	$( '#zoom-out-button' ).click( menu.clickZoomOutButton );
+	$( '#undo-button' ).click( menu.clickUndoButton );
+	$( '#redo-button' ).click( menu.clickRedoButton );
+	$( '#info-button' ).click( menu.clickInfoButton );
+	$( '#move-button' ).click( menu.clickMoveButton );
+	$( '#dropper-button' ).click( menu.clickDropperButton );
+	$( '#pencil-button' ).click( menu.clickPencilButton );
+	$( '#brush-button' ).click( menu.clickBrushButton );
+	$( '#bucket-button' ).click( menu.clickBucketButton );
+	$( '#eraser-button' ).click( menu.clickEraserButton );
+	$( document ).keydown( keyboard.keydown );
+	$( document ).keyup( keyboard.keyup );
 
 	// Set 'Move' as the default action
 	$( '#move-button' ).click();
 
 	// Disable disabled buttons
-	menu.checkButtons();
+	menu.updateButtons();
 
 	// Fill the board
 	board.fill();
 });
-
-/**
- * This object represents the current user
- */
-user = {
-	/**
-	 * These properties match the table columns and the properties of the PHP model
-	 */
-	id: null,
-	facebook_id: null,
-	join_time: null,
-	last_seen: null,
-	pixel_count: 0,
-	share_count: 0,
-	name: null,
-	email: null,
-	gender: null,
-	locale: null,
-	link: null,
-	status: 'anon',
-	timezone: null,
-
-	/**
-	 * Part of the undo/redo functionality
-	 * The rest is in the mouse.paintPixel and mouse.erasePixel methods
-	 */
-	oldPixels: [],
-	newPixels: [],
-	arrayPointer: 0,
-
-	register: function ( oldPixel, newPixel ) {
-		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
-		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
-		user.arrayPointer++;
-		menu.checkButtons();
-	},
-
-	undo: function () {
-		if ( user.arrayPointer === 0 ) {
-			return user;
-		}
-		user.arrayPointer--;
-		var oldPixel = user.oldPixels[ user.arrayPointer ];
-
-		if ( $.isArray( oldPixel ) ) {
-			oldPixel.forEach( function ( Pixel ) {
-				Pixel.paint().save();
-			});
-		} else {
-			oldPixel.paint().save();
-		}
-		menu.checkButtons();
-	},
-
-	redo: function () {
-		if ( user.arrayPointer === user.newPixels.length ) {
-			return user;
-		}
-		var newPixel = user.newPixels[ user.arrayPointer ];
-		user.arrayPointer++;
-
-		if ( $.isArray( newPixel ) ) {
-			newPixel.forEach( function ( Pixel ) {
-				Pixel.paint().save();
-			});
-		} else {
-			newPixel.paint().save();
-		}
-		menu.checkButtons();
-	},
-
-	isAnon: function () {
-		if ( user.status === 'anon' ) {
-			return true;
-		}
-		return false;
-	},
-
-	isAdmin: function () {
-		if ( user.status === 'admin' ) {
-			return true;
-		}
-		return false;
-	}
-}
 
 menu = {
 
@@ -150,7 +65,7 @@ menu = {
 
 	activeColor: '#000000',
 
-	onMenuButtonMouseover: function ( event ) {
+	showTooltip: function ( event ) {
 		var button = $( event.target );
 		var tooltip = button.attr( 'data-tooltip' );
 		if ( tooltip ) {
@@ -159,31 +74,31 @@ menu = {
 		}
 	},
 
-	onMenuButtonMouseout: function ( event ) {
+	hideTooltip: function ( event ) {
 		$( '.tooltip' ).remove();
 	},
 
-	onGridButtonClick: function ( event ) {
+	clickGridButton: function ( event ) {
 		grid.toggle();
 	},
 
-	onZoomInButtonClick: function ( event ) {
+	clickZoomInButton: function ( event ) {
 		board.zoomIn();
 	},
 
-	onZoomOutButtonClick: function ( event ) {
+	clickZoomOutButton: function ( event ) {
 		board.zoomOut();
 	},
 
-	onUndoButtonClick: function ( event ) {
-		user.undo();
+	clickUndoButton: function ( event ) {
+		board.undo();
 	},
 
-	onRedoButtonClick: function ( event ) {
-		user.redo();
+	clickRedoButton: function ( event ) {
+		board.redo();
 	},
 
-	onInfoButtonClick: function ( event ) {
+	clickInfoButton: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#info-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'getInfo';
@@ -191,7 +106,7 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onMoveButtonClick: function ( event ) {
+	clickMoveButton: function ( event ) {
 		$( '#board' ).css( 'cursor', 'move' );
 		$( '#move-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'moveBoard1';
@@ -199,7 +114,7 @@ menu = {
 		mouse.upAction = 'moveBoard3';
 	},
 
-	onDropperButtonClick: function ( event ) {
+	clickDropperButton: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#dropper-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'suckColor';
@@ -207,7 +122,7 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onPencilButtonClick: function ( event ) {
+	clickPencilButton: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#pencil-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
@@ -215,9 +130,9 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onBrushButtonClick: function ( event ) {
-		if ( user.status === 'anon' ) {
-			return; // Only logged in users can use the brush
+	clickBrushButton: function ( event ) {
+		if ( $( '#brush-button' ).hasClass( 'disabled' ) ) {
+			return; // There should be a server-side check
 		}
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#brush-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
@@ -226,9 +141,9 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onBucketButtonClick: function ( event ) {
-		if ( user.share_count === '0' ) {
-			return; // Only users that shared can use the bucket
+	clickBucketButton: function ( event ) {
+		if ( $( '#bucket-button' ).hasClass( 'disabled' ) ) {
+			return; // There should be a server-side check
 		}
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#bucket-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
@@ -237,7 +152,7 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	onEraserButtonClick: function ( event ) {
+	clickEraserButton: function ( event ) {
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#eraser-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'erasePixel';
@@ -245,7 +160,7 @@ menu = {
 		mouse.upAction = null;
 	},
 
-	setAlert: function ( html, duration ) {
+	showAlert: function ( html, duration ) {
 		$( '#alert' ).html( html ).show();
 		if ( duration ) {
 			window.setTimeout( function () {
@@ -254,12 +169,23 @@ menu = {
 		}
 	},
 
+	showPixelAuthor: function ( Pixel, Author ) {
+		var picture = '<img src="images/anon.png" />',
+			author = Author.name;
+		if ( !Author.isAnon() ) {
+			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture" />';
+			author = '<a href="' + Author.link + '">' + Author.name + '</a>';
+		}
+		var age = roundSeconds( Math.floor( Date.now() / 1000 ) - Pixel.time );
+		menu.showAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>', 4000 );
+	},
+
 	/**
-	 * Check each button to see if it should be enabled or disabled
+	 * Update the status of each button
 	 */
-	checkButtons: function () {
-		// First enable everything
-		$( '.menu button' ).removeClass( 'disabled' );
+	updateButtons: function () {
+		// First reset everything
+		$( '.menu button' ).removeClass( 'disabled' ).removeAttr( 'data-tooltip' );
 
 		if ( board.pixelSize === 1 ) {
 			$( '#zoom-out-button' ).addClass( 'disabled' );
@@ -269,89 +195,91 @@ menu = {
 			$( '#zoom-in-button' ).addClass( 'disabled' );
 		}
 
-		if ( user.arrayPointer === 0 ) {
+		if ( board.arrayPointer === 0 ) {
 			$( '#undo-button' ).addClass( 'disabled' );
 		}
 
-		if ( user.arrayPointer === user.newPixels.length ) {
+		if ( board.arrayPointer === board.newPixels.length ) {
 			$( '#redo-button' ).addClass( 'disabled' );
 		}
 
-		if ( user.isAnon() ) {
-			$( '#brush-button' ).addClass( 'disabled' ).attr( 'title', 'Log in with Facebook to use the brush' );
+		if ( gUser.isAnon() ) {
+			$( '#brush-button' ).addClass( 'disabled' ).attr( 'data-tooltip', 'Log in with Facebook to activate the brush' );
 		}
 
-		if ( user.share_count == 0 ) { // Non-strict comparison because ajax returns '0' rather than 0
-			$( '#bucket-button' ).addClass( 'disabled' ).attr( 'title', 'Share on Facebook to user the bucket' );
+		if ( gUser.share_count === 0 ) { // Non-strict comparison because ajax returns '0' rather than 0 (see bugs in README.md)
+			$( '#bucket-button' ).addClass( 'disabled' ).attr( 'data-tooltip', 'Share on Facebook to activate the bucket' );
 		}
 
 		if ( board.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
 		}
 
-		if ( !user.isAnon() ) {
+		if ( !gUser.isAnon() ) {
 			$( '#facebook-login-button' ).addClass( 'disabled' );
 		}
 
-		if ( user.isAnon() ) {
+		if ( gUser.isAnon() ) {
 			$( '#facebook-logout-button' ).addClass( 'disabled' );
 		}
+
+		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
 	}
 }
 
 keyboard = {
 
-	onKeydown: function ( event ) {
+	keydown: function ( event ) {
 		// Alt
 		if ( event.keyCode === 18 ) {
-			$( '#dropper-button' ).click();
+			menu.clickDropperButton();
 		}
 		// Spacebar
 		if ( event.keyCode === 32 ) {
-			$( '#move-button' ).click();
+			menu.clickMoveButton();
 		}
 		// A
 		if ( event.keyCode === 65 ) {
-			$( '#info-button' ).click();
+			menu.clickInfoButton();
 		}
 		// B
 		if ( event.keyCode === 66 ) {
-			$( '#bucket-button' ).click();
+			menu.clickBucketButton();
 		}
 		// E
 		if ( event.keyCode === 69 ) {
-			$( '#eraser-button' ).click();
+			menu.clickEraserButton();
 		}
 		// G
 		if ( event.keyCode === 71 ) {
-			$( '#grid-button' ).click();
+			menu.clickGridButton();
 		}
 		// I
 		if ( event.keyCode === 73 ) {
-			$( '#zoom-in-button' ).click();
+			menu.clickZoomInButton();
 		}
 		// O
 		if ( event.keyCode === 79 ) {
-			$( '#zoom-out-button' ).click();
+			menu.clickZoomOutButton();
 		}
 		// P
 		if ( event.keyCode === 80 ) {
-			$( '#pencil-button' ).click();
+			menu.clickPencilButton();
 		}
 		// X
 		if ( event.keyCode === 88 ) {
-			$( '#redo-button' ).click();
+			menu.clickRedoButton();
 		}
 		// Z
 		if ( event.keyCode === 90 ) {
-			$( '#undo-button' ).click();
+			menu.clickUndoButton();
 		}
 	},
 
-	onKeyup: function ( event ) {
+	keyup: function ( event ) {
 		// Alt
 		if ( event.keyCode === 18 ) {
-			$( '#pencil-button' ).click();
+			menu.clickPencilButton();
 		}
 	}
 }
@@ -438,7 +366,7 @@ mouse = {
 			blue  = imageData.data[2],
 			alpha = imageData.data[3],
 			menu.activeColor = alpha ? rgb2hex( red, green, blue ) : board.background;
-		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
+		menu.updateButtons();
 		return mouse;
 	},
 
@@ -447,14 +375,9 @@ mouse = {
 		$.get( 'ajax.php?method=getInfo', data, function ( response ) {
 			//console.log( response );
 			if ( response.Pixel ) {
-				var author = response.Author.name;
-				if ( response.Author.link ) {
-					author = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
-				}
-				var age = roundSeconds( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
-				menu.setAlert( 'By ' + author + ', ' + age + ' ago' );
-			} else {
-				menu.setAlert( 'Free pixel' );
+				var Pixel = new window.Pixel( response.Pixel );
+				var Author = new window.User( response.Author );
+				menu.showPixelAuthor( Pixel, Author );
 			}
 		});
 		return mouse;
@@ -473,7 +396,7 @@ mouse = {
 		}
 
 		// Register the changes for the undo/redo functionality
-		user.register( oldPixel, newPixel );
+		board.register( oldPixel, newPixel );
 
 		newPixel.paint().save();
 		return mouse;
@@ -492,7 +415,7 @@ mouse = {
 		var newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY });
 
 		// Register the changes for the undo/redo functionality
-		user.register( oldPixel, newPixel );
+		board.register( oldPixel, newPixel );
 
 		newPixel.erase().save();
 		return mouse;
@@ -500,11 +423,14 @@ mouse = {
 
 	paintArea: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor };
-		$.get( 'ajax.php?method=paintArea', data, function ( response ) {
-			console.log( response );
+		$.post( 'ajax.php?method=paintArea', data, function ( response ) {
+			//console.log( response );
 			if ( response.message === 'Not your pixel' ) {
-				menu.setAlert( response.message, 1000 );
+				var Pixel = new window.Pixel( response.Pixel );
+				var Author = new window.User( response.Author );
+				menu.showPixelAuthor( Pixel, Author );
 			}
+
 			if ( response.message === 'Area painted' ) {
 				var newData,
 					newPixel,
@@ -523,7 +449,7 @@ mouse = {
 					oldPixels.push( oldPixel );
 				}
 				// Register the changes for the undo/redo functionality
-				user.register( oldPixels, newPixels );
+				board.register( oldPixels, newPixels );
 			}
 		});
 		return mouse;
@@ -655,13 +581,63 @@ board = {
 		return board;
 	},
 
+	/* Methods */
+
+	/**
+	 * Undo/redo functionality
+	 */
+	oldPixels: [],
+	newPixels: [],
+	arrayPointer: 0,
+
+	register: function ( oldPixel, newPixel ) {
+		board.oldPixels.splice( board.arrayPointer, board.oldPixels.length - board.arrayPointer, oldPixel );
+		board.newPixels.splice( board.arrayPointer, board.newPixels.length - board.arrayPointer, newPixel );
+		board.arrayPointer++;
+		menu.updateButtons();
+	},
+
+	undo: function () {
+		if ( board.arrayPointer === 0 ) {
+			return board;
+		}
+		board.arrayPointer--;
+		var oldPixel = board.oldPixels[ board.arrayPointer ];
+
+		if ( $.isArray( oldPixel ) ) {
+			oldPixel.forEach( function ( Pixel ) {
+				Pixel.paint().save();
+			});
+		} else {
+			oldPixel.paint().save();
+		}
+		menu.updateButtons();
+	},
+
+	redo: function () {
+		if ( board.arrayPointer === board.newPixels.length ) {
+			return board;
+		}
+		var newPixel = board.newPixels[ board.arrayPointer ];
+		board.arrayPointer++;
+
+		if ( $.isArray( newPixel ) ) {
+			newPixel.forEach( function ( Pixel ) {
+				Pixel.paint().save();
+			});
+		} else {
+			newPixel.paint().save();
+		}
+		menu.updateButtons();
+	},
+
 	zoomIn: function () {
 		if ( board.pixelSize === 64 ) {
 			return board;
 		}
 		board.setPixelSize( board.pixelSize * 2 );
 		board.refill();
-		menu.checkButtons();
+		menu.updateButtons();
 		return board;
 	},
 
@@ -671,12 +647,12 @@ board = {
 		}
 		board.setPixelSize( board.pixelSize / 2 );
 		board.refill();
-		menu.checkButtons();
+		menu.updateButtons();
 		return board;
 	},
 
 	fill: function () {
-		menu.setAlert( 'Loading pixels, please wait...' );
+		menu.showAlert( 'Loading pixels, please wait...' );
 
 		var x1 = board.centerX - board.xPixels / 2, // Math.ceil() or Math.floor() ?
 			y1 = board.centerY - board.yPixels / 2,
@@ -782,11 +758,47 @@ grid = {
 }
 
 /**
+ * User model
+ */
+function User( data ) {
+	/**
+	 * The property names and defaults match those of the PHP model and the table columns
+	 */
+	this.id = 'id' in data ? data.id : null,
+	this.facebook_id = 'facebook_id' in data ? data.facebook_id : null;
+	this.join_time = 'join_time' in data ? data.join_time : null;
+	this.last_seen = 'last_seen' in data ? data.last_seen : null;
+	this.pixel_count = 'pixel_count' in data ? data.pixel_count : 0;
+	this.share_count = 'share_count' in data ? data.share_count : 0;
+	this.name = 'name' in data ? data.name : null;
+	this.email = 'email' in data ? data.email : null;
+	this.gender = 'gender' in data ? data.gender : null;
+	this.locale = 'locale' in data ? data.locale : null;
+	this.link = 'link' in data ? data.link : null;
+	this.status = 'status' in data ? data.status : 'anon';
+	this.timezone = 'timezone' in data ? data.timezone : null;
+
+	this.isAnon = function () {
+		if ( this.status === 'anon' ) {
+			return true;
+		}
+		return false;
+	}
+
+	this.isAdmin = function () {
+		if ( this.status === 'admin' ) {
+			return true;
+		}
+		return false;
+	}
+}
+
+/**
  * Pixel model
  */
 function Pixel( data ) {
 	/**
-	 * The properties are identical to those of the PHP model and the table columns
+	 * The property names and defaults match those of the PHP model and the table columns
 	 */
 	this.x = 'x' in data ? data.x : null;
 	this.y = 'y' in data ? data.y : null;
@@ -802,32 +814,29 @@ function Pixel( data ) {
 		});
 	}
 
+	this.register = function ( previous ) {
+		
+	}
+
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
-		$.get( 'ajax.php?method=savePixel', data, function ( response ) {
+		$.post( 'ajax.php?method=savePixel', data, function ( response ) {
 			//console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
-				// Repaint the pixel
-				var oldPixel = new window.Pixel( response.Pixel );
-				oldPixel.paint();
+				var Pixel = new window.Pixel( response.Pixel );
+				var Author = new window.User( response.Author );
 
-				// Display the author of the pixel
-				var picture = '<img src="images/anon.png" />',
-					author = response.Author.name;
-				if ( response.Author.facebook_id ) {
-					picture = '<img src="http://graph.facebook.com/' + response.Author.facebook_id + '/picture" />';
-					author = '<a href="' + response.Author.link + '">' + response.Author.name + '</a>';
-				}
-				var age = roundSeconds( Math.floor( Date.now() / 1000 ) - response.Pixel.time );
-				menu.setAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>', 4000 );
+				Pixel.paint();
+
+				menu.showPixelAuthor( Pixel, Author );
 
 				// Remove the reverted pixel from the undo/redo arrays
-				for ( var i = 0; i < user.oldPixels.length; i++ ) {
-					if ( user.oldPixels[ i ].x === oldPixel.x && user.oldPixels[ i ].y === oldPixel.y ) {
-						user.oldPixels.splice( i, 1 );
-						user.newPixels.splice( i, 1 );
-						user.arrayPointer--;
+				for ( var i = 0; i < board.oldPixels.length; i++ ) {
+					if ( board.oldPixels[ i ].x === Pixel.x && board.oldPixels[ i ].y === Pixel.y ) {
+						board.oldPixels.splice( i, 1 );
+						board.newPixels.splice( i, 1 );
+						board.arrayPointer--;
 					}
 				}
 			}
@@ -858,3 +867,23 @@ function Pixel( data ) {
 		return this;
 	}
 }
+
+function Area( data ) {
+
+	this.pixels = 'pixels' in data ? data.pixels : [];
+
+	this.paint = function () {
+		this.pixels.forEach( function ( pixel ) {
+			pixel.paint();
+		});
+	}
+
+	this.save = function () {
+		this.pixels.forEach( function ( pixel ) {
+			pixel.save();
+		});
+	}
+}
+
+// Build the global user
+gUser = new window.User({});

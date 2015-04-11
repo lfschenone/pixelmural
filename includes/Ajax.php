@@ -32,8 +32,8 @@ class Ajax extends Controller {
 		$PIXELS = array();
 		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
 		while ( $DATA = $Result->fetch_assoc() ) {
-			$PIXELS[] = (int) $DATA['x'];
-			$PIXELS[] = (int) $DATA['y'];
+			$PIXELS[] = $DATA['x'];
+			$PIXELS[] = $DATA['y'];
 			$PIXELS[] = $DATA['color'];
 		}
 		return $PIXELS;
@@ -46,9 +46,9 @@ class Ajax extends Controller {
 	static function saveScreen() {
 		global $gDatabase;
 
-		$centerX = GET( 'centerX' );
-		$centerY = GET( 'centerY' );
-		$pixelSize = GET( 'pixelSize' );
+		$centerX = POST( 'centerX' );
+		$centerY = POST( 'centerY' );
+		$pixelSize = POST( 'pixelSize' );
 
 		// Calculate the rest of the screenshot details
 		$width = 1200;
@@ -88,9 +88,9 @@ class Ajax extends Controller {
 	static function savePixel() {
 		global $gUser;
 
-		$x = GET( 'x' );
-		$y = GET( 'y' );
-		$color = GET( 'color' );
+		$x = POST( 'x' );
+		$y = POST( 'y' );
+		$color = POST( 'color' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
 
@@ -125,52 +125,59 @@ class Ajax extends Controller {
 	static function paintArea() {
 		global $gUser, $gDatabase;
 
-		$x = GET( 'x' );
-		$y = GET( 'y' );
+		$x = POST( 'x' );
+		$y = POST( 'y' );
 		$author_id = $gUser->id;
 		$time = $_SERVER['REQUEST_TIME'];
-		$color = GET( 'color' );
+		$color = POST( 'color' );
 
 		$firstPixel = Pixel::newFromCoords( $x, $y );
+
 		if ( !$firstPixel ) {
-			$RESPONSE['message'] = 'Not your pixel';
-		} else if ( $firstPixel->author_id != $author_id and !$gUser->isAdmin() ) {
-			$RESPONSE['message'] = 'Not your pixel';
-		} else {
-			$oldData[] = clone $firstPixel; // Save the data of the old pixels for the the undo/redo functionality
-			$oldColor = $firstPixel->color;
-			$firstPixel->color = $color;
-			$firstPixel->update();
-			$newData = array( $firstPixel );
-			$QUEUE = array( $firstPixel );
-
-			while ( $QUEUE ) {
-				$Pixel = array_shift( $QUEUE );
-
-				// Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
-				// have the same color as the first pixel, and haven't been painted yet
-				$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
-					author_id = "' . $firstPixel->author_id . '" AND
-					time < ' . $time . ' AND
-					color = "' . $oldColor . '" AND (
-					( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR
-					( x = ' . $Pixel->x . ' - 1 AND y = ' . $Pixel->y . ' ) OR
-					( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' + 1 ) OR
-					( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' - 1 )
-					) LIMIT 4' );
-				while ( $DATA = $Result->fetch_assoc() ) {
-					$Neighbor = new Pixel( $DATA );
-					$oldData[] = clone $Neighbor;
-					$Neighbor->color = $color;
-					$Neighbor->update();
-					$newData[] = $Neighbor;
-					$QUEUE[] = $Neighbor;
-				}
-			}
-			$RESPONSE['message'] = 'Area painted';
-			$RESPONSE['oldData'] = $oldData;
-			$RESPONSE['newData'] = $newData;
+			$RESPONSE['message'] = 'No pixel';
+			return $RESPONSE;
 		}
+
+		if ( !$gUser->canEdit( $firstPixel ) ) {
+			$RESPONSE['Pixel'] = $firstPixel;
+			$RESPONSE['Author'] = $firstPixel->getAuthor();
+			$RESPONSE['message'] = 'Not your pixel';
+			return $RESPONSE;
+		}
+
+		$oldData[] = clone $firstPixel; // Save the data of the old pixels for the the undo/redo functionality
+		$oldColor = $firstPixel->color;
+		$firstPixel->color = $color;
+		$firstPixel->update();
+		$newData = array( $firstPixel );
+		$QUEUE = array( $firstPixel );
+
+		while ( $QUEUE ) {
+			$Pixel = array_shift( $QUEUE );
+
+			// Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
+			// have the same color as the first pixel, and haven't been painted yet
+			$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
+				author_id = "' . $firstPixel->author_id . '" AND
+				time < ' . $time . ' AND
+				color = "' . $oldColor . '" AND (
+				( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR
+				( x = ' . $Pixel->x . ' - 1 AND y = ' . $Pixel->y . ' ) OR
+				( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' + 1 ) OR
+				( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' - 1 )
+				) LIMIT 4' );
+			while ( $DATA = $Result->fetch_assoc() ) {
+				$Neighbor = new Pixel( $DATA );
+				$oldData[] = clone $Neighbor;
+				$Neighbor->color = $color;
+				$Neighbor->update();
+				$newData[] = $Neighbor;
+				$QUEUE[] = $Neighbor;
+			}
+		}
+		$RESPONSE['message'] = 'Area painted';
+		$RESPONSE['oldData'] = $oldData;
+		$RESPONSE['newData'] = $newData;
 		return $RESPONSE;
 	}
 
@@ -210,7 +217,7 @@ class Ajax extends Controller {
 			$gUser->last_seen = $_SERVER['REQUEST_TIME'];
 			$gUser->update();
 
-			$RESPONSE['user'] = $gUser;
+			$RESPONSE['gUser'] = $gUser;
 
 		} catch( Facebook\FacebookRequestException $FacebookRequestException ) {
 			$RESPONSE = array( 'code' => $FacebookRequestException->getCode(), 'message' => $FacebookRequestException->getMessage() );
@@ -230,7 +237,7 @@ class Ajax extends Controller {
 		$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
 		$gUser = User::newFromName( $name );
 
-		$RESPONSE['user'] = $gUser;
+		$RESPONSE['gUser'] = $gUser;
 		return $RESPONSE;
 	}
 
@@ -240,7 +247,7 @@ class Ajax extends Controller {
 		$gUser->share_count++;
 		$gUser->update();
 
-		$RESPONSE['user'] = $gUser;
+		$RESPONSE['gUser'] = $gUser;
 		return $gUser;
 	}
 }

@@ -27,15 +27,15 @@ window.fbAsyncInit = function () {
 	$( '#facebook-share-button' ).click( function ( event ) {
 		//console.log( event );
 		var data = { 'centerX': board.centerX, 'centerY': board.centerY, 'pixelSize': board.pixelSize };
-		$.get( 'ajax.php?method=saveScreen', data, function ( response ) {
+		$.post( 'ajax.php?method=saveScreen', data, function ( response ) {
 			//console.log( response );
 			FB.XFBML.parse(); // Update the URL to be shared
 			var data = { 'method': 'share', 'href': location.href };
 			FB.ui( data, function ( response ) {
 				//console.log( response );
 				if ( response === [] ) { // [] seems to be the response after a successful Share
-					user.share_count++;
-					menu.checkButtons();
+					gUser.share_count++;
+					menu.updateButtons();
 					$.post( 'ajax.php?method=facebookShare' ); // Update the database
 				}
 			});
@@ -46,12 +46,12 @@ window.fbAsyncInit = function () {
 function statusChangeCallback( response ) {
 	//console.log( response );
     if ( response.status === 'connected' ) {
-		$.get( 'ajax.php?method=facebookLogin', function ( response ) {
+		$.post( 'ajax.php?method=facebookLogin', function ( response ) {
 			//console.log( response );
-			for ( var property in response.user ) {
-				user[ property ] = response.user[ property ];
+			for ( var property in response.gUser ) {
+				gUser[ property ] = response.gUser[ property ];
 			}
-			menu.checkButtons();
+			menu.updateButtons();
 		});
     }
 
@@ -60,12 +60,12 @@ function statusChangeCallback( response ) {
     }
 
     if ( response.status === 'unknown' ) {
-		$.get( 'ajax.php?method=facebookLogout', function ( response ) {
+		$.post( 'ajax.php?method=facebookLogout', function ( response ) {
 			//console.log( response );
-			for ( var property in response.user ) {
-				user[ property ] = response.user[ property ];
+			for ( var property in response.gUser ) {
+				gUser[ property ] = response.gUser[ property ];
 			}
-			menu.checkButtons();
+			menu.updateButtons();
 		});
 	}
 }

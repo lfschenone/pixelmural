@@ -5,8 +5,7 @@ An infinite canvas of collaborative pixel art
 Bugs
 ----
 * The mouse position is off by two pixels. There is a bugfix in place, but it's ugly.
-* Somehow fix the data types sent via ajax.
-* The spectrum source throws a warning, see the console.
+* The spectrum source throws a warning, see the console. My fault or theirs?
 * Sometimes the bucket doesn't paint all the pixels it should. The bug probably comes from the SQL statement.
 
 Tasks
@@ -16,8 +15,6 @@ Tasks
 * Mobile version
 * Cookies to remember things like the grid and colors
 * Set up payments
-* Replace GET for POST ajax requests where adequate
-* Draft pencil?
 * When zooming and moving, only load the pixels that change
 * Further optimise data transfer
 * Further customise Spectrum
