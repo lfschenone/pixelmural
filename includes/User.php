@@ -21,6 +21,9 @@ class User extends Model {
 
 	static function newFromId( $id ) {
 		global $gDatabase;
+		if ( !$id ) {
+			return null;
+		}
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE id = $id LIMIT 1" );
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
@@ -31,6 +34,9 @@ class User extends Model {
 
 	static function newFromFacebookId( $facebook_id ) {
 		global $gDatabase;
+		if ( !$facebook_id ) {
+			return null;
+		}
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE facebook_id = $facebook_id LIMIT 1" );
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
@@ -45,6 +51,9 @@ class User extends Model {
 	 */
 	static function newFromName( $name ) {
 		global $gDatabase;
+		if ( !$name ) {
+			return null;
+		}
 		$name = $gDatabase->real_escape_string( $name );
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$name' LIMIT 1" );
 		$DATA = $Result->fetch_assoc();

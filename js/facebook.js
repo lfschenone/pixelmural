@@ -8,17 +8,12 @@ window.fbAsyncInit = function () {
 		version: 'v2.0'
 	});
 
-	$( '#facebook-share-button' ).click( function ( event ) {
-		//console.log( event );
-		var data = { 'centerX': board.centerX, 'centerY': board.centerY, 'pixelSize': board.pixelSize };
-		$.get( 'ajax.php?method=saveScreen', data, function ( response ) {
-			//console.log( response );
-			FB.XFBML.parse(); // Update URL to be shared to the latest coordinates
-			var data = { 'method': 'share', 'href': location.href };
-			FB.ui( data, function ( response ) {
-				//console.log( response );
-			});
-		});
+	FB.Event.subscribe( 'auth.statusChange', function ( response ) {
+		statusChangeCallback( response )
+	});
+
+	FB.getLoginStatus( function ( response ) {
+		statusChangeCallback( response );
 	});
 
 	$( '#facebook-login-button' ).click( function () {
@@ -29,33 +24,46 @@ window.fbAsyncInit = function () {
 		FB.logout();
 	});
 
-	FB.Event.subscribe( 'auth.statusChange', function ( response ) {
-		//console.log( response );
-	    if ( response.status === 'connected' ) {
-			$.get( 'ajax.php?method=facebookLogin', function ( response ) {
-				//console.log( response );
-				for ( var property in response.user ) {
-					user[ property ] = response.user[ property ];
-				}
+	$( '#facebook-share-button' ).click( function ( event ) {
+		//console.log( event );
+		var data = { 'centerX': board.centerX, 'centerY': board.centerY, 'pixelSize': board.pixelSize };
+		$.get( 'ajax.php?method=saveScreen', data, function ( response ) {
+			//console.log( response );
+			FB.XFBML.parse(); // Update the URL to be shared
+			var data = { 'method': 'share', 'href': location.href };
+			FB.ui( data, function ( response ) {
+				console.log( response );
+				user.share_count++;
+				menu.checkButtons();
+				$.post( 'ajax.php?method=facebookShare' ); // Update the database
 			});
-			FB.api( '/me', function ( response ) {
-				//console.log( response );
-			});
-			$( '#facebook-login-button' ).hide();
-			$( '#facebook-logout-button' ).show();
-	    }
-	    if ( response.status === 'not_authorized' ) {
-			// What do?
-	    }
-	    if ( response.status === 'unknown' ) {
-			$.get( 'ajax.php?method=facebookLogout', function ( response ) {
-				//console.log( response );
-				for ( var property in response.user ) {
-					user[ property ] = response.user[ property ];
-				}
-			});
-			$( '#facebook-login-button' ).show();
-			$( '#facebook-logout-button' ).hide();
-		}
+		});
 	});
+}
+
+function statusChangeCallback( response ) {
+	//console.log( response );
+    if ( response.status === 'connected' ) {
+		$.get( 'ajax.php?method=facebookLogin', function ( response ) {
+			//console.log( response );
+			for ( var property in response.user ) {
+				user[ property ] = response.user[ property ];
+			}
+			menu.checkButtons();
+		});
+    }
+
+    if ( response.status === 'not_authorized' ) {
+		// What do?
+    }
+
+    if ( response.status === 'unknown' ) {
+		$.get( 'ajax.php?method=facebookLogout', function ( response ) {
+			//console.log( response );
+			for ( var property in response.user ) {
+				user[ property ] = response.user[ property ];
+			}
+			menu.checkButtons();
+		});
+	}
 }

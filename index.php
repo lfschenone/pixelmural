@@ -44,8 +44,8 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 		<button id="dropper-button" title="Dropper"><img src="images/dropper.png" alt="Dropper" /></button>
 		<button id="pencil-button" title="Pencil"><img src="images/pencil.png" alt="Pencil" /></button>
 		<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush" /></button>
-		<button id="eraser-button" title="Eraser"data-tooltip="E"><img src="images/eraser.png" alt="Eraser" /></button>
-		<button id="bucket-button" title="Bucket" class="disabled"><img src="images/bucket.png" alt="Bucket" /></button>
+		<button id="eraser-button" title="Eraser"><img src="images/eraser.png" alt="Eraser" /></button>
+		<button id="bucket-button" title="Bucket"><img src="images/bucket.png" alt="Bucket" /></button>
 		<button id="grid-button" title="Grid"><img src="images/grid.png" alt="Grid" /></button>
 	</div>
 
@@ -62,8 +62,8 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 
 	<div id="facebook-menu" class="menu">
 		<button id="facebook-share-button" title="Share on Facebook"><img src="images/facebook-share.png" alt="Share"></button>
-		<button id="facebook-login-button" title="Login with Facebook"><img src="images/facebook-login.png" alt="Login"></button>
-		<button id="facebook-logout-button" title="Logout from Facebook"><img src="images/facebook-logout.png" alt="Logout"></button>
+		<button id="facebook-login-button" title="Log in with Facebook"><img src="images/facebook-login.png" alt="Login"></button>
+		<button id="facebook-logout-button" title="Log out from Facebook"><img src="images/facebook-logout.png" alt="Logout"></button>
 	</div>
 
 	<div id="alert"></div>

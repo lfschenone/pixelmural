@@ -32,7 +32,7 @@ $( function () {
 	grid.setHeight( board.height );
 
 	// Bind events
-	$( '.menu button' ).mouseover( menu.onButtonMouseover ).mouseout( menu.onButtonMouseout );
+	$( '.menu button' ).mouseover( menu.onMenuButtonMouseover ).mouseout( menu.onMenuButtonMouseout );
 	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( '#grid-button' ).click( menu.onGridButtonClick );
 	$( '#zoom-in-button' ).click( menu.onZoomInButtonClick );
@@ -51,6 +51,9 @@ $( function () {
 
 	// Set 'Move' as the default action
 	$( '#move-button' ).click();
+
+	// Disable disabled buttons
+	menu.checkButtons();
 
 	// Fill the board
 	board.fill();
@@ -89,14 +92,16 @@ user = {
 		user.oldPixels.splice( user.arrayPointer, user.oldPixels.length - user.arrayPointer, oldPixel );
 		user.newPixels.splice( user.arrayPointer, user.newPixels.length - user.arrayPointer, newPixel );
 		user.arrayPointer++;
+		menu.checkButtons();
 	},
 
 	undo: function () {
 		if ( user.arrayPointer === 0 ) {
-			return false;
+			return user;
 		}
 		user.arrayPointer--;
 		var oldPixel = user.oldPixels[ user.arrayPointer ];
+
 		if ( $.isArray( oldPixel ) ) {
 			oldPixel.forEach( function ( Pixel ) {
 				Pixel.paint().save();
@@ -104,14 +109,16 @@ user = {
 		} else {
 			oldPixel.paint().save();
 		}
+		menu.checkButtons();
 	},
 
 	redo: function () {
 		if ( user.arrayPointer === user.newPixels.length ) {
-			return false;
+			return user;
 		}
 		var newPixel = user.newPixels[ user.arrayPointer ];
 		user.arrayPointer++;
+
 		if ( $.isArray( newPixel ) ) {
 			newPixel.forEach( function ( Pixel ) {
 				Pixel.paint().save();
@@ -119,6 +126,7 @@ user = {
 		} else {
 			newPixel.paint().save();
 		}
+		menu.checkButtons();
 	},
 
 	isAnon: function () {
@@ -134,6 +142,19 @@ menu = {
 	alert: '',
 
 	activeColor: '#000000',
+
+	onMenuButtonMouseover: function ( event ) {
+		var button = $( event.target );
+		var tooltip = button.attr( 'data-tooltip' );
+		if ( tooltip ) {
+			var span = $( '<span/>' ).addClass( 'tooltip' ).text( tooltip );
+			button.append( span );
+		}
+	},
+
+	onMenuButtonMouseout: function ( event ) {
+		$( '.tooltip' ).remove();
+	},
 
 	onGridButtonClick: function ( event ) {
 		grid.toggle();
@@ -188,6 +209,9 @@ menu = {
 	},
 
 	onBrushButtonClick: function ( event ) {
+		if ( user.status === 'anon' ) {
+			return; // Only logged in users can use the brush
+		}
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#brush-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
@@ -196,6 +220,9 @@ menu = {
 	},
 
 	onBucketButtonClick: function ( event ) {
+		if ( user.share_count === '0' ) {
+			return; // Only users that shared can use the bucket
+		}
 		$( '#board' ).css( 'cursor', 'default' );
 		$( '#bucket-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintArea';
@@ -217,6 +244,50 @@ menu = {
 			window.setTimeout( function () {
 				$( '#alert' ).hide();
 			}, duration );
+		}
+	},
+
+	/**
+	 * Check each button to see if it should be enabled or disabled
+	 */
+	checkButtons: function () {
+		// First enable everything
+		$( '.menu button' ).removeClass( 'disabled' );
+
+		if ( board.pixelSize === 1 ) {
+			$( '#zoom-out-button' ).addClass( 'disabled' );
+		}
+
+		if ( board.pixelSize === 64 ) {
+			$( '#zoom-in-button' ).addClass( 'disabled' );
+		}
+
+		if ( user.arrayPointer === 0 ) {
+			$( '#undo-button' ).addClass( 'disabled' );
+		}
+
+		if ( user.arrayPointer === user.newPixels.length ) {
+			$( '#redo-button' ).addClass( 'disabled' );
+		}
+
+		if ( user.isAnon() ) {
+			$( '#brush-button' ).addClass( 'disabled' );
+		}
+
+		if ( user.share_count == 0 ) { // Non-strict comparison because ajax returns '0' rather than 0
+			$( '#bucket-button' ).addClass( 'disabled' );
+		}
+
+		if ( board.pixelSize < 4 ) {
+			$( '#grid-button' ).addClass( 'disabled' );
+		}
+
+		if ( !user.isAnon() ) {
+			$( '#facebook-login-button' ).addClass( 'disabled' );
+		}
+
+		if ( user.isAnon() ) {
+			$( '#facebook-logout-button' ).addClass( 'disabled' );
 		}
 	}
 }
@@ -583,6 +654,7 @@ board = {
 		}
 		board.setPixelSize( board.pixelSize * 2 );
 		board.refill();
+		menu.checkButtons();
 		return board;
 	},
 
@@ -592,6 +664,7 @@ board = {
 		}
 		board.setPixelSize( board.pixelSize / 2 );
 		board.refill();
+		menu.checkButtons();
 		return board;
 	},
 
@@ -673,8 +746,7 @@ grid = {
 	show: function () {
 		grid.visible = true;
 		if ( board.pixelSize < 4 ) {
-			menu.setAlert( 'Pixels are too small for the grid', 1000 );
-			return grid;
+			return grid; // Pixels are too small for the grid
 		}
 		grid.context.beginPath();
 		for ( var x = 0; x <= board.xPixels; x++ ) {
@@ -707,7 +779,7 @@ grid = {
  */
 function Pixel( data ) {
 	/**
-	 * The properties are identical to those of the PHP model and the database columns
+	 * The properties are identical to those of the PHP model and the table columns
 	 */
 	this.x = 'x' in data ? data.x : null;
 	this.y = 'y' in data ? data.y : null;

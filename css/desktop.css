@@ -7,6 +7,7 @@ html {
 body {
 	background: #ddd;
 	box-sizing: border-box;
+	cursor: default;
 	font-family: Helvetica;
 	font-size: 15px;
 	font-weight: 300;
@@ -35,14 +36,19 @@ body {
 .menu button img {
 	display: block;
 	height: 30px;
+	pointer-events: none;
+}
+
+.menu button.disabled {
+	cursor: default;
+}
+
+.menu button.disabled img {
+	opacity: .1;
 }
 
 .menu button.active {
 	background: #aaf;
-}
-
-.menu button.disabled {
-	
 }
 
 .menu .tooltip {
@@ -53,6 +59,7 @@ body {
 	padding: 5px 10px;
 	pointer-events: none;
 	position: absolute;
+	top: 50px;
 	white-space: nowrap;
 	z-index: 2;
 }
@@ -86,7 +93,7 @@ body {
 #facebook-menu img {
 	height: intrinsic;
 }
-#facebook-logout-button {
+#facebook-menu button.disabled {
 	display: none;
 }
 

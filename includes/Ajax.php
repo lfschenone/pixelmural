@@ -222,22 +222,25 @@ class Ajax extends Controller {
 
 	static function facebookLogout() {
 		global $gDatabase, $gUser;
+
 		session_destroy();
 		setcookie( 'token', '', 0, '/' );
 
-		// Now update the user info
+		// Update the global user
 		$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
 		$gUser = User::newFromName( $name );
-		
-		// If no user exists with that name, create a new one
-		if ( !$gUser ) {
-			$gUser = new User;
-			$gUser->name = $_SERVER['REMOTE_ADDR'];
-			$gUser->join_time = $_SERVER['REQUEST_TIME'];
-			$gUser->status = 'anon';
-			$gUser->id = $gUser->insert();
-		}
+
 		$RESPONSE['user'] = $gUser;
 		return $RESPONSE;
+	}
+
+	static function facebookShare() {
+		global $gDatabase, $gUser;
+
+		$gUser->share_count++;
+		$gUser->update();
+
+		$RESPONSE['user'] = $gUser;
+		return $gUser;
 	}
 }

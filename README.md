@@ -16,9 +16,7 @@ Tasks
 * Mobile version
 * Cookies to remember things like the grid and colors
 * Perfect Facebook sharing
-* Block the bucket until the user shares
 * Set up payments
-* Break pixel-by-pixel.js into many files?
 * Replace GET for POST ajax requests where adequate
 * Draft pencil?
 * When zooming and moving, only load the pixels that change

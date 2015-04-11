@@ -19,11 +19,13 @@ Facebook\FacebookSession::setDefaultApplication( FACEBOOK_APP_ID, FACEBOOK_APP_S
 // Build the global user object
 $token = SESSION( 'token', COOKIE( 'token' ) );
 $gUser = User::newFromToken( $token );
-// If no user was built, check if it's a returning visitor
+
+// If there is still no user, check if it's a returning visitor
 if ( !$gUser ) {
 	$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
 	$gUser = User::newFromName( $name );
 }
+
 // If there is still no user, create a new one
 if ( !$gUser ) {
 	$gUser = new User;

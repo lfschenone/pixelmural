@@ -26,7 +26,7 @@ function roundSeconds( seconds ) {
 }
 
 function plural( amount, singular, plural ) {
-	( singular === undefined ) ? '' : singular;
-	( plural === undefined ) ? 's' : plural;
-	return ( amount === 1 ) ? singular : plural;
+	singular = singular === undefined ? '' : singular;
+	plural = plural === undefined ? 's' : plural;
+	return amount === 1 ? singular : plural;
 }
