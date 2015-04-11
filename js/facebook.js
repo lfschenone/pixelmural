@@ -32,10 +32,12 @@ window.fbAsyncInit = function () {
 			FB.XFBML.parse(); // Update the URL to be shared
 			var data = { 'method': 'share', 'href': location.href };
 			FB.ui( data, function ( response ) {
-				console.log( response );
-				user.share_count++;
-				menu.checkButtons();
-				$.post( 'ajax.php?method=facebookShare' ); // Update the database
+				//console.log( response );
+				if ( response === [] ) { // [] seems to be the response after a successful Share
+					user.share_count++;
+					menu.checkButtons();
+					$.post( 'ajax.php?method=facebookShare' ); // Update the database
+				}
 			});
 		});
 	});

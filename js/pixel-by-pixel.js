@@ -77,7 +77,7 @@ user = {
 	gender: null,
 	locale: null,
 	link: null,
-	status: null,
+	status: 'anon',
 	timezone: null,
 
 	/**

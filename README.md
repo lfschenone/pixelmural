@@ -15,7 +15,6 @@ Tasks
 * 404, error handling
 * Mobile version
 * Cookies to remember things like the grid and colors
-* Perfect Facebook sharing
 * Set up payments
 * Replace GET for POST ajax requests where adequate
 * Draft pencil?
