@@ -39,50 +39,27 @@ class Ajax extends Controller {
 		return $PIXELS;
 	}
 
-	/**
-	 * Saves a screenshot of 1200px x 630px (recommended image size by Facebook)
-	 * centered around the view of the user
-	 */
-	static function saveScreen() {
+	static function getBoard() {
 		global $gDatabase;
+		$x1 = GET( 'x1' );
+		$y1 = GET( 'y1' );
+		$x2 = GET( 'x2' );
+		$y2 = GET( 'y2' );
+		$width = GET( 'width' );
+		$height = GET( 'height' );
+		$pixelSize = GET( 'pixelSize' );
 
-		$centerX = POST( 'centerX' );
-		$centerY = POST( 'centerY' );
-		$pixelSize = POST( 'pixelSize' );
-
-		// Calculate the rest of the screenshot details
-		$width = 1200;
-		$height = 630;
-		$xPixels = ceil( $width / $pixelSize );
-		$yPixels = ceil( $height / $pixelSize );
-		$x1 = $centerX - $xPixels / 2; // ceil() or floor() ?
-		$y1 = $centerY - $yPixels / 2;
-		$x2 = $centerX + $xPixels / 2;
-		$y2 = $centerY + $yPixels / 2;
-
-		// Create a transparent image
 		$Image = new Image( $width, $height );
 		$Image->makeTransparent();
 
-		// Fill the image with the pixels
-		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
+		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
 		while ( $DATA = $Result->fetch_assoc() ) {
-			$Pixel = new Pixel( $DATA );
-			$x1 = abs( $centerX - floor( $xPixels / 2 ) - $Pixel->x ) * $pixelSize;
-			$y1 = abs( $centerY - floor( $yPixels / 2 ) - $Pixel->y ) * $pixelSize;
-			$x2 = $x1 + $pixelSize;
-			$y2 = $y1 + $pixelSize;
-			$Image->setColorFromHex( $Pixel->color );
-			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
+			$Image->setColorFromHex( $DATA['color'] );
+			$x = ( $DATA['x'] - $x1 ) * $pixelSize;
+			$y = ( $DATA['y'] - $y1 ) * $pixelSize;
+			$Image->drawFilledRectangle( $x, $y, $x + $pixelSize, $y + $pixelSize );
 		}
-		if ( !file_exists( 'screens/' . $centerX ) ) {
-			mkdir( 'screens/' . $centerX );
-		}
-		if ( !file_exists( 'screens/' . $centerX . '/' . $centerY ) ) {
-			mkdir( 'screens/' . $centerX . '/' . $centerY );
-		}
-		$Image->save( 'screens/' . $centerX . '/' . $centerY . '/' . $pixelSize . '.png' );
-		return null;
+		return $Image->getBase64();
 	}
 
 	static function savePixel() {
@@ -179,6 +156,52 @@ class Ajax extends Controller {
 		$RESPONSE['oldData'] = $oldData;
 		$RESPONSE['newData'] = $newData;
 		return $RESPONSE;
+	}
+
+	/**
+	 * Saves a screenshot of 1200px x 630px (recommended image size by Facebook)
+	 * centered around the view of the user
+	 */
+	static function saveFacebookPreview() {
+		global $gDatabase;
+
+		$centerX = POST( 'centerX' );
+		$centerY = POST( 'centerY' );
+		$pixelSize = POST( 'pixelSize' );
+
+		// Calculate the rest of the screenshot details
+		$width = 1200;
+		$height = 630;
+		$xPixels = ceil( $width / $pixelSize );
+		$yPixels = ceil( $height / $pixelSize );
+		$x1 = $centerX - $xPixels / 2; // ceil() or floor() ?
+		$y1 = $centerY - $yPixels / 2;
+		$x2 = $centerX + $xPixels / 2;
+		$y2 = $centerY + $yPixels / 2;
+
+		// Create a transparent image
+		$Image = new Image( $width, $height );
+		$Image->makeTransparent();
+
+		// Fill the image with the pixels
+		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
+		while ( $DATA = $Result->fetch_assoc() ) {
+			$Pixel = new Pixel( $DATA );
+			$x1 = abs( $centerX - floor( $xPixels / 2 ) - $Pixel->x ) * $pixelSize;
+			$y1 = abs( $centerY - floor( $yPixels / 2 ) - $Pixel->y ) * $pixelSize;
+			$x2 = $x1 + $pixelSize;
+			$y2 = $y1 + $pixelSize;
+			$Image->setColorFromHex( $Pixel->color );
+			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
+		}
+		if ( !file_exists( 'previews/' . $centerX ) ) {
+			mkdir( 'previews/' . $centerX );
+		}
+		if ( !file_exists( 'previews/' . $centerX . '/' . $centerY ) ) {
+			mkdir( 'previews/' . $centerX . '/' . $centerY );
+		}
+		$Image->save( 'previews/' . $centerX . '/' . $centerY . '/' . $pixelSize . '.png' );
+		return null;
 	}
 
 	static function facebookLogin() {

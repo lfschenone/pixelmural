@@ -85,6 +85,14 @@ class Image {
 		return imagesy( $this->image );
 	}
 
+	function getBase64() {
+		ob_start();
+		imagepng( $this->image );
+		$data = ob_get_contents();
+		ob_end_clean();
+		return base64_encode( $data );
+	}
+
 	// Setters
 
 	function setColor( $red, $green, $blue, $alpha = 0 ) {

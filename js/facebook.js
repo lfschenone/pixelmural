@@ -27,7 +27,7 @@ window.fbAsyncInit = function () {
 	$( '#facebook-share-button' ).click( function ( event ) {
 		//console.log( event );
 		var data = { 'centerX': board.centerX, 'centerY': board.centerY, 'pixelSize': board.pixelSize };
-		$.post( 'ajax.php?method=saveScreen', data, function ( response ) {
+		$.post( 'ajax.php?method=saveFacebookPreview', data, function ( response ) {
 			//console.log( response );
 			FB.XFBML.parse(); // Update the URL to be shared
 			var data = { 'method': 'share', 'href': location.href };

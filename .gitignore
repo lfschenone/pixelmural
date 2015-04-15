@@ -1,4 +1,4 @@
 .DS_Store
-screens/*
-!screens/.htaccess
+previews/*
+!previews/.htaccess
 vendor/
