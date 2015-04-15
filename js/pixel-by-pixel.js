@@ -653,41 +653,19 @@ board = {
 
 	fill: function () {
 		menu.showAlert( 'Loading pixels, please wait...' );
-
-		var topLeftX = board.centerX - board.xPixels / 2, // Math.ceil() or Math.floor() ?
-			topLeftY = board.centerY - board.yPixels / 2,
-			data = { 'topLeftX': topLeftX, 'topLeftY': topLeftY, 'width': board.width, 'height': board.height, 'pixelSize': board.pixelSize };
-
+		var data = {
+			'width': board.width,
+			'height': board.height,
+			'pixelSize': board.pixelSize,
+			'centerX': board.centerX,
+			'centerY': board.centerY
+		};
 		$.get( 'ajax.php?method=getBoard', data, function ( response ) {
 			//console.log( response );
 			var image = new Image();
 			image.src = "data:image/png;base64," + response;
 			board.context.drawImage( image, 0, 0 );
-			$( '#alert' ).hide();
 
-		});
-		return board;
-	},
-
-	fill2: function () {
-		menu.showAlert( 'Loading pixels, please wait...' );
-
-		var x1 = board.centerX - board.xPixels / 2, // Math.ceil() or Math.floor() ?
-			y1 = board.centerY - board.yPixels / 2,
-			x2 = board.centerX + board.xPixels / 2,
-			y2 = board.centerY + board.yPixels / 2,
-			data = { 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2 };
-
-		$.get( 'ajax.php?method=getArea', data, function ( response ) {
-			//console.log( response );
-			var i,
-				pixelData,
-				Pixel;
-			for ( i = 0; i < response.length; i += 3 ) {
-				pixelData = { 'x': response[ i ], 'y': response[ i + 1 ], 'color': response[ i + 2 ] };
-				Pixel = new window.Pixel( pixelData );
-				Pixel.paint();
-			}
 			$( '#alert' ).hide();
 
 			// Update the URL of the browser

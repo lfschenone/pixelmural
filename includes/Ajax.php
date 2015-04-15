@@ -44,13 +44,16 @@ class Ajax extends Controller {
 		$width = GET( 'width' );
 		$height = GET( 'height' );
 		$pixelSize = GET( 'pixelSize' );
-		$topLeftX = GET( 'topLeftX' );
-		$topLeftY = GET( 'topLeftY' );
-		$bottomRightX = $topLeftX + ceil( $width / $pixelSize );
-		$bottomRightY = $topLeftY + ceil( $height / $pixelSize );
+		$centerX = GET( 'centerX' );
+		$centerY = GET( 'centerY' );
 
 		$Image = new Image( $width, $height );
 		$Image->makeTransparent();
+
+		$topLeftX = $centerX - ceil( $width / $pixelSize / 2 );
+		$topLeftY = $centerY - ceil( $height / $pixelSize / 2 );
+		$bottomRightX = $centerX + ceil( $width / $pixelSize / 2 );
+		$bottomRightY = $centerY + ceil( $height / $pixelSize / 2 );
 
 		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x < $bottomRightX AND y >= $topLeftY AND y < $bottomRightY" );
 		while ( $DATA = $Result->fetch_assoc() ) {
