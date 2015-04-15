@@ -654,11 +654,9 @@ board = {
 	fill: function () {
 		menu.showAlert( 'Loading pixels, please wait...' );
 
-		var x1 = board.centerX - board.xPixels / 2, // Math.ceil() or Math.floor() ?
-			y1 = board.centerY - board.yPixels / 2,
-			x2 = board.centerX + board.xPixels / 2,
-			y2 = board.centerY + board.yPixels / 2,
-			data = { 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2, 'width': board.width, 'height': board.height, 'pixelSize': board.pixelSize };
+		var topLeftX = board.centerX - board.xPixels / 2, // Math.ceil() or Math.floor() ?
+			topLeftY = board.centerY - board.yPixels / 2,
+			data = { 'topLeftX': topLeftX, 'topLeftY': topLeftY, 'width': board.width, 'height': board.height, 'pixelSize': board.pixelSize };
 
 		$.get( 'ajax.php?method=getBoard', data, function ( response ) {
 			//console.log( response );

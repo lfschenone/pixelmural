@@ -41,23 +41,25 @@ class Ajax extends Controller {
 
 	static function getBoard() {
 		global $gDatabase;
-		$x1 = GET( 'x1' );
-		$y1 = GET( 'y1' );
-		$x2 = GET( 'x2' );
-		$y2 = GET( 'y2' );
 		$width = GET( 'width' );
 		$height = GET( 'height' );
 		$pixelSize = GET( 'pixelSize' );
+		$topLeftX = GET( 'topLeftX' );
+		$topLeftY = GET( 'topLeftY' );
+		$bottomRightX = $topLeftX + ceil( $width / $pixelSize );
+		$bottomRightY = $topLeftY + ceil( $height / $pixelSize );
 
 		$Image = new Image( $width, $height );
 		$Image->makeTransparent();
 
-		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
+		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x < $bottomRightX AND y >= $topLeftY AND y < $bottomRightY" );
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$Image->setColorFromHex( $DATA['color'] );
-			$x = ( $DATA['x'] - $x1 ) * $pixelSize;
-			$y = ( $DATA['y'] - $y1 ) * $pixelSize;
-			$Image->drawFilledRectangle( $x, $y, $x + $pixelSize, $y + $pixelSize );
+			$x1 = ( $DATA['x'] - $topLeftX ) * $pixelSize;
+			$y1 = ( $DATA['y'] - $topLeftY ) * $pixelSize;
+			$x2 = $x1 + $pixelSize - 1;
+			$y2 = $y1 + $pixelSize - 1;
+			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
 		}
 		return $Image->getBase64();
 	}
