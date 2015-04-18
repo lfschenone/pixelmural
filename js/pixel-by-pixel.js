@@ -300,24 +300,30 @@ mouse = {
 	dragAction: null,
 	upAction: null,
 
+	getCurrentX: function ( event ) {
+		return board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( ( event.offsetX - 1 /* bugfix */ ) / board.pixelSize );
+	},
+
+	getCurrentY: function ( event ) {
+		return board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( ( event.offsetY - 2 /* bugfix */ ) / board.pixelSize );
+	},
+
 	down: function ( event ) {
 		mouse.state = 'down';
 		mouse[ mouse.downAction ]( event );
-		return mouse;
 	},
 
 	move: function ( event ) {
 		mouse.previousX = mouse.currentX;
 		mouse.previousY = mouse.currentY;
 
-		mouse.currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( ( event.offsetX - 1 /* bugfix */ ) / board.pixelSize );
-		mouse.currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( ( event.offsetY - 2 /* bugfix */ ) / board.pixelSize );
+		mouse.currentX = mouse.getCurrentX( event );
+		mouse.currentY = mouse.getCurrentY( event );
 
 		// If the mouse is being dragged
 		if ( mouse.state === 'down' && ( mouse.currentX !== mouse.previousX || mouse.currentY !== mouse.previousY ) && mouse.dragAction ) {
 			mouse[ mouse.dragAction ]( event );
 		}
-		return mouse;
 	},
 
 	up: function ( event ) {
@@ -325,14 +331,12 @@ mouse = {
 		if ( mouse.upAction ) {
 			mouse[ mouse.upAction ]( event );
 		}
-		return mouse;
 	},
 
 	moveBoard1: function ( event ) {
 		mouse.diffX = 0;
 		mouse.diffY = 0;
 		board.imageData = board.context.getImageData( 0, 0, board.width, board.height );
-		return mouse;
 	},
 
 	moveBoard2: function ( event ) {
@@ -346,17 +350,14 @@ mouse = {
 		board.context.putImageData( board.imageData, mouse.diffX, mouse.diffY );
 
 		// Bugfix: without this, the board flickers when moving
-		mouse.currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( event.offsetX / board.pixelSize );
-		mouse.currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( event.offsetY / board.pixelSize );
-
-		return mouse;
+		mouse.currentX = mouse.getCurrentX( event );
+		mouse.currentY = mouse.getCurrentY( event );
 	},
 
 	moveBoard3: function ( event ) {
 		if ( mouse.diffX || mouse.diffY ) {
 			board.fill();
 		}
-		return mouse;
 	},
 
 	suckColor: function ( event ) {
@@ -367,7 +368,6 @@ mouse = {
 			alpha = imageData.data[3],
 			menu.activeColor = alpha ? rgb2hex( red, green, blue ) : board.background;
 		menu.updateButtons();
-		return mouse;
 	},
 
 	getInfo: function ( event ) {
@@ -380,7 +380,6 @@ mouse = {
 				menu.showPixelAuthor( Pixel, Author );
 			}
 		});
-		return mouse;
 	},
 
 	/**
@@ -390,16 +389,11 @@ mouse = {
 		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY ),
 			newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
 
-		// For convenience, re-painting a pixel erases it
 		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
-			newPixel.color = null;
+			newPixel.color = null; // For convenience, re-painting a pixel erases it
 		}
 
-		// Register the changes for the undo/redo functionality
-		board.register( oldPixel, newPixel );
-
-		newPixel.paint().save();
-		return mouse;
+		newPixel.paint().save().register( oldPixel );
 	},
 
 	/**
@@ -409,16 +403,12 @@ mouse = {
 		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY );
 
 		if ( oldPixel.color === null ) {
-			return mouse; // The pixel doesn't exist, no need to continue
+			return; // The pixel doesn't exist, no need to continue
 		}
 
 		var newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY });
 
-		// Register the changes for the undo/redo functionality
-		board.register( oldPixel, newPixel );
-
-		newPixel.erase().save();
-		return mouse;
+		newPixel.erase().save().register( oldPixel );
 	},
 
 	paintArea: function ( event ) {
@@ -432,27 +422,24 @@ mouse = {
 			}
 
 			if ( response.message === 'Area painted' ) {
-				var newData,
+				var newArea = new window.Area({}),
+					newPixelData,
 					newPixel,
-					newPixels = [],
-					oldData,
-					oldPixel,
-					oldPixels = [];
-				for ( var i = 0; i < response.newData.length; i++ ) {
-					newData = response.newData[ i ];
-					newPixel = new window.Pixel( newData );
-					newPixel.paint();
-					newPixels.push( newPixel );
+					oldArea = new window.Area({}),
+					oldPixelData,
+					oldPixel;
+				for ( var i = 0; i < response.newAreaData.length; i++ ) {
+					newPixelData = response.newAreaData[ i ];
+					newPixel = new window.Pixel( newPixelData );
+					newArea.pixels.push( newPixel );
 
-					oldData = response.oldData[ i ];
-					oldPixel = new window.Pixel( oldData );
-					oldPixels.push( oldPixel );
+					oldPixelData = response.oldAreaData[ i ];
+					oldPixel = new window.Pixel( oldPixelData );
+					oldArea.pixels.push( oldPixel );
 				}
-				// Register the changes for the undo/redo functionality
-				board.register( oldPixels, newPixels );
+				newArea.paint().register( oldArea );
 			}
 		});
-		return mouse;
 	}
 }
 
@@ -530,42 +517,35 @@ board = {
 
 	setCanvas: function ( value ) {
 		board.canvas = value;
-		return board;
 	},
 
 	setContext: function ( value ) {
 		board.context = value;
-		return board;
 	},
 
 	setBackground: function ( value ) {
 		board.background = value;
 		$( board.canvas ).css( 'background', value );
-		return board;
 	},
 
 	setWidth: function ( value ) {
 		board.width = value;
 		board.canvas.setAttribute( 'width', value );
 		board.xPixels = board.getXpixels();
-		return board;
 	},
 
 	setHeight: function ( value ) {
 		board.height = value;
 		board.canvas.setAttribute( 'height', value );
 		board.yPixels = board.getYpixels();
-		return board;
 	},
 
 	setCenterX: function ( value ) {
 		board.centerX = value;
-		return board;
 	},
 
 	setCenterY: function ( value ) {
 		board.centerY = value;
-		return board;
 	},
 
 	setPixelSize: function ( value ) {
@@ -578,7 +558,6 @@ board = {
 		}
 		board.xPixels = board.getXpixels();
 		board.yPixels = board.getYpixels();
-		return board;
 	},
 
 	/* Methods */
@@ -590,65 +569,42 @@ board = {
 	newPixels: [],
 	arrayPointer: 0,
 
-	register: function ( oldPixel, newPixel ) {
-		board.oldPixels.splice( board.arrayPointer, board.oldPixels.length - board.arrayPointer, oldPixel );
-		board.newPixels.splice( board.arrayPointer, board.newPixels.length - board.arrayPointer, newPixel );
-		board.arrayPointer++;
-		menu.updateButtons();
-	},
-
 	undo: function () {
 		if ( board.arrayPointer === 0 ) {
-			return board;
+			return;
 		}
 		board.arrayPointer--;
-		var oldPixel = board.oldPixels[ board.arrayPointer ];
-
-		if ( $.isArray( oldPixel ) ) {
-			oldPixel.forEach( function ( Pixel ) {
-				Pixel.paint().save();
-			});
-		} else {
-			oldPixel.paint().save();
-		}
+		var oldPixels = board.oldPixels[ board.arrayPointer ];
+		oldPixels.paint().save();
 		menu.updateButtons();
 	},
 
 	redo: function () {
 		if ( board.arrayPointer === board.newPixels.length ) {
-			return board;
+			return;
 		}
 		var newPixel = board.newPixels[ board.arrayPointer ];
 		board.arrayPointer++;
-
-		if ( $.isArray( newPixel ) ) {
-			newPixel.forEach( function ( Pixel ) {
-				Pixel.paint().save();
-			});
-		} else {
-			newPixel.paint().save();
-		}
+		oldPixels.paint().save();
 		menu.updateButtons();
 	},
 
 	zoomIn: function () {
 		if ( board.pixelSize === 64 ) {
-			return board;
+			return;
 		}
 		board.setPixelSize( board.pixelSize * 2 );
-		board.refill();
+		board.fill();
 		menu.updateButtons();
-		return board;
 	},
 
 	zoomOut: function () {
 		if ( board.pixelSize === 1 ) {
-			return board;
+			return;
 		}
 		board.setPixelSize( board.pixelSize / 2 );
-		board.refill();
+		board.fill();
 		menu.updateButtons();
-		return board;
 	},
 
 	fill: function () {
@@ -664,7 +620,9 @@ board = {
 			//console.log( response );
 			var image = new Image();
 			image.src = "data:image/png;base64," + response;
+			board.clear();
 			board.context.drawImage( image, 0, 0 );
+			grid.toggle().toggle();
 
 			$( '#alert' ).hide();
 
@@ -672,18 +630,10 @@ board = {
 			var BASE = $( 'base' ).attr( 'href' );
 			history.replaceState( null, null, BASE + board.centerX + '/' + board.centerY + '/' + board.pixelSize );
 		});
-		return board;
 	},
 
 	clear: function () {
-		board.context.clearRect( 0, 0, board.canvas.width, board.canvas.height );
-		return board;
-	},
-
-	refill: function () {
-		board.clear().fill();
-		grid.toggle().toggle();
-		return board;
+		board.context.clearRect( 0, 0, board.width, board.height );
 	}
 }
 
@@ -698,24 +648,20 @@ grid = {
 
 	setCanvas: function ( value ) {
 		grid.canvas = value
-		return grid
 	},
 
 	setContext: function ( value ) {
 		grid.context = value
-		return grid
 	},
 
 	setWidth: function ( value ) {
 		grid.width = value;
 		grid.canvas.setAttribute( 'width', value );
-		return grid;
 	},
 
 	setHeight: function ( value ) {
 		grid.height = value;
 		grid.canvas.setAttribute( 'height', value );
-		return grid;
 	},
 
 	clear: function () {
@@ -725,7 +671,7 @@ grid = {
 	show: function () {
 		grid.visible = true;
 		if ( board.pixelSize < 4 ) {
-			return grid; // Pixels are too small for the grid
+			return; // Pixels are too small for the grid
 		}
 		grid.context.beginPath();
 		for ( var x = 0; x <= board.xPixels; x++ ) {
@@ -738,13 +684,11 @@ grid = {
 		}
 		grid.context.strokeStyle = grid.color;
 		grid.context.stroke();
-		return grid;
 	},
 
 	hide: function () {
 		grid.visible = false;
 		grid.clear();
-		return grid;
 	},
 
 	toggle: function () {
@@ -810,31 +754,37 @@ function Pixel( data ) {
 		});
 	}
 
-	this.register = function ( previous ) {
-		
+	this.register = function ( oldPixel ) {
+		board.oldPixels.splice( board.arrayPointer, board.oldPixels.length - board.arrayPointer, oldPixel );
+		board.newPixels.splice( board.arrayPointer, board.newPixels.length - board.arrayPointer, this );
+		board.arrayPointer++;
+		menu.updateButtons();
+		return this;
+	}
+
+	this.unregister = function () {
+		for ( var i = 0; i < board.oldPixels.length; i++ ) {
+			if ( board.oldPixels[ i ].x === this.x && board.oldPixels[ i ].y === this.y ) {
+				board.oldPixels.splice( i, 1 );
+				board.newPixels.splice( i, 1 );
+				board.arrayPointer--;
+			}
+		}
+		menu.updateButtons();
+		return this;
 	}
 
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
+		console.log( data );
 		$.post( 'ajax.php?method=savePixel', data, function ( response ) {
-			//console.log( response );
+			console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
 				var Pixel = new window.Pixel( response.Pixel );
 				var Author = new window.User( response.Author );
-
-				Pixel.paint();
-
+				Pixel.paint().unregister();
 				menu.showPixelAuthor( Pixel, Author );
-
-				// Remove the reverted pixel from the undo/redo arrays
-				for ( var i = 0; i < board.oldPixels.length; i++ ) {
-					if ( board.oldPixels[ i ].x === Pixel.x && board.oldPixels[ i ].y === Pixel.y ) {
-						board.oldPixels.splice( i, 1 );
-						board.newPixels.splice( i, 1 );
-						board.arrayPointer--;
-					}
-				}
 			}
 		});
 		return this;
@@ -864,20 +814,33 @@ function Pixel( data ) {
 	}
 }
 
+/**
+ * Area model
+ */
 function Area( data ) {
 
 	this.pixels = 'pixels' in data ? data.pixels : [];
 
+	this.register = function ( oldArea ) {
+		board.oldPixels.splice( board.arrayPointer, board.oldPixels.length - board.arrayPointer, oldArea );
+		board.newPixels.splice( board.arrayPointer, board.newPixels.length - board.arrayPointer, this );
+		board.arrayPointer++;
+		menu.updateButtons();
+		return this;
+	}
+
 	this.paint = function () {
-		this.pixels.forEach( function ( pixel ) {
-			pixel.paint();
+		this.pixels.forEach( function ( Pixel ) {
+			Pixel.paint();
 		});
+		return this;
 	}
 
 	this.save = function () {
-		this.pixels.forEach( function ( pixel ) {
-			pixel.save();
+		this.pixels.forEach( function ( Pixel ) {
+			Pixel.save(); // Very inefficient
 		});
+		return this;
 	}
 }
 

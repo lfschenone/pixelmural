@@ -50,10 +50,10 @@ class Ajax extends Controller {
 		$Image = new Image( $width, $height );
 		$Image->makeTransparent();
 
-		$topLeftX = $centerX - ceil( $width / $pixelSize / 2 );
-		$topLeftY = $centerY - ceil( $height / $pixelSize / 2 );
-		$bottomRightX = $centerX + ceil( $width / $pixelSize / 2 );
-		$bottomRightY = $centerY + ceil( $height / $pixelSize / 2 );
+		$topLeftX = $centerX - floor( $width / $pixelSize / 2 );
+		$topLeftY = $centerY - floor( $height / $pixelSize / 2 );
+		$bottomRightX = $centerX + floor( $width / $pixelSize / 2 );
+		$bottomRightY = $centerY + floor( $height / $pixelSize / 2 );
 
 		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x < $bottomRightX AND y >= $topLeftY AND y < $bottomRightY" );
 		while ( $DATA = $Result->fetch_assoc() ) {
@@ -109,8 +109,6 @@ class Ajax extends Controller {
 
 		$x = POST( 'x' );
 		$y = POST( 'y' );
-		$author_id = $gUser->id;
-		$time = $_SERVER['REQUEST_TIME'];
 		$color = POST( 'color' );
 
 		$firstPixel = Pixel::newFromCoords( $x, $y );
@@ -127,12 +125,12 @@ class Ajax extends Controller {
 			return $RESPONSE;
 		}
 
-		$oldData[] = clone $firstPixel; // Save the data of the old pixels for the the undo/redo functionality
+		$oldAreaData[] = clone $firstPixel; // Save the data of the old pixels for the the undo/redo functionality
 		$oldColor = $firstPixel->color;
 		$firstPixel->color = $color;
 		$firstPixel->update();
-		$newData = array( $firstPixel );
-		$QUEUE = array( $firstPixel );
+		$newAreaData[] = $firstPixel;
+		$QUEUE[] = $firstPixel;
 
 		while ( $QUEUE ) {
 			$Pixel = array_shift( $QUEUE );
@@ -141,7 +139,7 @@ class Ajax extends Controller {
 			// have the same color as the first pixel, and haven't been painted yet
 			$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
 				author_id = "' . $firstPixel->author_id . '" AND
-				time < ' . $time . ' AND
+				time < ' . time() . ' AND
 				color = "' . $oldColor . '" AND (
 				( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR
 				( x = ' . $Pixel->x . ' - 1 AND y = ' . $Pixel->y . ' ) OR
@@ -150,16 +148,16 @@ class Ajax extends Controller {
 				) LIMIT 4' );
 			while ( $DATA = $Result->fetch_assoc() ) {
 				$Neighbor = new Pixel( $DATA );
-				$oldData[] = clone $Neighbor;
+				$oldAreaData[] = clone $Neighbor;
 				$Neighbor->color = $color;
 				$Neighbor->update();
-				$newData[] = $Neighbor;
+				$newAreaData[] = $Neighbor;
 				$QUEUE[] = $Neighbor;
 			}
 		}
 		$RESPONSE['message'] = 'Area painted';
-		$RESPONSE['oldData'] = $oldData;
-		$RESPONSE['newData'] = $newData;
+		$RESPONSE['oldAreaData'] = $oldAreaData;
+		$RESPONSE['newAreaData'] = $newAreaData;
 		return $RESPONSE;
 	}
 
