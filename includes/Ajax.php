@@ -55,7 +55,7 @@ class Ajax extends Controller {
 		$bottomRightX = $centerX + floor( $width / $pixelSize / 2 );
 		$bottomRightY = $centerY + floor( $height / $pixelSize / 2 );
 
-		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x < $bottomRightX AND y >= $topLeftY AND y < $bottomRightY" );
+		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x <= $bottomRightX AND y >= $topLeftY AND y <= $bottomRightY" );
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$Image->setColorFromHex( $DATA['color'] );
 			$x1 = ( $DATA['x'] - $topLeftX ) * $pixelSize;
