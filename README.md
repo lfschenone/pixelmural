@@ -4,7 +4,6 @@ An infinite canvas of collaborative pixel art
 
 Bugs
 ----
-* jQuery throws a warning related to Spectrum in Chrome, see the console and http://stackoverflow.com/questions/29004611
 * Sometimes the bucket doesn't paint all the pixels it should. Not sure how to reproduce it. The bug probably comes from the SQL statement.
 * Sometimes the pencil doesn't erase when repainting. Not sure how to reproduce it.
 
