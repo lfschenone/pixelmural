@@ -52,8 +52,8 @@ class Ajax extends Controller {
 
 		$topLeftX = $centerX - floor( $width / $pixelSize / 2 );
 		$topLeftY = $centerY - floor( $height / $pixelSize / 2 );
-		$bottomRightX = $centerX + floor( $width / $pixelSize / 2 );
-		$bottomRightY = $centerY + floor( $height / $pixelSize / 2 );
+		$bottomRightX = $centerX + ceil( $width / $pixelSize / 2 );
+		$bottomRightY = $centerY + ceil( $height / $pixelSize / 2 );
 
 		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x < $bottomRightX AND y >= $topLeftY AND y < $bottomRightY" );
 		while ( $DATA = $Result->fetch_assoc() ) {
