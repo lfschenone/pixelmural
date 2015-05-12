@@ -16,6 +16,11 @@ body {
 	height: 100%;
 }
 
+button::-moz-focus-inner {
+	border: 0;
+	padding: 0;
+}
+
 .menu {
 	padding: 5px;
 	position: absolute;
@@ -24,6 +29,7 @@ body {
 .menu button {
 	background: transparent;
 	border: none;
+	box-sizing: border-box;
 	cursor: pointer;
 	display: inline-block;
 	font: inherit;
@@ -91,7 +97,7 @@ body {
 	top: 0; right: 0;
 }
 #facebook-menu img {
-	height: intrinsic;
+	height: auto;
 }
 #facebook-menu button.disabled {
 	display: none;
@@ -121,6 +127,10 @@ body {
 #alert p {
 	margin: 0 0 5px 60px;
 	overflow: hidden;
+}
+
+#board {
+	position: relative;
 }
 
 #grid {

@@ -33,7 +33,7 @@ window.fbAsyncInit = function () {
 			var data = { 'method': 'share', 'href': location.href };
 			FB.ui( data, function ( response ) {
 				//console.log( response );
-				if ( response === [] ) { // [] seems to be the response after a successful Share
+				if ( response === [] ) { // [] seems to be the response after a successful share
 					gUser.share_count++;
 					menu.updateButtons();
 					$.post( 'ajax.php?method=facebookShare' ); // Update the database

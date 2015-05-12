@@ -13,24 +13,25 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 <html>
 <head>
 	<title><?php echo TITLE; ?></title>
-	<base href="<?php echo BASE; ?>" />
-	<link rel="icon" href="images/favicon.ico" />
-	<link rel="stylesheet" href="css/desktop.css" />
-	<link rel="stylesheet" href="css/spectrum.css" />
+	<base href="<?php echo BASE; ?>">
+	<link rel="icon" href="images/favicon.ico">
+	<link rel="stylesheet" href="css/desktop.css">
+	<link rel="stylesheet" href="css/spectrum.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.6.1/spectrum.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.0/spectrum.min.js"></script>
 	<script src="https://connect.facebook.net/en_US/sdk.js"></script>
 	<script src="js/functions.js"></script>
 	<script src="js/pixel-by-pixel.js"></script>
 	<script src="js/facebook.js"></script>
-	<meta name="description" content="<?php echo DESCRIPTION; ?>" />
-	<meta property="og:url" content="<?php echo BASE . $centerX . '/' . $centerY . '/' . $pixelSize; ?>" />
-	<meta property="og:title" content="<?php echo TITLE; ?>" />
-	<meta property="og:description" content="<?php echo DESCRIPTION; ?>" />
-	<meta property="og:image" content="<?php echo BASE . 'previews/' . $centerX . '/' . $centerY . '/' . $pixelSize; ?>.png" />
-	<meta property="og:image:type" content="image/png" />
-	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="630" />
+	<meta charset="UTF-8">
+	<meta name="description" content="<?php echo DESCRIPTION; ?>">
+	<meta property="og:url" content="<?php echo BASE . $centerX . '/' . $centerY . '/' . $pixelSize; ?>">
+	<meta property="og:title" content="<?php echo TITLE; ?>">
+	<meta property="og:description" content="<?php echo DESCRIPTION; ?>">
+	<meta property="og:image" content="<?php echo BASE . 'previews/' . $centerX . '/' . $centerY . '/' . $pixelSize; ?>.png">
+	<meta property="og:image:type" content="image/png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
 </head>
 <body>
 	<div id="fb-root"></div>

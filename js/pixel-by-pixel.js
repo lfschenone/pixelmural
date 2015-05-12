@@ -301,11 +301,15 @@ mouse = {
 	upAction: null,
 
 	getCurrentX: function ( event ) {
-		return board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( ( event.offsetX - 1 /* bugfix */ ) / board.pixelSize );
+		var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
+		var currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( offsetX / board.pixelSize );
+		return currentX;
 	},
 
 	getCurrentY: function ( event ) {
-		return board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( ( event.offsetY - 2 /* bugfix */ ) / board.pixelSize );
+		var offsetY = event.pageY - $( event.target ).offset().top - 2; // The -2 is to correct a minor displacement
+		var currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( offsetY / board.pixelSize );
+		return currentY;
 	},
 
 	down: function ( event ) {
@@ -346,8 +350,10 @@ mouse = {
 		mouse.diffX += ( mouse.currentX - mouse.previousX ) * board.pixelSize;
 		mouse.diffY += ( mouse.currentY - mouse.previousY ) * board.pixelSize;
 
+//console.log( mouse, mouse.previousX, mouse.currentX, board, board.centerX, board.pixelSize, mouse.diffX )
+
 		board.clear();
-		board.context.putImageData( board.imageData, mouse.diffX, mouse.diffY );
+		board.context.putImageData( board.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
 
 		// Bugfix: without this, the board flickers when moving
 		mouse.currentX = mouse.getCurrentX( event );
@@ -620,10 +626,11 @@ board = {
 			//console.log( response );
 			var image = new Image();
 			image.src = "data:image/png;base64," + response;
-			board.clear();
-			board.context.drawImage( image, 0, 0 );
-			grid.toggle().toggle();
-
+			image.onload = function () {
+				board.clear();
+				board.context.drawImage( image, 0, 0 );
+				grid.toggle().toggle();
+			}
 			$( '#alert' ).hide();
 
 			// Update the URL of the browser
