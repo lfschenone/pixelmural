@@ -50,8 +50,8 @@ class Ajax extends Controller {
 		$Image = new Image( $width, $height );
 		$Image->makeTransparent();
 
-		$topLeftX = $centerX - floor( $width / $pixelSize / 2 );
-		$topLeftY = $centerY - floor( $height / $pixelSize / 2 );
+		$topLeftX = $centerX - ceil( $width / $pixelSize / 2 );
+		$topLeftY = $centerY - ceil( $height / $pixelSize / 2 );
 		$bottomRightX = $centerX + ceil( $width / $pixelSize / 2 );
 		$bottomRightY = $centerY + ceil( $height / $pixelSize / 2 );
 
