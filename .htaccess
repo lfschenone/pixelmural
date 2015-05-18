@@ -6,4 +6,4 @@ RewriteEngine on
 #RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 RewriteRule ^([-0-9]+)/([-0-9]+)/([-0-9]+)/?$ index.php?centerX=$1&centerY=$2&pixelSize=$3 [L,QSA]
-RewriteRule ^preview/([-0-9]+)/([-0-9]+)/([-0-9]+)/?$ ajax.php?method=preview&centerX=$1&centerY=$2&pixelSize=$3 [L,QSA]
+RewriteRule ^preview/([-0-9]+)/([-0-9]+)/([-0-9]+)/?$ ajax.php?method=facebookPreview&centerX=$1&centerY=$2&pixelSize=$3 [L,QSA]

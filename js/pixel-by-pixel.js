@@ -14,8 +14,7 @@ $( function () {
 		hide: function ( color ) {
 			menu.activeColor = color.toHexString();
 		}
-	});
-	$( '.color-input:first-child' ).next().addClass( 'active' ); // Set the first color as active
+	}).first().next().addClass( 'active' ); // Set the first color as active
 
 	// Set the variables that must wait for the DOM to be loaded
 	board.setCanvas( document.getElementById( 'board' ) );
@@ -589,9 +588,9 @@ board = {
 		if ( board.arrayPointer === board.newPixels.length ) {
 			return;
 		}
-		var newPixel = board.newPixels[ board.arrayPointer ];
+		var newPixels = board.newPixels[ board.arrayPointer ];
 		board.arrayPointer++;
-		oldPixels.paint().save();
+		newPixels.paint().save();
 		menu.updateButtons();
 	},
 

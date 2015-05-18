@@ -161,45 +161,6 @@ class Ajax extends Controller {
 		return $RESPONSE;
 	}
 
-	/**
-	 * Outputs a screenshot of 1200px x 630px (recommended image size by Facebook)
-	 * centered around the view of the user, meant to be shared on Facebook
-	 */
-	static function preview() {
-		global $gDatabase;
-
-		$centerX = GET( 'centerX' );
-		$centerY = GET( 'centerY' );
-		$pixelSize = GET( 'pixelSize' );
-
-		// Calculate the rest of the screenshot details
-		$width = 1200;
-		$height = 630;
-		$xPixels = ceil( $width / $pixelSize );
-		$yPixels = ceil( $height / $pixelSize );
-		$x1 = $centerX - $xPixels / 2; // ceil() or floor() ?
-		$y1 = $centerY - $yPixels / 2;
-		$x2 = $centerX + $xPixels / 2;
-		$y2 = $centerY + $yPixels / 2;
-
-		// Create a transparent image
-		$Image = new Image( $width, $height );
-		$Image->makeTransparent();
-
-		// Fill the image with the pixels
-		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
-		while ( $DATA = $Result->fetch_assoc() ) {
-			$Pixel = new Pixel( $DATA );
-			$x1 = abs( $centerX - floor( $xPixels / 2 ) - $Pixel->x ) * $pixelSize;
-			$y1 = abs( $centerY - floor( $yPixels / 2 ) - $Pixel->y ) * $pixelSize;
-			$x2 = $x1 + $pixelSize;
-			$y2 = $y1 + $pixelSize;
-			$Image->setColorFromHex( $Pixel->color );
-			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
-		}
-		$Image->draw();
-	}
-
 	static function facebookLogin() {
 		global $gDatabase, $gUser;
 
@@ -268,5 +229,44 @@ class Ajax extends Controller {
 
 		$RESPONSE['gUser'] = $gUser;
 		return $gUser;
+	}
+
+	/**
+	 * Outputs a screenshot centered around the view of the user, meant to be shared on Facebook
+	 */
+	static function facebookPreview() {
+		global $gDatabase;
+
+		$centerX = GET( 'centerX' );
+		$centerY = GET( 'centerY' );
+		$pixelSize = GET( 'pixelSize' );
+
+		// Calculate the rest of the screenshot details
+		$width = 1200; // Recommended image size
+		$height = 630; // for sharing on Facebook
+		$xPixels = ceil( $width / $pixelSize );
+		$yPixels = ceil( $height / $pixelSize );
+		$x1 = $centerX - $xPixels / 2; // ceil() or floor() ?
+		$y1 = $centerY - $yPixels / 2;
+		$x2 = $centerX + $xPixels / 2;
+		$y2 = $centerY + $yPixels / 2;
+
+		// Create a transparent image
+		$Image = new Image( $width, $height );
+		$Image->makeTransparent();
+
+		// Fill the image with the pixels
+		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x >= $x1 AND x <= $x2 AND y >= $y1 AND y <= $y2" );
+		while ( $DATA = $Result->fetch_assoc() ) {
+			$Pixel = new Pixel( $DATA );
+			$x1 = abs( $centerX - floor( $xPixels / 2 ) - $Pixel->x ) * $pixelSize;
+			$y1 = abs( $centerY - floor( $yPixels / 2 ) - $Pixel->y ) * $pixelSize;
+			$x2 = $x1 + $pixelSize;
+			$y2 = $y1 + $pixelSize;
+			$Image->setColorFromHex( $Pixel->color );
+			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
+		}
+		// Output the image
+		$Image->draw();
 	}
 }
