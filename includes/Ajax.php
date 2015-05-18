@@ -162,15 +162,15 @@ class Ajax extends Controller {
 	}
 
 	/**
-	 * Saves a screenshot of 1200px x 630px (recommended image size by Facebook)
-	 * centered around the view of the user
+	 * Outputs a screenshot of 1200px x 630px (recommended image size by Facebook)
+	 * centered around the view of the user, meant to be shared on Facebook
 	 */
-	static function saveFacebookPreview() {
+	static function preview() {
 		global $gDatabase;
 
-		$centerX = POST( 'centerX' );
-		$centerY = POST( 'centerY' );
-		$pixelSize = POST( 'pixelSize' );
+		$centerX = GET( 'centerX' );
+		$centerY = GET( 'centerY' );
+		$pixelSize = GET( 'pixelSize' );
 
 		// Calculate the rest of the screenshot details
 		$width = 1200;
@@ -197,14 +197,7 @@ class Ajax extends Controller {
 			$Image->setColorFromHex( $Pixel->color );
 			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
 		}
-		if ( !file_exists( 'previews/' . $centerX ) ) {
-			mkdir( 'previews/' . $centerX );
-		}
-		if ( !file_exists( 'previews/' . $centerX . '/' . $centerY ) ) {
-			mkdir( 'previews/' . $centerX . '/' . $centerY );
-		}
-		$Image->save( 'previews/' . $centerX . '/' . $centerY . '/' . $pixelSize . '.png' );
-		return null;
+		$Image->draw();
 	}
 
 	static function facebookLogin() {

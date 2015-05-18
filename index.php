@@ -17,9 +17,9 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 	<link rel="icon" href="images/favicon.ico">
 	<link rel="stylesheet" href="css/desktop.css">
 	<link rel="stylesheet" href="css/spectrum.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.0/spectrum.min.js"></script>
-	<script src="https://connect.facebook.net/en_US/sdk.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.0/spectrum.min.js"></script>
+	<script src="//connect.facebook.net/en_US/sdk.js"></script>
 	<script src="js/functions.js"></script>
 	<script src="js/pixel-by-pixel.js"></script>
 	<script src="js/facebook.js"></script>
@@ -37,28 +37,28 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 	<div id="fb-root"></div>
 
 	<div id="tools-menu" class="menu">
-		<button id="move-button" title="Move"><img src="images/move.png" alt="Move" /></button>
-		<button id="zoom-in-button" title="Zoom in"><img src="images/zoom-in.png" alt="Zoom in" /></button>
-		<button id="zoom-out-button" title="Zoom out"><img src="images/zoom-out.png" alt="Zoom out" /></button>
-		<button id="undo-button" title="Undo"><img src="images/undo.png" alt="Undo" /></button>
-		<button id="redo-button" title="Redo"><img src="images/redo.png" alt="Redo" /></button>
-		<button id="dropper-button" title="Dropper"><img src="images/dropper.png" alt="Dropper" /></button>
-		<button id="pencil-button" title="Pencil"><img src="images/pencil.png" alt="Pencil" /></button>
-		<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush" /></button>
-		<button id="eraser-button" title="Eraser"><img src="images/eraser.png" alt="Eraser" /></button>
-		<button id="bucket-button" title="Bucket"><img src="images/bucket.png" alt="Bucket" /></button>
-		<button id="grid-button" title="Grid"><img src="images/grid.png" alt="Grid" /></button>
+		<button id="move-button" title="Move"><img src="images/move.png" alt="Move"></button>
+		<button id="zoom-in-button" title="Zoom in"><img src="images/zoom-in.png" alt="Zoom in"></button>
+		<button id="zoom-out-button" title="Zoom out"><img src="images/zoom-out.png" alt="Zoom out"></button>
+		<button id="undo-button" title="Undo"><img src="images/undo.png" alt="Undo"></button>
+		<button id="redo-button" title="Redo"><img src="images/redo.png" alt="Redo"></button>
+		<button id="dropper-button" title="Dropper"><img src="images/dropper.png" alt="Dropper"></button>
+		<button id="pencil-button" title="Pencil"><img src="images/pencil.png" alt="Pencil"></button>
+		<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"></button>
+		<button id="eraser-button" title="Eraser"><img src="images/eraser.png" alt="Eraser"></button>
+		<button id="bucket-button" title="Bucket"><img src="images/bucket.png" alt="Bucket"></button>
+		<button id="grid-button" title="Grid"><img src="images/grid.png" alt="Grid"></button>
 	</div>
 
 	<div id="colors-menu" class="menu">
-		<input class="color-input" type="text" value="#000000" />
-		<input class="color-input" type="text" value="#0000ff" />
-		<input class="color-input" type="text" value="#00ff00" />
-		<input class="color-input" type="text" value="#00ffff" />
-		<input class="color-input" type="text" value="#ff0000" />
-		<input class="color-input" type="text" value="#ff00ff" />
-		<input class="color-input" type="text" value="#ffff00" />
-		<input class="color-input" type="text" value="#ffffff" />
+		<input class="color-input" type="text" value="#000000">
+		<input class="color-input" type="text" value="#0000ff">
+		<input class="color-input" type="text" value="#00ff00">
+		<input class="color-input" type="text" value="#00ffff">
+		<input class="color-input" type="text" value="#ff0000">
+		<input class="color-input" type="text" value="#ff00ff">
+		<input class="color-input" type="text" value="#ffff00">
+		<input class="color-input" type="text" value="#ffffff">
 	</div>
 
 	<div id="facebook-menu" class="menu">

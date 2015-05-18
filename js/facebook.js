@@ -26,19 +26,15 @@ window.fbAsyncInit = function () {
 
 	$( '#facebook-share-button' ).click( function ( event ) {
 		//console.log( event );
-		var data = { 'centerX': board.centerX, 'centerY': board.centerY, 'pixelSize': board.pixelSize };
-		$.post( 'ajax.php?method=saveFacebookPreview', data, function ( response ) {
+		FB.XFBML.parse(); // Update the URL to be shared
+		var data = { 'method': 'share', 'href': location.href };
+		FB.ui( data, function ( response ) {
 			//console.log( response );
-			FB.XFBML.parse(); // Update the URL to be shared
-			var data = { 'method': 'share', 'href': location.href };
-			FB.ui( data, function ( response ) {
-				//console.log( response );
-				if ( response === [] ) { // [] seems to be the response after a successful share
-					gUser.share_count++;
-					menu.updateButtons();
-					$.post( 'ajax.php?method=facebookShare' ); // Update the database
-				}
-			});
+			if ( response === [] ) { // [] seems to be the response after a successful share
+				gUser.share_count++;
+				menu.updateButtons();
+				$.post( 'ajax.php?method=facebookShare' ); // Update the database
+			}
 		});
 	});
 }

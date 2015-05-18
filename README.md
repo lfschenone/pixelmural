@@ -19,10 +19,6 @@ Tasks
 
 Further tasks
 -------------
+* Migrate to node.js?
 * i18n and l10n
 * Documentation
-
-Code conventions
-----------------
-* Objects and classes go Capitalised
-* CSS ids and classes go-with-dashes
