@@ -28,7 +28,7 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 	<meta property="og:url" content="<?php echo BASE . $centerX . '/' . $centerY . '/' . $pixelSize; ?>">
 	<meta property="og:title" content="<?php echo TITLE; ?>">
 	<meta property="og:description" content="<?php echo DESCRIPTION; ?>">
-	<meta property="og:image" content="<?php echo BASE . 'previews/' . $centerX . '/' . $centerY . '/' . $pixelSize; ?>.png">
+	<meta property="og:image" content="<?php echo BASE . 'preview/' . $centerX . '/' . $centerY . '/' . $pixelSize; ?>">
 	<meta property="og:image:type" content="image/png">
 	<meta property="og:image:width" content="1200">
 	<meta property="og:image:height" content="630">
