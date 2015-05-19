@@ -8,13 +8,8 @@ window.fbAsyncInit = function () {
 		version: 'v2.0'
 	});
 
-	FB.Event.subscribe( 'auth.statusChange', function ( response ) {
-		statusChangeCallback( response )
-	});
-
-	FB.getLoginStatus( function ( response ) {
-		statusChangeCallback( response );
-	});
+	FB.Event.subscribe( 'auth.statusChange', statusChangeCallback );
+	FB.getLoginStatus( statusChangeCallback );
 
 	$( '#facebook-login-button' ).click( function () {
 		FB.login();

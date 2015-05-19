@@ -8,7 +8,8 @@ class Pixel extends Model {
 	public $x;
 	public $y;
 	public $author_id;
-	public $time;
+	public $insert_time;
+	public $update_time;
 	public $color;
 
 	static function newFromCoords( $x, $y ) {
@@ -44,15 +45,17 @@ class Pixel extends Model {
 			x,
 			y,
 			author_id,
-			time,
+			insert_time,
+			update_time,
 			color
-			) VALUES (?,?,?,?,?)'
+			) VALUES (?,?,?,?,?,?)'
 		);
-		$Statement->bind_param( 'iiiis',
+		$Statement->bind_param( 'iiiiis',
 			$this->x,
 			$this->y,
 			$this->author_id,
-			$this->time,
+			$this->insert_time,
+			$this->update_time,
 			$this->color
 		);
 		$Statement->execute();
@@ -63,13 +66,15 @@ class Pixel extends Model {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'UPDATE pixels SET
 			author_id = ?,
-			time = ?,
+			insert_time = ?,
+			update_time = ?,
 			color = ?
 			WHERE x = ? AND y = ?'
 		);
 		$Statement->bind_param( 'iisii',
 			$this->author_id,
-			$this->time,
+			$this->insert_time,
+			$this->update_time,
 			$this->color,
 			$this->x,
 			$this->y

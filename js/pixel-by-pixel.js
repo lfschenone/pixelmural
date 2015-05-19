@@ -31,7 +31,6 @@ $( function () {
 	grid.setHeight( board.height );
 
 	// Bind events
-	$( '.menu button' ).mouseover( menu.showTooltip ).mouseout( menu.hideTooltip );
 	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( '#grid-button' ).click( menu.clickGridButton );
 	$( '#zoom-in-button' ).click( menu.clickZoomInButton );
@@ -45,14 +44,12 @@ $( function () {
 	$( '#brush-button' ).click( menu.clickBrushButton );
 	$( '#bucket-button' ).click( menu.clickBucketButton );
 	$( '#eraser-button' ).click( menu.clickEraserButton );
+	$( '.menu button' ).mouseover( menu.showTooltip ).mouseout( menu.hideTooltip ).click( menu.updateButtons );
 	$( document ).keydown( keyboard.keydown );
 	$( document ).keyup( keyboard.keyup );
 
 	// Set 'Move' as the default action
 	$( '#move-button' ).click();
-
-	// Disable disabled buttons
-	menu.updateButtons();
 
 	// Fill the board
 	board.fill();
@@ -214,12 +211,10 @@ menu = {
 			$( '#grid-button' ).addClass( 'disabled' );
 		}
 
-		if ( !gUser.isAnon() ) {
-			$( '#facebook-login-button' ).addClass( 'disabled' );
-		}
-
 		if ( gUser.isAnon() ) {
 			$( '#facebook-logout-button' ).addClass( 'disabled' );
+		} else {
+			$( '#facebook-login-button' ).addClass( 'disabled' );
 		}
 
 		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
@@ -370,9 +365,8 @@ mouse = {
 			red   = imageData.data[0],
 			green = imageData.data[1],
 			blue  = imageData.data[2],
-			alpha = imageData.data[3],
-			menu.activeColor = alpha ? rgb2hex( red, green, blue ) : board.background;
-		menu.updateButtons();
+			alpha = imageData.data[3];
+		menu.activeColor = alpha ? rgb2hex( red, green, blue ) : board.background;
 	},
 
 	getInfo: function ( event ) {
@@ -581,7 +575,6 @@ board = {
 		board.arrayPointer--;
 		var oldPixels = board.oldPixels[ board.arrayPointer ];
 		oldPixels.paint().save();
-		menu.updateButtons();
 	},
 
 	redo: function () {
@@ -591,7 +584,6 @@ board = {
 		var newPixels = board.newPixels[ board.arrayPointer ];
 		board.arrayPointer++;
 		newPixels.paint().save();
-		menu.updateButtons();
 	},
 
 	zoomIn: function () {
@@ -600,7 +592,6 @@ board = {
 		}
 		board.setPixelSize( board.pixelSize * 2 );
 		board.fill();
-		menu.updateButtons();
 	},
 
 	zoomOut: function () {
@@ -609,7 +600,6 @@ board = {
 		}
 		board.setPixelSize( board.pixelSize / 2 );
 		board.fill();
-		menu.updateButtons();
 	},
 
 	fill: function () {

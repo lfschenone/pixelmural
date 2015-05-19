@@ -7,8 +7,8 @@ class User extends Model {
 	 */
 	public $id;
 	public $facebook_id;
-	public $join_time;
-	public $last_seen;
+	public $insert_time;
+	public $update_time;
 	public $pixel_count = 0;
 	public $share_count = 0;
 	public $name;
@@ -22,51 +22,44 @@ class User extends Model {
 	static function newFromId( $id ) {
 		global $gDatabase;
 		if ( !$id ) {
-			return null;
+			return;
 		}
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE id = $id LIMIT 1" );
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
-		return null;
 	}
 
 	static function newFromFacebookId( $facebook_id ) {
 		global $gDatabase;
 		if ( !$facebook_id ) {
-			return null;
+			return;
 		}
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE facebook_id = $facebook_id LIMIT 1" );
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
-		return null;
 	}
 
-	/**
-	 * Careful! This is not 100% guaranteed to match a single user,
-	 * different users may have the same Facebook name.
-	 */
-	static function newFromName( $name ) {
+	static function newFromIp( $ip ) {
 		global $gDatabase;
-		if ( !$name ) {
-			return null;
+		if ( !$ip ) {
+			return;
 		}
-		$name = $gDatabase->real_escape_string( $name );
-		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$name' LIMIT 1" );
+		$ip = $gDatabase->real_escape_string( $ip );
+		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$ip' LIMIT 1" ); // IPs are stored as the names of anonymous users
 		$DATA = $Result->fetch_assoc();
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
-		return null;
 	}
 
 	static function newFromToken( $token ) {
 		global $gDatabase;
 		if ( !$token ) {
-			return null;
+			return;
 		}
 		$token = $gDatabase->real_escape_string( $token );
 		$Result = $gDatabase->query( "SELECT * FROM users WHERE token = '$token' LIMIT 1" );
@@ -74,7 +67,6 @@ class User extends Model {
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
-		return null;
 	}
 
 	function isAdmin() {
@@ -85,7 +77,10 @@ class User extends Model {
 	}
 
 	function canEdit( $Pixel ) {
-		if ( $this->id === $Pixel->author_id or $this->isAdmin() ) {
+		if ( $this->id === $Pixel->author_id ) {
+			return true;
+		}
+		if ( $this->isAdmin() ) {
 			return true;
 		}
 		return false;
@@ -95,8 +90,8 @@ class User extends Model {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'INSERT INTO users (
 			facebook_id,
-			join_time,
-			last_seen,
+			insert_time,
+			update_time,
 			pixel_count,
 			share_count,
 			token,
@@ -109,10 +104,12 @@ class User extends Model {
 			timezone
 			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
 		);
+		$this->insert_time = $_SERVER['REQUEST_TIME'];
+		$this->update_time = $_SERVER['REQUEST_TIME'];
 		$Statement->bind_param( 'siiiisssssssi',
 			$this->facebook_id,
-			$this->join_time,
-			$this->last_seen,
+			$this->insert_time,
+			$this->update_time,
 			$this->pixel_count,
 			$this->share_count,
 			$this->token,
@@ -132,8 +129,8 @@ class User extends Model {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'UPDATE users SET
 			facebook_id = ?,
-			join_time = ?,
-			last_seen = ?,
+			insert_time = ?,
+			update_time = ?,
 			pixel_count = ?,
 			share_count = ?,
 			token = ?,
@@ -146,6 +143,7 @@ class User extends Model {
 			timezone = ?
 			WHERE id = ?'
 		);
+		$this->update_time = $_SERVER['REQUEST_TIME'];
 		$Statement->bind_param( 'iiiissssssssii',
 			$this->facebook_id,
 			$this->join_time,

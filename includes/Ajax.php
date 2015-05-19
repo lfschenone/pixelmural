@@ -24,6 +24,7 @@ class Ajax extends Controller {
 
 	static function getArea() {
 		global $gDatabase;
+
 		$x1 = GET( 'x1' );
 		$y1 = GET( 'y1' );
 		$x2 = GET( 'x2' );
@@ -41,6 +42,7 @@ class Ajax extends Controller {
 
 	static function getBoard() {
 		global $gDatabase;
+
 		$width = GET( 'width' );
 		$height = GET( 'height' );
 		$pixelSize = GET( 'pixelSize' );
@@ -95,7 +97,6 @@ class Ajax extends Controller {
 			$Pixel->x = $x;
 			$Pixel->y = $y;
 			$Pixel->author_id = $gUser->id;
-			$Pixel->time = time();
 			$Pixel->color = $color;
 			$Pixel->insert();
 			$RESPONSE['message'] = 'Pixel inserted';
@@ -139,7 +140,7 @@ class Ajax extends Controller {
 			// have the same color as the first pixel, and haven't been painted yet
 			$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
 				author_id = "' . $firstPixel->author_id . '" AND
-				time < ' . time() . ' AND
+				insert_time < ' . $_SERVER['REQUEST_TIME'] . ' AND
 				color = "' . $oldColor . '" AND (
 				( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR
 				( x = ' . $Pixel->x . ' - 1 AND y = ' . $Pixel->y . ' ) OR
@@ -164,6 +165,7 @@ class Ajax extends Controller {
 	static function facebookLogin() {
 		global $gDatabase, $gUser;
 
+		Facebook\FacebookSession::setDefaultApplication( FACEBOOK_APP_ID, FACEBOOK_APP_SECRET );
 		$Helper = new Facebook\FacebookJavaScriptLoginHelper();
 		try {
 			$Session = $Helper->getSession();
@@ -176,7 +178,6 @@ class Ajax extends Controller {
 			// If no user matches that Facebook id, create one
 			if ( !$gUser ) {
 				$gUser = new User;
-				$gUser->join_time = $_SERVER['REQUEST_TIME'];
 				$gUser->status = 'user';
 				$gUser->id = $gUser->insert();
 			}
@@ -184,7 +185,7 @@ class Ajax extends Controller {
 			// Set the token
 			$gUser->token = md5( uniqid() );
 			$_SESSION['token'] = $gUser->token;
-			setcookie( 'token', $gUser->token, time() + 60 * 60 * 24 * 30, '/' ); //Lasts one month
+			setcookie( 'token', $gUser->token, $_SERVER['REQUEST_TIME'] + 60 * 60 * 24 * 30, '/' ); // 30 days
 
 			// Every time the user logs in, make sure all the stats are up to date
 			$DATA = $GraphUser->asArray();
@@ -193,8 +194,7 @@ class Ajax extends Controller {
 					$gUser->$key = $value;
 				}
 			}
-			$gUser->facebook_id = $DATA['id']; // Because we already have an 'id' field -_-
-			$gUser->last_seen = $_SERVER['REQUEST_TIME'];
+			$gUser->facebook_id = $DATA['id']; // Because we already have an 'id' field
 			$gUser->update();
 
 			$RESPONSE['gUser'] = $gUser;
@@ -208,21 +208,21 @@ class Ajax extends Controller {
 	}
 
 	static function facebookLogout() {
-		global $gDatabase, $gUser;
+		global $gUser;
 
 		session_destroy();
 		setcookie( 'token', '', 0, '/' );
 
 		// Update the global user
-		$name = $_SERVER['REMOTE_ADDR']; // IPs are treated as names of anonymous users
-		$gUser = User::newFromName( $name );
+		$ip = $_SERVER['REMOTE_ADDR'];
+		$gUser = User::newFromIp( $ip );
 
 		$RESPONSE['gUser'] = $gUser;
 		return $RESPONSE;
 	}
 
 	static function facebookShare() {
-		global $gDatabase, $gUser;
+		global $gUser;
 
 		$gUser->share_count++;
 		$gUser->update();
