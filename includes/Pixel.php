@@ -71,7 +71,7 @@ class Pixel extends Model {
 			color = ?
 			WHERE x = ? AND y = ?'
 		);
-		$Statement->bind_param( 'iisii',
+		$Statement->bind_param( 'iiisii',
 			$this->author_id,
 			$this->insert_time,
 			$this->update_time,
