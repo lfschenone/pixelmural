@@ -171,7 +171,7 @@ menu = {
 			age = roundSeconds( Math.floor( Date.now() / 1000 ) - Pixel.insert_time );
 		if ( !Author.isAnon() ) {
 			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture" />';
-			author = '<a href="' + Author.link + '">' + Author.name + '</a>';
+			author = '<a target="_blank" href="' + Author.link + '">' + Author.name + '</a>';
 		}
 		menu.showAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>', 4000 );
 	},
