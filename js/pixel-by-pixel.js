@@ -167,13 +167,14 @@ menu = {
 
 	showPixelAuthor: function ( Pixel, Author ) {
 		var picture = '<img src="images/anon.png" />',
-			author = Author.name;
+			author = Author.name,
+			age = roundSeconds( Math.floor( Date.now() / 1000 ) - Pixel.insert_time ),
+			count = Author.pixel_count + plural( Author.pixel_count );
 		if ( !Author.isAnon() ) {
 			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture" />';
 			author = '<a href="' + Author.link + '">' + Author.name + '</a>';
 		}
-		var age = roundSeconds( Math.floor( Date.now() / 1000 ) - Pixel.time );
-		menu.showAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>', 4000 );
+		menu.showAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p><p>' + count + '</p>' );
 	},
 
 	/**
@@ -702,8 +703,8 @@ function User( data ) {
 	 */
 	this.id = 'id' in data ? data.id : null,
 	this.facebook_id = 'facebook_id' in data ? data.facebook_id : null;
-	this.join_time = 'join_time' in data ? data.join_time : null;
-	this.last_seen = 'last_seen' in data ? data.last_seen : null;
+	this.insert_time = 'insert_time' in data ? data.insert_time : null;
+	this.update_time = 'update_time' in data ? data.update_time : null;
 	this.pixel_count = 'pixel_count' in data ? data.pixel_count : 0;
 	this.share_count = 'share_count' in data ? data.share_count : 0;
 	this.name = 'name' in data ? data.name : null;
@@ -739,7 +740,8 @@ function Pixel( data ) {
 	this.x = 'x' in data ? data.x : null;
 	this.y = 'y' in data ? data.y : null;
 	this.author_id = 'author_id' in data ? data.author_id : null;
-	this.time = 'time' in data ? data.time : null;
+	this.insert_time = 'insert_time' in data ? data.insert_time : null;
+	this.update_time = 'update_time' in data ? data.update_time : null;
 	this.color = 'color' in data ? data.color : null;
 
 	this.fetch = function () {

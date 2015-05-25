@@ -23,7 +23,7 @@ if ( !$gUser ) {
 	$gUser = new User;
 	$gUser->name = $ip; // IPs are the names of anonymous users
 	$gUser->status = 'anon';
-	$gUser->id = $gUser->insert();
+	$gUser->insert();
 }
 
 // Do the request

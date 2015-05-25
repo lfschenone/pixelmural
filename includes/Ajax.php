@@ -52,16 +52,16 @@ class Ajax extends Controller {
 		$Image = new Image( $width, $height );
 		$Image->makeTransparent();
 
-		$topLeftX = $centerX - floor( $width / $pixelSize / 2 );
-		$topLeftY = $centerY - floor( $height / $pixelSize / 2 );
-		$bottomRightX = $centerX + floor( $width / $pixelSize / 2 );
-		$bottomRightY = $centerY + floor( $height / $pixelSize / 2 );
+		$minX = $centerX - floor( $width / $pixelSize / 2 );
+		$minY = $centerY - floor( $height / $pixelSize / 2 );
+		$maxX = $centerX + floor( $width / $pixelSize / 2 );
+		$maxY = $centerY + floor( $height / $pixelSize / 2 );
 
-		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $topLeftX AND x <= $bottomRightX AND y >= $topLeftY AND y <= $bottomRightY" );
+		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $minX AND x <= $maxX AND y >= $minY AND y <= $maxY" );
 		while ( $DATA = $Result->fetch_assoc() ) {
 			$Image->setColorFromHex( $DATA['color'] );
-			$x1 = ( $DATA['x'] - $topLeftX ) * $pixelSize;
-			$y1 = ( $DATA['y'] - $topLeftY ) * $pixelSize;
+			$x1 = ( $DATA['x'] - $minX ) * $pixelSize;
+			$y1 = ( $DATA['y'] - $minY ) * $pixelSize;
 			$x2 = $x1 + $pixelSize - 1;
 			$y2 = $y1 + $pixelSize - 1;
 			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
@@ -87,6 +87,9 @@ class Ajax extends Controller {
 				} else {
 					$Pixel->delete();
 					$RESPONSE['message'] = 'Pixel deleted';
+					$Author = $Pixel->getAuthor();
+					$Author->pixel_count--;
+					$Author->update();
 				}
 			} else {
 				$RESPONSE['Author'] = $Pixel->getAuthor();
@@ -100,6 +103,8 @@ class Ajax extends Controller {
 			$Pixel->color = $color;
 			$Pixel->insert();
 			$RESPONSE['message'] = 'Pixel inserted';
+			$gUser->pixel_count++;
+			$gUser->update();
 		}
 		$RESPONSE['Pixel'] = $Pixel;
 		return $RESPONSE;
@@ -179,7 +184,7 @@ class Ajax extends Controller {
 			if ( !$gUser ) {
 				$gUser = new User;
 				$gUser->status = 'user';
-				$gUser->id = $gUser->insert();
+				$gUser->insert();
 			}
 
 			// Set the token

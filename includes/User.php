@@ -122,7 +122,7 @@ class User extends Model {
 			$this->timezone
 		);
 		$Statement->execute();
-		return $gDatabase->insert_id;
+		$this->id = $gDatabase->insert_id;
 	}
 
 	function update() {
@@ -146,8 +146,8 @@ class User extends Model {
 		$this->update_time = $_SERVER['REQUEST_TIME'];
 		$Statement->bind_param( 'iiiissssssssii',
 			$this->facebook_id,
-			$this->join_time,
-			$this->last_seen,
+			$this->insert_time,
+			$this->update_time,
 			$this->pixel_count,
 			$this->share_count,
 			$this->token,
