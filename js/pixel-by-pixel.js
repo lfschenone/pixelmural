@@ -173,7 +173,7 @@ menu = {
 			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture" />';
 			author = '<a href="' + Author.link + '">' + Author.name + '</a>';
 		}
-		menu.showAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>' );
+		menu.showAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>', 4000 );
 	},
 
 	/**
