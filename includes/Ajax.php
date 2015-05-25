@@ -1,6 +1,6 @@
 <?php
 
-class Ajax extends Controller {
+class Ajax {
 
 	static function fetchPixel() {
 		$x = GET( 'x' );
