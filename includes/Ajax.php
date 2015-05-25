@@ -54,8 +54,8 @@ class Ajax {
 
 		$minX = $centerX - floor( $width / $pixelSize / 2 );
 		$minY = $centerY - floor( $height / $pixelSize / 2 );
-		$maxX = $centerX + floor( $width / $pixelSize / 2 );
-		$maxY = $centerY + floor( $height / $pixelSize / 2 );
+		$maxX = $centerX + ceil( $width / $pixelSize / 2 );
+		$maxY = $centerY + ceil( $height / $pixelSize / 2 );
 
 		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $minX AND x <= $maxX AND y >= $minY AND y <= $maxY" );
 		while ( $DATA = $Result->fetch_assoc() ) {

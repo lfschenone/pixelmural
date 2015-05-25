@@ -169,7 +169,7 @@ menu = {
 		var picture = '<img src="images/anon.png" />',
 			author = Author.name,
 			age = roundSeconds( Math.floor( Date.now() / 1000 ) - Pixel.insert_time ),
-			count = Author.pixel_count + plural( Author.pixel_count );
+			count = Author.pixel_count + ' pixel' + plural( Author.pixel_count );
 		if ( !Author.isAnon() ) {
 			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture" />';
 			author = '<a href="' + Author.link + '">' + Author.name + '</a>';
