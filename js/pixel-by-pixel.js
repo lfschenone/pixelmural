@@ -168,7 +168,7 @@ menu = {
 	showPixelAuthor: function ( Pixel, Author ) {
 		var picture = '<img src="images/anon.png" />',
 			author = Author.name,
-			age = roundSeconds( Math.floor( Date.now() / 1000 ) - Pixel.insert_time ),
+			age = roundSeconds( Math.floor( Date.now() / 1000 ) - Pixel.insert_time );
 		if ( !Author.isAnon() ) {
 			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture" />';
 			author = '<a href="' + Author.link + '">' + Author.name + '</a>';
