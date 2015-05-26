@@ -1,5 +1,8 @@
 $( function () {
 
+	// Initialise the global user
+	gUser = new User;
+
 	// Initialize Spectrum
 	$( '.color-input' ).spectrum({
 		preferredFormat: 'hex',
@@ -199,22 +202,12 @@ menu = {
 			$( '#redo-button' ).addClass( 'disabled' );
 		}
 
-		if ( gUser.isAnon() ) {
-			$( '#brush-button' ).addClass( 'disabled' ).attr( 'data-tooltip', 'Log in with Facebook to activate the brush' );
-		}
-
-		if ( gUser.share_count === 0 ) { // Non-strict comparison because ajax returns '0' rather than 0 (see bugs in README.md)
-			$( '#bucket-button' ).addClass( 'disabled' ).attr( 'data-tooltip', 'Share on Facebook to activate the bucket' );
-		}
-
 		if ( board.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
 		}
 
-		if ( gUser.isAnon() ) {
-			$( '#facebook-logout-button' ).addClass( 'disabled' );
-		} else {
-			$( '#facebook-login-button' ).addClass( 'disabled' );
+		if ( gUser.status === 'anon' ) {
+			$( '#brush-button' ).addClass( 'disabled' );
 		}
 
 		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
@@ -371,7 +364,7 @@ mouse = {
 
 	getInfo: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
-		$.get( 'ajax.php?method=getInfo', data, function ( response ) {
+		$.get( 'pixels', data, function ( response ) {
 			//console.log( response );
 			if ( response.Pixel ) {
 				var Pixel = new window.Pixel( response.Pixel );
@@ -386,7 +379,7 @@ mouse = {
 	 */
 	paintPixel: function ( event ) {
 		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY ),
-			newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
+			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
 
 		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
 			newPixel.color = null; // For convenience, re-painting a pixel erases it
@@ -405,15 +398,16 @@ mouse = {
 			return; // The pixel doesn't exist, no need to continue
 		}
 
-		var newPixel = new window.Pixel({ 'x': mouse.currentX, 'y': mouse.currentY });
+		var newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY });
 
 		newPixel.erase().save().register( oldPixel );
 	},
 
 	paintArea: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor };
-		$.post( 'ajax.php?method=paintArea', data, function ( response ) {
-			//console.log( response );
+		console.log( data );
+		$.post( 'areas', data, function ( response ) {
+			console.log( response );
 			if ( response.message === 'Not your pixel' ) {
 				var Pixel = new window.Pixel( response.Pixel );
 				var Author = new window.User( response.Author );
@@ -421,10 +415,10 @@ mouse = {
 			}
 
 			if ( response.message === 'Area painted' ) {
-				var newArea = new window.Area({}),
+				var newArea = new window.Area,
 					newPixelData,
 					newPixel,
-					oldArea = new window.Area({}),
+					oldArea = new window.Area,
 					oldPixelData,
 					oldPixel;
 				for ( var i = 0; i < response.newAreaData.length; i++ ) {
@@ -607,11 +601,12 @@ board = {
 		var data = {
 			'width': board.width,
 			'height': board.height,
-			'pixelSize': board.pixelSize,
 			'centerX': board.centerX,
-			'centerY': board.centerY
+			'centerY': board.centerY,
+			'pixelSize': board.pixelSize,
+			'format': 'base64'
 		};
-		$.get( 'ajax.php?method=getBoard', data, function ( response ) {
+		$.get( 'areas', data, function ( response ) {
 			//console.log( response );
 			var image = new Image();
 			image.src = "data:image/png;base64," + response;
@@ -638,7 +633,7 @@ grid = {
 	canvas: {},
 	context: {},
 
-	color: '#555555',
+	color: '#ddd',
 
 	visible: false,
 
@@ -697,22 +692,24 @@ grid = {
  * User model
  */
 function User( data ) {
-	/**
-	 * The property names and defaults match those of the PHP model and the table columns
-	 */
-	this.id = 'id' in data ? data.id : null,
-	this.facebook_id = 'facebook_id' in data ? data.facebook_id : null;
-	this.insert_time = 'insert_time' in data ? data.insert_time : null;
-	this.update_time = 'update_time' in data ? data.update_time : null;
-	this.pixel_count = 'pixel_count' in data ? data.pixel_count : 0;
-	this.share_count = 'share_count' in data ? data.share_count : 0;
-	this.name = 'name' in data ? data.name : null;
-	this.email = 'email' in data ? data.email : null;
-	this.gender = 'gender' in data ? data.gender : null;
-	this.locale = 'locale' in data ? data.locale : null;
-	this.link = 'link' in data ? data.link : null;
-	this.status = 'status' in data ? data.status : 'anon';
-	this.timezone = 'timezone' in data ? data.timezone : null;
+
+	this.id = null;
+	this.facebook_id = null;
+	this.insert_time = null;
+	this.update_time = null;
+	this.pixel_count = 0;
+	this.share_count = 0;
+	this.name = null;
+	this.email = null;
+	this.gender = null;
+	this.locale = null;
+	this.link = null;
+	this.status = null;
+	this.timezone = null;
+
+	for ( var property in data ) {
+		this[ property ] = data[ property ];
+	}
 
 	this.isAnon = function () {
 		if ( this.status === 'anon' ) {
@@ -733,19 +730,21 @@ function User( data ) {
  * Pixel model
  */
 function Pixel( data ) {
-	/**
-	 * The property names and defaults match those of the PHP model and the table columns
-	 */
-	this.x = 'x' in data ? data.x : null;
-	this.y = 'y' in data ? data.y : null;
-	this.author_id = 'author_id' in data ? data.author_id : null;
-	this.insert_time = 'insert_time' in data ? data.insert_time : null;
-	this.update_time = 'update_time' in data ? data.update_time : null;
-	this.color = 'color' in data ? data.color : null;
+
+	this.x = null;
+	this.y = null;
+	this.author_id = null;
+	this.insert_time = null;
+	this.update_time = null;
+	this.color = null;
+
+	for ( var property in data ) {
+		this[ property ] = data[ property ];
+	}
 
 	this.fetch = function () {
 		var data = { 'x': this.x, 'y': this.y };
-		$.get( 'ajax.php?method=fetchPixel', data, function ( response ) {
+		$.get( 'pixels', data, function ( response ) {
 			//console.log( response );
 			return new window.Pixel( response );
 		});
@@ -773,7 +772,7 @@ function Pixel( data ) {
 
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
-		$.post( 'ajax.php?method=savePixel', data, function ( response ) {
+		$.post( 'pixels', data, function ( response ) {
 			//console.log( response );
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
@@ -815,7 +814,11 @@ function Pixel( data ) {
  */
 function Area( data ) {
 
-	this.pixels = 'pixels' in data ? data.pixels : [];
+	this.pixels = [];
+
+	for ( var property in data ) {
+		this[ property ] = data[ property ];
+	}
 
 	this.register = function ( oldArea ) {
 		board.oldPixels.splice( board.arrayPointer, board.oldPixels.length - board.arrayPointer, oldArea );
@@ -839,6 +842,3 @@ function Area( data ) {
 		return this;
 	}
 }
-
-// Build the global user
-gUser = new window.User({});

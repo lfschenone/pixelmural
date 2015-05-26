@@ -9,6 +9,9 @@ $centerX = GET( 'centerX', DEFAULT_CENTERX );
 $centerY = GET( 'centerY', DEFAULT_CENTERY );
 $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 
+$ogUrl = BASE . $centerX . '/' . $centerY . '/' . $pixelSize;
+$ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630&pixelSize=$pixelSize&format=png";
+
 ?><!DOCTYPE HTML>
 <html>
 <head>
@@ -25,10 +28,10 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 	<script src="js/facebook.js"></script>
 	<meta charset="UTF-8">
 	<meta name="description" content="<?php echo DESCRIPTION; ?>">
-	<meta property="og:url" content="<?php echo BASE . $centerX . '/' . $centerY . '/' . $pixelSize; ?>">
+	<meta property="og:url" content="<?php echo $ogUrl; ?>">
 	<meta property="og:title" content="<?php echo TITLE; ?>">
 	<meta property="og:description" content="<?php echo DESCRIPTION; ?>">
-	<meta property="og:image" content="<?php echo BASE . 'preview/' . $centerX . '/' . $centerY . '/' . $pixelSize; ?>">
+	<meta property="og:image" content="<?php echo $ogImage; ?>">
 	<meta property="og:image:type" content="image/png">
 	<meta property="og:image:width" content="1200">
 	<meta property="og:image:height" content="630">

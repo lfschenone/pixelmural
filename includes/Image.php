@@ -7,9 +7,10 @@ class Image {
 	public $image;
 	public $color;
 
-	function __construct( $width, $height ) {
+	function __construct( $width, $height, $format = 'png' ) {
 		$this->width = $width;
 		$this->height = $height;
+		$this->format = $format;
 		$this->image = imagecreatetruecolor( $width, $height );
 	}
 
@@ -31,7 +32,7 @@ class Image {
 	}
 
 	function draw() {
-		header( 'Content-Type: image/png' );
+		header( 'Content-Type: image/' . $this->format );
 		imagepng( $this->image );
 		return $this;
 	}
@@ -48,7 +49,7 @@ class Image {
 	// Drawers
 
 	function drawPoint( $x, $y ) {
-		return imageline( $this->image, $x, $y, $x, $y, $this->color );
+		return imagesetpixel( $this->image, $x, $y, $this->color );
 	}
 
 	function drawLine( $x1, $y1, $x2, $y2 ) {

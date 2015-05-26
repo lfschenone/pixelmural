@@ -19,44 +19,26 @@ window.fbAsyncInit = function () {
 		FB.logout();
 	});
 
-	$( '#facebook-share-button' ).click( function ( event ) {
-		//console.log( event );
+	$( '#facebook-share-button' ).click( function () {
 		FB.XFBML.parse(); // Update the URL to be shared
-		var data = { 'method': 'share', 'href': location.href };
-		FB.ui( data, function ( response ) {
-			//console.log( response );
-			if ( response === [] ) { // [] seems to be the response after a successful share
-				gUser.share_count++;
-				menu.updateButtons();
-				$.post( 'ajax.php?method=facebookShare' ); // Update the database
-			}
-		});
+		FB.ui({ 'method': 'share', 'href': location.href });
 	});
 }
 
 function statusChangeCallback( response ) {
 	//console.log( response );
+	$.get( 'tokens', function ( response ) {
+		// Set the global user with the data from the response
+		gUser = new User( response );
+	});
+
+	$( '#facebook-login-button' ).show();
+	$( '#facebook-logout-button' ).hide();
+	$( '#brush-button' ).addClass( 'disabled' ).attr( 'title', 'Log in to activate the brush' );
+
     if ( response.status === 'connected' ) {
-		$.post( 'ajax.php?method=facebookLogin', function ( response ) {
-			//console.log( response );
-			for ( var property in response.gUser ) {
-				gUser[ property ] = response.gUser[ property ];
-			}
-			menu.updateButtons();
-		});
+		$( '#facebook-login-button' ).hide();
+		$( '#facebook-logout-button' ).show();
+		$( '#brush-button' ).removeClass( 'disabled' ).attr( 'title', 'Brush' );
     }
-
-    if ( response.status === 'not_authorized' ) {
-		// What do?
-    }
-
-    if ( response.status === 'unknown' ) {
-		$.post( 'ajax.php?method=facebookLogout', function ( response ) {
-			//console.log( response );
-			for ( var property in response.gUser ) {
-				gUser[ property ] = response.gUser[ property ];
-			}
-			menu.updateButtons();
-		});
-	}
 }

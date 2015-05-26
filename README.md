@@ -9,6 +9,7 @@ Bugs
 
 Tasks
 -----
+* Use only prepared statements
 * Preview
 * 404, error handling
 * Mobile version (view only?)
@@ -22,3 +23,7 @@ Further tasks
 * Migrate to node.js?
 * i18n and l10n
 * Documentation
+
+Code conventions
+----------------
+* REST API

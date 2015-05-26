@@ -25,7 +25,6 @@ button::-moz-focus-inner {
 	padding: 5px;
 	position: absolute;
 }
-
 .menu button {
 	background: transparent;
 	border: none;
@@ -38,25 +37,20 @@ button::-moz-focus-inner {
 	padding: 5px;
 	vertical-align: middle;
 }
-
 .menu button img {
 	display: block;
 	height: 30px;
 	pointer-events: none;
 }
-
 .menu button.disabled {
 	cursor: default;
 }
-
 .menu button.disabled img {
 	opacity: .1;
 }
-
 .menu button.active {
 	background: #aaf;
 }
-
 .menu .tooltip {
 	background: #aaa;
 	border-radius: 10px;
@@ -99,7 +93,8 @@ button::-moz-focus-inner {
 #facebook-menu img {
 	height: auto;
 }
-#facebook-menu button.disabled {
+#facebook-login-button,
+#facebook-logout-button {
 	display: none;
 }
 
