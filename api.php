@@ -9,7 +9,7 @@ include 'vendor/autoload.php';
 // Initialize the database
 $gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 
-// Initialise the global user object
+// Initialise the global user
 $token = SESSION( 'token' );
 $gUser = User::newFromToken( $token );
 

@@ -337,8 +337,6 @@ mouse = {
 		mouse.diffX += ( mouse.currentX - mouse.previousX ) * board.pixelSize;
 		mouse.diffY += ( mouse.currentY - mouse.previousY ) * board.pixelSize;
 
-//console.log( mouse, mouse.previousX, mouse.currentX, board, board.centerX, board.pixelSize, mouse.diffX )
-
 		board.clear();
 		board.context.putImageData( board.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
 
@@ -405,9 +403,8 @@ mouse = {
 
 	paintArea: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor };
-		console.log( data );
 		$.post( 'areas', data, function ( response ) {
-			console.log( response );
+			//console.log( response );
 			if ( response.message === 'Not your pixel' ) {
 				var Pixel = new window.Pixel( response.Pixel );
 				var Author = new window.User( response.Author );

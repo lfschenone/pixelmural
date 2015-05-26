@@ -9,6 +9,7 @@ Bugs
 
 Tasks
 -----
+* In the API, check if the global user exists
 * Use only prepared statements
 * Preview
 * 404, error handling

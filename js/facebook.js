@@ -28,6 +28,7 @@ window.fbAsyncInit = function () {
 function statusChangeCallback( response ) {
 	//console.log( response );
 	$.get( 'tokens', function ( response ) {
+		//console.log( response );
 		// Set the global user with the data from the response
 		gUser = new User( response );
 	});
