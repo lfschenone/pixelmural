@@ -20,21 +20,21 @@ $( function () {
 	}).first().next().addClass( 'active' ); // Set the first color as active
 
 	// Set the variables that must wait for the DOM to be loaded
-	board.setCanvas( document.getElementById( 'board' ) );
-	board.setContext( board.canvas.getContext( '2d' ) );
-	board.setWidth( $( 'body' ).width() );
-	board.setHeight( $( 'body' ).height() );
-	board.setBackground( '#ffffff' );
-	board.setCenterX( board.getCenterX() );
-	board.setCenterY( board.getCenterY() );
-	board.setPixelSize( board.getPixelSize() );
+	mural.setCanvas( document.getElementById( 'mural' ) );
+	mural.setContext( mural.canvas.getContext( '2d' ) );
+	mural.setWidth( $( 'body' ).width() );
+	mural.setHeight( $( 'body' ).height() );
+	mural.setBackground( '#ffffff' );
+	mural.setCenterX( mural.getCenterX() );
+	mural.setCenterY( mural.getCenterY() );
+	mural.setPixelSize( mural.getPixelSize() );
 	grid.setCanvas( document.getElementById( 'grid' ) );
 	grid.setContext( grid.canvas.getContext( '2d' ) );
-	grid.setWidth( board.width );
-	grid.setHeight( board.height );
+	grid.setWidth( mural.width );
+	grid.setHeight( mural.height );
 
 	// Bind events
-	$( '#board' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
+	$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( '#grid-button' ).click( menu.clickGridButton );
 	$( '#zoom-in-button' ).click( menu.clickZoomInButton );
 	$( '#zoom-out-button' ).click( menu.clickZoomOutButton );
@@ -48,14 +48,14 @@ $( function () {
 	$( '#bucket-button' ).click( menu.clickBucketButton );
 	$( '#eraser-button' ).click( menu.clickEraserButton );
 	$( '.menu button' ).mouseover( menu.showTooltip ).mouseout( menu.hideTooltip ).click( menu.updateButtons );
-	$( document ).keydown( keyboard.keydown );
-	$( document ).keyup( keyboard.keyup );
+	$( document ).keydown( keymural.keydown );
+	$( document ).keyup( keymural.keyup );
 
 	// Set 'Move' as the default action
 	$( '#move-button' ).click();
 
-	// Fill the board
-	board.fill();
+	// Fill the mural
+	mural.fill();
 });
 
 menu = {
@@ -82,23 +82,23 @@ menu = {
 	},
 
 	clickZoomInButton: function ( event ) {
-		board.zoomIn();
+		mural.zoomIn();
 	},
 
 	clickZoomOutButton: function ( event ) {
-		board.zoomOut();
+		mural.zoomOut();
 	},
 
 	clickUndoButton: function ( event ) {
-		board.undo();
+		mural.undo();
 	},
 
 	clickRedoButton: function ( event ) {
-		board.redo();
+		mural.redo();
 	},
 
 	clickInfoButton: function ( event ) {
-		$( '#board' ).css( 'cursor', 'default' );
+		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#info-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'getInfo';
 		mouse.dragAction = null;
@@ -106,15 +106,15 @@ menu = {
 	},
 
 	clickMoveButton: function ( event ) {
-		$( '#board' ).css( 'cursor', 'move' );
+		$( '#mural' ).css( 'cursor', 'move' );
 		$( '#move-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
-		mouse.downAction = 'moveBoard1';
-		mouse.dragAction = 'moveBoard2';
-		mouse.upAction = 'moveBoard3';
+		mouse.downAction = 'movemural1';
+		mouse.dragAction = 'movemural2';
+		mouse.upAction = 'movemural3';
 	},
 
 	clickDropperButton: function ( event ) {
-		$( '#board' ).css( 'cursor', 'default' );
+		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#dropper-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'suckColor';
 		mouse.dragAction = 'suckColor';
@@ -122,7 +122,7 @@ menu = {
 	},
 
 	clickPencilButton: function ( event ) {
-		$( '#board' ).css( 'cursor', 'default' );
+		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#pencil-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
 		mouse.dragAction = null;
@@ -133,7 +133,7 @@ menu = {
 		if ( $( '#brush-button' ).hasClass( 'disabled' ) ) {
 			return; // There should be a server-side check
 		}
-		$( '#board' ).css( 'cursor', 'default' );
+		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#brush-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
 		mouse.dragAction = 'paintPixel';
@@ -144,7 +144,7 @@ menu = {
 		if ( $( '#bucket-button' ).hasClass( 'disabled' ) ) {
 			return; // There should be a server-side check
 		}
-		$( '#board' ).css( 'cursor', 'default' );
+		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#bucket-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintArea';
 		mouse.dragAction = null;
@@ -152,7 +152,7 @@ menu = {
 	},
 
 	clickEraserButton: function ( event ) {
-		$( '#board' ).css( 'cursor', 'default' );
+		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#eraser-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'erasePixel';
 		mouse.dragAction = 'erasePixel';
@@ -186,23 +186,23 @@ menu = {
 		// First reset everything
 		$( '.menu button' ).removeClass( 'disabled' ).removeAttr( 'data-tooltip' );
 
-		if ( board.pixelSize === 1 ) {
+		if ( mural.pixelSize === 1 ) {
 			$( '#zoom-out-button' ).addClass( 'disabled' );
 		}
 
-		if ( board.pixelSize === 64 ) {
+		if ( mural.pixelSize === 64 ) {
 			$( '#zoom-in-button' ).addClass( 'disabled' );
 		}
 
-		if ( board.arrayPointer === 0 ) {
+		if ( mural.arrayPointer === 0 ) {
 			$( '#undo-button' ).addClass( 'disabled' );
 		}
 
-		if ( board.arrayPointer === board.newPixels.length ) {
+		if ( mural.arrayPointer === mural.newPixels.length ) {
 			$( '#redo-button' ).addClass( 'disabled' );
 		}
 
-		if ( board.pixelSize < 4 ) {
+		if ( mural.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
 		}
 
@@ -214,7 +214,7 @@ menu = {
 	}
 }
 
-keyboard = {
+keymural = {
 
 	keydown: function ( event ) {
 		// Alt
@@ -289,13 +289,13 @@ mouse = {
 
 	getCurrentX: function ( event ) {
 		var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
-		var currentX = board.centerX - Math.floor( board.xPixels / 2 ) + Math.floor( offsetX / board.pixelSize );
+		var currentX = mural.centerX - Math.floor( mural.xPixels / 2 ) + Math.floor( offsetX / mural.pixelSize );
 		return currentX;
 	},
 
 	getCurrentY: function ( event ) {
 		var offsetY = event.pageY - $( event.target ).offset().top - 2; // The -2 is to correct a minor displacement
-		var currentY = board.centerY - Math.floor( board.yPixels / 2 ) + Math.floor( offsetY / board.pixelSize );
+		var currentY = mural.centerY - Math.floor( mural.yPixels / 2 ) + Math.floor( offsetY / mural.pixelSize );
 		return currentY;
 	},
 
@@ -324,40 +324,40 @@ mouse = {
 		}
 	},
 
-	moveBoard1: function ( event ) {
+	movemural1: function ( event ) {
 		mouse.diffX = 0;
 		mouse.diffY = 0;
-		board.imageData = board.context.getImageData( 0, 0, board.width, board.height );
+		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
 	},
 
-	moveBoard2: function ( event ) {
-		board.centerX += mouse.previousX - mouse.currentX;
-		board.centerY += mouse.previousY - mouse.currentY;
+	movemural2: function ( event ) {
+		mural.centerX += mouse.previousX - mouse.currentX;
+		mural.centerY += mouse.previousY - mouse.currentY;
 
-		mouse.diffX += ( mouse.currentX - mouse.previousX ) * board.pixelSize;
-		mouse.diffY += ( mouse.currentY - mouse.previousY ) * board.pixelSize;
+		mouse.diffX += ( mouse.currentX - mouse.previousX ) * mural.pixelSize;
+		mouse.diffY += ( mouse.currentY - mouse.previousY ) * mural.pixelSize;
 
-		board.clear();
-		board.context.putImageData( board.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
+		mural.clear();
+		mural.context.putImageData( mural.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
 
-		// Bugfix: without this, the board flickers when moving
+		// Bugfix: without this, the mural flickers when moving
 		mouse.currentX = mouse.getCurrentX( event );
 		mouse.currentY = mouse.getCurrentY( event );
 	},
 
-	moveBoard3: function ( event ) {
+	movemural3: function ( event ) {
 		if ( mouse.diffX || mouse.diffY ) {
-			board.fill();
+			mural.fill();
 		}
 	},
 
 	suckColor: function ( event ) {
-		var imageData = board.context.getImageData( event.offsetX, event.offsetY, 1, 1 );
+		var imageData = mural.context.getImageData( event.offsetX, event.offsetY, 1, 1 );
 			red   = imageData.data[0],
 			green = imageData.data[1],
 			blue  = imageData.data[2],
 			alpha = imageData.data[3];
-		menu.activeColor = alpha ? rgb2hex( red, green, blue ) : board.background;
+		menu.activeColor = alpha ? rgb2hex( red, green, blue ) : mural.background;
 	},
 
 	getInfo: function ( event ) {
@@ -376,7 +376,7 @@ mouse = {
 	 * Paint a single pixel
 	 */
 	paintPixel: function ( event ) {
-		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY ),
+		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY ),
 			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
 
 		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
@@ -390,7 +390,7 @@ mouse = {
 	 * Erase a single pixel
 	 */
 	erasePixel: function ( event ) {
-		var oldPixel = board.getPixel( mouse.currentX, mouse.currentY );
+		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY );
 
 		if ( oldPixel.color === null ) {
 			return; // The pixel doesn't exist, no need to continue
@@ -433,7 +433,7 @@ mouse = {
 	}
 }
 
-board = {
+mural = {
 
 	canvas: {},
 	context: {},
@@ -454,11 +454,11 @@ board = {
 	/* Getters */
 
 	getXpixels: function () {
-		return Math.floor( board.width / board.pixelSize );
+		return Math.floor( mural.width / mural.pixelSize );
 	},
 
 	getYpixels: function () {
-		return Math.floor( board.height / board.pixelSize );
+		return Math.floor( mural.height / mural.pixelSize );
 	},
 
 	getCenterX: function() {
@@ -466,7 +466,7 @@ board = {
 		if ( !isNaN( centerX ) ) {
 			return centerX;
 		}
-		return board.centerX;
+		return mural.centerX;
 	},
 
 	getCenterY: function() {
@@ -474,7 +474,7 @@ board = {
 		if ( !isNaN( centerY ) ) {
 			return centerY;
 		}
-		return board.centerY;
+		return mural.centerY;
 	},
 
 	getPixelSize: function() {
@@ -482,7 +482,7 @@ board = {
 		if ( !isNaN( pixelSize ) ) {
 			return pixelSize;
 		}
-		return board.pixelSize;
+		return mural.pixelSize;
 	},
 
 	/**
@@ -491,9 +491,9 @@ board = {
 	 * so it only works for visible pixels
 	 */
 	getPixel: function ( x, y ) {
-		var rectX = Math.abs( board.centerX - Math.floor( board.xPixels / 2 ) - x ) * board.pixelSize,
-			rectY = Math.abs( board.centerY - Math.floor( board.yPixels / 2 ) - y ) * board.pixelSize,
-			imageData = board.context.getImageData( rectX, rectY, 1, 1 ),
+		var rectX = Math.abs( mural.centerX - Math.floor( mural.xPixels / 2 ) - x ) * mural.pixelSize,
+			rectY = Math.abs( mural.centerY - Math.floor( mural.yPixels / 2 ) - y ) * mural.pixelSize,
+			imageData = mural.context.getImageData( rectX, rectY, 1, 1 ),
 			red   = imageData.data[0],
 			green = imageData.data[1],
 			blue  = imageData.data[2],
@@ -506,48 +506,48 @@ board = {
 	/* Setters */
 
 	setCanvas: function ( value ) {
-		board.canvas = value;
+		mural.canvas = value;
 	},
 
 	setContext: function ( value ) {
-		board.context = value;
+		mural.context = value;
 	},
 
 	setBackground: function ( value ) {
-		board.background = value;
-		$( board.canvas ).css( 'background', value );
+		mural.background = value;
+		$( mural.canvas ).css( 'background', value );
 	},
 
 	setWidth: function ( value ) {
-		board.width = value;
-		board.canvas.setAttribute( 'width', value );
-		board.xPixels = board.getXpixels();
+		mural.width = value;
+		mural.canvas.setAttribute( 'width', value );
+		mural.xPixels = mural.getXpixels();
 	},
 
 	setHeight: function ( value ) {
-		board.height = value;
-		board.canvas.setAttribute( 'height', value );
-		board.yPixels = board.getYpixels();
+		mural.height = value;
+		mural.canvas.setAttribute( 'height', value );
+		mural.yPixels = mural.getYpixels();
 	},
 
 	setCenterX: function ( value ) {
-		board.centerX = value;
+		mural.centerX = value;
 	},
 
 	setCenterY: function ( value ) {
-		board.centerY = value;
+		mural.centerY = value;
 	},
 
 	setPixelSize: function ( value ) {
-		board.pixelSize = parseInt( value );
-		if ( board.pixelSize > 64 ) {
-			board.pixelSize = 64; // Max pixel size
+		mural.pixelSize = parseInt( value );
+		if ( mural.pixelSize > 64 ) {
+			mural.pixelSize = 64; // Max pixel size
 		}
-		if ( board.pixelSize < 1 ) {
-			board.pixelSize = 1; // Min pixel size
+		if ( mural.pixelSize < 1 ) {
+			mural.pixelSize = 1; // Min pixel size
 		}
-		board.xPixels = board.getXpixels();
-		board.yPixels = board.getYpixels();
+		mural.xPixels = mural.getXpixels();
+		mural.yPixels = mural.getYpixels();
 	},
 
 	/* Methods */
@@ -560,47 +560,47 @@ board = {
 	arrayPointer: 0,
 
 	undo: function () {
-		if ( board.arrayPointer === 0 ) {
+		if ( mural.arrayPointer === 0 ) {
 			return;
 		}
-		board.arrayPointer--;
-		var oldPixels = board.oldPixels[ board.arrayPointer ];
+		mural.arrayPointer--;
+		var oldPixels = mural.oldPixels[ mural.arrayPointer ];
 		oldPixels.paint().save();
 	},
 
 	redo: function () {
-		if ( board.arrayPointer === board.newPixels.length ) {
+		if ( mural.arrayPointer === mural.newPixels.length ) {
 			return;
 		}
-		var newPixels = board.newPixels[ board.arrayPointer ];
-		board.arrayPointer++;
+		var newPixels = mural.newPixels[ mural.arrayPointer ];
+		mural.arrayPointer++;
 		newPixels.paint().save();
 	},
 
 	zoomIn: function () {
-		if ( board.pixelSize === 64 ) {
+		if ( mural.pixelSize === 64 ) {
 			return;
 		}
-		board.setPixelSize( board.pixelSize * 2 );
-		board.fill();
+		mural.setPixelSize( mural.pixelSize * 2 );
+		mural.fill();
 	},
 
 	zoomOut: function () {
-		if ( board.pixelSize === 1 ) {
+		if ( mural.pixelSize === 1 ) {
 			return;
 		}
-		board.setPixelSize( board.pixelSize / 2 );
-		board.fill();
+		mural.setPixelSize( mural.pixelSize / 2 );
+		mural.fill();
 	},
 
 	fill: function () {
 		menu.showAlert( 'Loading pixels, please wait...' );
 		var data = {
-			'width': board.width,
-			'height': board.height,
-			'centerX': board.centerX,
-			'centerY': board.centerY,
-			'pixelSize': board.pixelSize,
+			'width': mural.width,
+			'height': mural.height,
+			'centerX': mural.centerX,
+			'centerY': mural.centerY,
+			'pixelSize': mural.pixelSize,
 			'format': 'base64'
 		};
 		$.get( 'areas', data, function ( response ) {
@@ -608,20 +608,20 @@ board = {
 			var image = new Image();
 			image.src = "data:image/png;base64," + response;
 			image.onload = function () {
-				board.clear();
-				board.context.drawImage( image, 0, 0 );
+				mural.clear();
+				mural.context.drawImage( image, 0, 0 );
 				grid.toggle().toggle();
 			}
 			$( '#alert' ).hide();
 
 			// Update the URL of the browser
 			var BASE = $( 'base' ).attr( 'href' );
-			history.replaceState( null, null, BASE + board.centerX + '/' + board.centerY + '/' + board.pixelSize );
+			history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
 		});
 	},
 
 	clear: function () {
-		board.context.clearRect( 0, 0, board.width, board.height );
+		mural.context.clearRect( 0, 0, mural.width, mural.height );
 	}
 }
 
@@ -658,17 +658,17 @@ grid = {
 
 	show: function () {
 		grid.visible = true;
-		if ( board.pixelSize < 4 ) {
+		if ( mural.pixelSize < 4 ) {
 			return; // Pixels are too small for the grid
 		}
 		grid.context.beginPath();
-		for ( var x = 0; x <= board.xPixels; x++ ) {
-			grid.context.moveTo( x * board.pixelSize - 0.5, 0 ); // The 0.5 avoids getting blury lines
-			grid.context.lineTo( x * board.pixelSize - 0.5, grid.height );
+		for ( var x = 0; x <= mural.xPixels; x++ ) {
+			grid.context.moveTo( x * mural.pixelSize - 0.5, 0 ); // The 0.5 avoids getting blury lines
+			grid.context.lineTo( x * mural.pixelSize - 0.5, grid.height );
 		}
-		for ( var y = 0; y <= board.yPixels; y++ ) {
-			grid.context.moveTo( 0, y * board.pixelSize - 0.5 );
-			grid.context.lineTo( grid.width, y * board.pixelSize - 0.5 );
+		for ( var y = 0; y <= mural.yPixels; y++ ) {
+			grid.context.moveTo( 0, y * mural.pixelSize - 0.5 );
+			grid.context.lineTo( grid.width, y * mural.pixelSize - 0.5 );
 		}
 		grid.context.strokeStyle = grid.color;
 		grid.context.stroke();
@@ -748,19 +748,19 @@ function Pixel( data ) {
 	}
 
 	this.register = function ( oldPixel ) {
-		board.oldPixels.splice( board.arrayPointer, board.oldPixels.length - board.arrayPointer, oldPixel );
-		board.newPixels.splice( board.arrayPointer, board.newPixels.length - board.arrayPointer, this );
-		board.arrayPointer++;
+		mural.oldPixels.splice( mural.arrayPointer, mural.oldPixels.length - mural.arrayPointer, oldPixel );
+		mural.newPixels.splice( mural.arrayPointer, mural.newPixels.length - mural.arrayPointer, this );
+		mural.arrayPointer++;
 		menu.updateButtons();
 		return this;
 	}
 
 	this.unregister = function () {
-		for ( var i = 0; i < board.oldPixels.length; i++ ) {
-			if ( board.oldPixels[ i ].x === this.x && board.oldPixels[ i ].y === this.y ) {
-				board.oldPixels.splice( i, 1 );
-				board.newPixels.splice( i, 1 );
-				board.arrayPointer--;
+		for ( var i = 0; i < mural.oldPixels.length; i++ ) {
+			if ( mural.oldPixels[ i ].x === this.x && mural.oldPixels[ i ].y === this.y ) {
+				mural.oldPixels.splice( i, 1 );
+				mural.newPixels.splice( i, 1 );
+				mural.arrayPointer--;
 			}
 		}
 		menu.updateButtons();
@@ -786,21 +786,21 @@ function Pixel( data ) {
 		if ( this.color === null ) {
 			return this.erase();
 		}
-		var rectX = Math.abs( board.centerX - Math.floor( board.xPixels / 2 ) - this.x ) * board.pixelSize,
-			rectY = Math.abs( board.centerY - Math.floor( board.yPixels / 2 ) - this.y ) * board.pixelSize,
-			rectW = board.pixelSize,
-			rectH = board.pixelSize;
-		board.context.fillStyle = this.color;
-		board.context.fillRect( rectX, rectY, rectW, rectH );
+		var rectX = Math.abs( mural.centerX - Math.floor( mural.xPixels / 2 ) - this.x ) * mural.pixelSize,
+			rectY = Math.abs( mural.centerY - Math.floor( mural.yPixels / 2 ) - this.y ) * mural.pixelSize,
+			rectW = mural.pixelSize,
+			rectH = mural.pixelSize;
+		mural.context.fillStyle = this.color;
+		mural.context.fillRect( rectX, rectY, rectW, rectH );
 		return this;
 	}
 
 	this.erase = function () {
-		var rectX = Math.abs( board.centerX - Math.floor( board.xPixels / 2 ) - this.x ) * board.pixelSize,
-			rectY = Math.abs( board.centerY - Math.floor( board.yPixels / 2 ) - this.y ) * board.pixelSize,
-			rectW = board.pixelSize,
-			rectH = board.pixelSize;
-		board.context.clearRect( rectX, rectY, rectW, rectH );
+		var rectX = Math.abs( mural.centerX - Math.floor( mural.xPixels / 2 ) - this.x ) * mural.pixelSize,
+			rectY = Math.abs( mural.centerY - Math.floor( mural.yPixels / 2 ) - this.y ) * mural.pixelSize,
+			rectW = mural.pixelSize,
+			rectH = mural.pixelSize;
+		mural.context.clearRect( rectX, rectY, rectW, rectH );
 		this.color = null;
 		return this;
 	}
@@ -818,9 +818,9 @@ function Area( data ) {
 	}
 
 	this.register = function ( oldArea ) {
-		board.oldPixels.splice( board.arrayPointer, board.oldPixels.length - board.arrayPointer, oldArea );
-		board.newPixels.splice( board.arrayPointer, board.newPixels.length - board.arrayPointer, this );
-		board.arrayPointer++;
+		mural.oldPixels.splice( mural.arrayPointer, mural.oldPixels.length - mural.arrayPointer, oldArea );
+		mural.newPixels.splice( mural.arrayPointer, mural.newPixels.length - mural.arrayPointer, this );
+		mural.arrayPointer++;
 		menu.updateButtons();
 		return this;
 	}

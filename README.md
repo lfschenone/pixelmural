@@ -1,5 +1,5 @@
-Pixel by Pixel
-==============
+Pixel Mural
+===========
 An infinite canvas of collaborative pixel art
 
 Bugs
@@ -24,7 +24,3 @@ Further tasks
 * Migrate to node.js?
 * i18n and l10n
 * Documentation
-
-Code conventions
-----------------
-* REST API

@@ -5,16 +5,14 @@ ini_set( 'display_errors', 1 );
 error_reporting( E_ALL );
 
 // General settings
-define( 'BASE', 'http://local.pixel-by-pixel.net/pixel-by-pixel/' );
-define( 'TITLE', 'Pixel by Pixel' );
+define( 'BASE', 'http://local.pixelmural.com/pixelmural/' );
+define( 'TITLE', 'Pixel Mural' );
 define( 'DESCRIPTION', 'An infinite canvas of collaborative pixel art. Come leave your mark!' );
-define( 'CONTACT_EMAIL', 'contact@pixel-by-pixel.net' );
 
 // Defaults
 define( 'DEFAULT_CENTERX', 0 );
 define( 'DEFAULT_CENTERY', 0 );
 define( 'DEFAULT_PIXELSIZE', 2 );
-date_default_timezone_set( 'America/Argentina/Buenos_Aires' );
 
 // Database
 define( 'DB_HOST', 'localhost' );
