@@ -14,12 +14,14 @@ class Pixel extends Model {
 
 	static function newFromCoords( $x, $y ) {
 		global $gDatabase;
-		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x = $x AND y = $y LIMIT 1" );
-		$DATA = $Result->fetch_assoc();
+		$Statement = $gDatabase->prepare( 'SELECT * FROM pixels WHERE x = ? AND y = ? LIMIT 1' );
+		$Statement->bind_param( 'ii', $x, $y );
+		$Statement->execute();
+		$RESULT = get_result( $Statement );
+		$DATA = array_shift( $RESULT );
 		if ( $DATA ) {
 			return new Pixel( $DATA );
 		}
-		return null;
 	}
 
 	function getAuthor() {
@@ -29,14 +31,9 @@ class Pixel extends Model {
 	function fetch() {
 		global $gDatabase;
 		if ( !$this->x or !$this->y ) {
-			return false;
+			return;
 		}
-		$Result = $gDatabase->query( "SELECT * FROM pixels WHERE x = $x AND y = $y LIMIT 1" );
-		$DATA = $Result->fetch_assoc();
-		if ( $DATA ) {
-			return new Pixel( $DATA );
-		}
-		return false;
+		return Pixel::newFromCoords( $this->x, $this->y );
 	}
 
 	function insert() {

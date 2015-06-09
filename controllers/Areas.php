@@ -20,8 +20,11 @@ class Areas extends Controller {
 		$Image = new Image( $width, $height );
 		$Image->makeTransparent();
 
-		$Result = $gDatabase->query( "SELECT x, y, color FROM pixels WHERE x >= $minX AND x <= $maxX AND y >= $minY AND y <= $maxY" );
-		while ( $DATA = $Result->fetch_assoc() ) {
+		$Statement = $gDatabase->prepare( 'SELECT x, y, color FROM pixels WHERE x >= ? AND x <= ? AND y >= ? AND y <= ?' );
+		$Statement->bind_param( 'iiii', $minX, $maxX, $minY, $maxY );
+		$Statement->execute();
+		$RESULT = get_result( $Statement );
+		while ( $DATA = array_shift( $RESULT ) ) {
 			$Image->setColorFromHex( $DATA['color'] );
 			$x1 = ( $DATA['x'] - $minX ) * $pixelSize;
 			$y1 = ( $DATA['y'] - $minY ) * $pixelSize;
@@ -72,16 +75,32 @@ class Areas extends Controller {
 
 			// Search for all the pixels in the Von Neumann neighborhood that are owned by the user,
 			// have the same color as the first pixel, and haven't been painted yet
-			$Result = $gDatabase->query( 'SELECT * FROM pixels WHERE
-				author_id = "' . $firstPixel->author_id . '" AND
-				insert_time < ' . $_SERVER['REQUEST_TIME'] . ' AND
-				color = "' . $oldColor . '" AND (
-				( x = ' . $Pixel->x . ' + 1 AND y = ' . $Pixel->y . ' ) OR
-				( x = ' . $Pixel->x . ' - 1 AND y = ' . $Pixel->y . ' ) OR
-				( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' + 1 ) OR
-				( x = ' . $Pixel->x . ' AND y = ' . $Pixel->y . ' - 1 )
-				) LIMIT 4' );
-			while ( $DATA = $Result->fetch_assoc() ) {
+			$Statement = $gDatabase->prepare( 'SELECT * FROM pixels WHERE
+				author_id = ? AND
+				insert_time < ? AND
+				color = ? AND (
+				( x = ? + 1 AND y = ? ) OR
+				( x = ? - 1 AND y = ? ) OR
+				( x = ? AND y = ? + 1 ) OR
+				( x = ? AND y = ? - 1 )
+				) LIMIT 4'
+			);
+			$Statement->bind_param( 'iisiiiiiiii',
+				$firstPixel->author_id,
+				$_SERVER['REQUEST_TIME'],
+				$oldColor,
+				$Pixel->x,
+				$Pixel->y,
+				$Pixel->x,
+				$Pixel->y,
+				$Pixel->x,
+				$Pixel->y,
+				$Pixel->x,
+				$Pixel->y
+			);
+			$Statement->execute();
+			$RESULT = get_result( $Statement );
+			while ( $DATA = array_shift( $RESULT ) ) {
 				$Neighbor = new Pixel( $DATA );
 				$oldAreaData[] = clone $Neighbor;
 				$Neighbor->color = $color;

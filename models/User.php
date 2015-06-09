@@ -11,6 +11,7 @@ class User extends Model {
 	public $update_time;
 	public $pixel_count = 0;
 	public $share_count = 0;
+	public $token;
 	public $name;
 	public $email;
 	public $gender;
@@ -24,8 +25,11 @@ class User extends Model {
 		if ( !$id ) {
 			return;
 		}
-		$Result = $gDatabase->query( "SELECT * FROM users WHERE id = $id LIMIT 1" );
-		$DATA = $Result->fetch_assoc();
+		$Statement = $gDatabase->prepare( 'SELECT * FROM users WHERE id = ? LIMIT 1' );
+		$Statement->bind_param( 'i', $id );
+		$Statement->execute();
+		$RESULT = get_result( $Statement );
+		$DATA = array_shift( $RESULT );
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
@@ -36,8 +40,11 @@ class User extends Model {
 		if ( !$facebook_id ) {
 			return;
 		}
-		$Result = $gDatabase->query( "SELECT * FROM users WHERE facebook_id = $facebook_id LIMIT 1" );
-		$DATA = $Result->fetch_assoc();
+		$Statement = $gDatabase->prepare( 'SELECT * FROM users WHERE facebook_id = ? LIMIT 1' );
+		$Statement->bind_param( 'i', $facebook_id );
+		$Statement->execute();
+		$RESULT = get_result( $Statement );
+		$DATA = array_shift( $RESULT );
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
@@ -48,9 +55,11 @@ class User extends Model {
 		if ( !$ip ) {
 			return;
 		}
-		$ip = $gDatabase->real_escape_string( $ip );
-		$Result = $gDatabase->query( "SELECT * FROM users WHERE name = '$ip' LIMIT 1" ); // IPs are stored as the names of anonymous users
-		$DATA = $Result->fetch_assoc();
+		$Statement = $gDatabase->prepare( 'SELECT * FROM users WHERE name = ? LIMIT 1' );
+		$Statement->bind_param( 's', $ip ); // IPs are the names of anonymous users
+		$Statement->execute();
+		$RESULT = get_result( $Statement );
+		$DATA = array_shift( $RESULT );
 		if ( $DATA ) {
 			return new User( $DATA );
 		}
@@ -61,9 +70,11 @@ class User extends Model {
 		if ( !$token ) {
 			return;
 		}
-		$token = $gDatabase->real_escape_string( $token );
-		$Result = $gDatabase->query( "SELECT * FROM users WHERE token = '$token' LIMIT 1" );
-		$DATA = $Result->fetch_assoc();
+		$Statement = $gDatabase->prepare( 'SELECT * FROM users WHERE token = ? LIMIT 1' );
+		$Statement->bind_param( 's', $token );
+		$Statement->execute();
+		$RESULT = get_result( $Statement );
+		$DATA = array_shift( $RESULT );
 		if ( $DATA ) {
 			return new User( $DATA );
 		}

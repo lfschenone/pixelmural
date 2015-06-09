@@ -48,8 +48,7 @@ $( function () {
 	$( '#bucket-button' ).click( menu.clickBucketButton );
 	$( '#eraser-button' ).click( menu.clickEraserButton );
 	$( '.menu button' ).mouseover( menu.showTooltip ).mouseout( menu.hideTooltip ).click( menu.updateButtons );
-	$( document ).keydown( keymural.keydown );
-	$( document ).keyup( keymural.keyup );
+	$( document ).keydown( keymural.keydown ).keyup( keymural.keyup ).mouseup( mouse.up );
 
 	// Set 'Move' as the default action
 	$( '#move-button' ).click();
@@ -352,12 +351,15 @@ mouse = {
 	},
 
 	suckColor: function ( event ) {
-		var imageData = mural.context.getImageData( event.offsetX, event.offsetY, 1, 1 );
+		var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
+			offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
+			imageData = mural.context.getImageData( offsetX, offsetY, 1, 1 ),
 			red   = imageData.data[0],
 			green = imageData.data[1],
 			blue  = imageData.data[2],
 			alpha = imageData.data[3];
 		menu.activeColor = alpha ? rgb2hex( red, green, blue ) : mural.background;
+		menu.updateButtons();
 	},
 
 	getInfo: function ( event ) {
@@ -771,6 +773,8 @@ function Pixel( data ) {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
 		$.post( 'pixels', data, function ( response ) {
 			//console.log( response );
+			menu.showAlert( response.message, 1000 );
+
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
 				var Pixel = new window.Pixel( response.Pixel );

@@ -48,11 +48,10 @@ class Tokens extends Controller {
 			}
 		}
 
-		// Create the token
-		$token = md5( uniqid() );
-		$gUser->token = $token;
+		// Set the token
+		session_regenerate_id();
+		$gUser->token = session_id();
 		$gUser->update();
-		$_SESSION['token'] = $token;
 
 		return $gUser;
 	}
