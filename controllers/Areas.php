@@ -23,11 +23,11 @@ class Areas extends Controller {
 		$Statement = $gDatabase->prepare( 'SELECT x, y, color FROM pixels WHERE x >= ? AND x <= ? AND y >= ? AND y <= ?' );
 		$Statement->bind_param( 'iiii', $minX, $maxX, $minY, $maxY );
 		$Statement->execute();
-		$RESULT = get_result( $Statement );
-		while ( $DATA = array_shift( $RESULT ) ) {
-			$Image->setColorFromHex( $DATA['color'] );
-			$x1 = ( $DATA['x'] - $minX ) * $pixelSize;
-			$y1 = ( $DATA['y'] - $minY ) * $pixelSize;
+		$Statement->bind_result( $x, $y, $color );
+		while ( $Statement->fetch() ) {
+			$Image->setColorFromHex( $color );
+			$x1 = ( $x - $minX ) * $pixelSize;
+			$y1 = ( $y - $minY ) * $pixelSize;
 			$x2 = $x1 + $pixelSize - 1;
 			$y2 = $y1 + $pixelSize - 1;
 			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );

@@ -39,7 +39,7 @@ class Image {
 
 	function destroy() {
 		imagedestroy( $this->image );
-		return null; //Or return $this?
+		return $this;
 	}
 
 	function __destruct() {
