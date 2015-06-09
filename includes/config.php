@@ -8,6 +8,7 @@ error_reporting( E_ALL );
 define( 'BASE', 'http://local.pixelmural.com/pixelmural/' );
 define( 'TITLE', 'Pixel Mural' );
 define( 'DESCRIPTION', 'An infinite canvas of collaborative pixel art. Come leave your mark!' );
+date_default_timezone_set( 'America/Argentina/Buenos_Aires' );
 
 // Defaults
 define( 'DEFAULT_CENTERX', 0 );
@@ -18,7 +19,7 @@ define( 'DEFAULT_PIXELSIZE', 2 );
 define( 'DB_HOST', 'localhost' );
 define( 'DB_USER', 'root' );
 define( 'DB_PASS', 'penta' );
-define( 'DB_NAME', 'pixel-by-pixel' );
+define( 'DB_NAME', 'pixelmural' );
 
 // Facebook
 define( 'FACEBOOK_APP_ID', '707049712677506' );
