@@ -10,13 +10,11 @@ Bugs
 
 Tasks
 -----
-* In the API, check if the global user exists
-* Preview
+* In the API, always check if the global user exists
 * 404s, error handling
 * Mobile version (view only?)
 * Set up payments
 * Cookies to remember things like the grid and colors?
-* When zooming and moving, only load the pixels that change?
 * Further customise Spectrum
 
 Further tasks

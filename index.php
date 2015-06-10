@@ -72,6 +72,7 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 
 	<canvas id="mural"></canvas>
 	<canvas id="grid"></canvas>
+	<canvas id="preview"></canvas>
 
 </body>
 </html>

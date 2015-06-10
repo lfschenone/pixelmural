@@ -32,6 +32,8 @@ $( function () {
 	grid.setContext( grid.canvas.getContext( '2d' ) );
 	grid.setWidth( mural.width );
 	grid.setHeight( mural.height );
+	preview.setCanvas( document.getElementById( 'preview' ) );
+	preview.setContext( preview.canvas.getContext( '2d' ) );
 
 	// Bind events
 	$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
@@ -437,19 +439,19 @@ mouse = {
 
 mural = {
 
-	canvas: {},
-	context: {},
+	canvas: null,
+	context: null,
 
-	width: 600,
-	height: 300,
+	width: null,
+	height: null,
 
 	centerX: 0,
 	centerY: 0,
 
 	pixelSize: 2,
 
-	xPixels: 60,
-	yPixels: 30,
+	xPixels: null,
+	yPixels: null,
 
 	background: null,
 
@@ -552,7 +554,7 @@ mural = {
 		mural.yPixels = mural.getYpixels();
 	},
 
-	/* Methods */
+	/* Actions */
 
 	/**
 	 * Undo/redo functionality
@@ -608,11 +610,12 @@ mural = {
 		$.get( 'areas', data, function ( response ) {
 			//console.log( response );
 			var image = new Image();
-			image.src = "data:image/png;base64," + response;
+			image.src = 'data:image/png;base64,' + response;
 			image.onload = function () {
 				mural.clear();
 				mural.context.drawImage( image, 0, 0 );
 				grid.toggle().toggle();
+				preview.fill();
 			}
 			$( '#alert' ).hide();
 
@@ -684,6 +687,61 @@ grid = {
 	toggle: function () {
 		grid.visible ? grid.hide() : grid.show();
 		return grid;
+	}
+}
+
+preview = {
+
+	canvas: null,
+	context: null,
+
+	width: 300,
+	height: 200,
+
+	/* Setters */
+
+	setCanvas: function ( value ) {
+		preview.canvas = value;
+	},
+
+	setContext: function ( value ) {
+		preview.context = value;
+	},
+
+	setWidth: function ( value ) {
+		preview.width = value;
+		preview.canvas.setAttribute( 'width', value );
+	},
+
+	setHeight: function ( value ) {
+		preview.height = value;
+		preview.canvas.setAttribute( 'height', value );
+	},
+
+	/* Actions */
+
+	fill: function () {
+		var data = {
+			'width': preview.width,
+			'height': preview.height,
+			'centerX': mural.centerX,
+			'centerY': mural.centerY,
+			'pixelSize': 1,
+			'format': 'base64'
+		};
+		$.get( 'areas', data, function ( response ) {
+			//console.log( response );
+			var image = new Image();
+			image.src = 'data:image/png;base64,' + response;
+			image.onload = function () {
+				preview.clear();
+				preview.context.drawImage( image, 0, 0 );
+			}
+		});
+	},
+
+	clear: function () {
+		preview.context.clearRect( 0, 0, preview.width, preview.height );
 	}
 }
 
