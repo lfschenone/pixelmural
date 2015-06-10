@@ -10,11 +10,13 @@ Bugs
 
 Tasks
 -----
+* Preview button
 * In the API, always check if the global user exists
 * 404s, error handling
 * Mobile version (view only?)
 * Set up payments
 * Cookies to remember things like the grid and colors?
+* Optimise preview loading
 * Further customise Spectrum
 
 Further tasks

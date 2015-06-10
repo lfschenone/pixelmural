@@ -71,7 +71,7 @@ menu = {
 		var button = $( event.target );
 		var tooltip = button.attr( 'data-tooltip' );
 		if ( tooltip ) {
-			var span = $( '<span/>' ).addClass( 'tooltip' ).text( tooltip );
+			var span = $( '<span>' ).addClass( 'tooltip' ).text( tooltip );
 			button.append( span );
 		}
 	},
@@ -172,11 +172,11 @@ menu = {
 	},
 
 	showPixelAuthor: function ( Pixel, Author ) {
-		var picture = '<img src="images/anon.png" />',
+		var picture = '<img src="images/anon.png">',
 			author = Author.name,
 			age = roundSeconds( Math.floor( Date.now() / 1000 ) - Pixel.insert_time );
 		if ( !Author.isAnon() ) {
-			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture" />';
+			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture">';
 			author = '<a target="_blank" href="' + Author.link + '">' + Author.name + '</a>';
 		}
 		menu.showAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>', 4000 );
@@ -850,21 +850,34 @@ function Pixel( data ) {
 		if ( this.color === null ) {
 			return this.erase();
 		}
-		var rectX = Math.abs( mural.centerX - Math.floor( mural.xPixels / 2 ) - this.x ) * mural.pixelSize,
-			rectY = Math.abs( mural.centerY - Math.floor( mural.yPixels / 2 ) - this.y ) * mural.pixelSize,
+		var rectX = ( this.x + Math.floor( mural.xPixels / 2 ) ) * mural.pixelSize,
+			rectY = ( this.y + Math.floor( mural.yPixels / 2 ) ) * mural.pixelSize,
 			rectW = mural.pixelSize,
 			rectH = mural.pixelSize;
 		mural.context.fillStyle = this.color;
 		mural.context.fillRect( rectX, rectY, rectW, rectH );
+
+		// Draw in the preview too
+		var x = this.x + preview.width / 2,
+			y = this.y + preview.height / 2;
+		preview.context.fillStyle = this.color;
+		preview.context.fillRect( x, y, 1, 1 );
+
 		return this;
 	}
 
 	this.erase = function () {
-		var rectX = Math.abs( mural.centerX - Math.floor( mural.xPixels / 2 ) - this.x ) * mural.pixelSize,
-			rectY = Math.abs( mural.centerY - Math.floor( mural.yPixels / 2 ) - this.y ) * mural.pixelSize,
+		var rectX = ( this.x + Math.floor( mural.xPixels / 2 ) ) * mural.pixelSize,
+			rectY = ( this.y + Math.floor( mural.yPixels / 2 ) ) * mural.pixelSize,
 			rectW = mural.pixelSize,
 			rectH = mural.pixelSize;
 		mural.context.clearRect( rectX, rectY, rectW, rectH );
+
+		// Erase from the preview too
+		var x = this.x + preview.width / 2,
+			y = this.y + preview.height / 2;
+		preview.context.clearRect( x, y, 1, 1 );
+
 		this.color = null;
 		return this;
 	}

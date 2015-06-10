@@ -25,6 +25,7 @@ try {
 	if ( !method_exists( $controller, $method ) ) {
 		throw new Exception( 'Not found', 404 );
 	}
+
 	$RESPONSE = $controller::$method(); // Main call
 
 } catch ( Exception $Exception ) {
