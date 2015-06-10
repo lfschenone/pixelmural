@@ -850,16 +850,15 @@ function Pixel( data ) {
 		if ( this.color === null ) {
 			return this.erase();
 		}
-		var rectX = ( this.x + Math.floor( mural.xPixels / 2 ) ) * mural.pixelSize,
-			rectY = ( this.y + Math.floor( mural.yPixels / 2 ) ) * mural.pixelSize,
-			rectW = mural.pixelSize,
-			rectH = mural.pixelSize;
+
+		var x = ( this.x + Math.floor( mural.xPixels / 2 ) - mural.centerX ) * mural.pixelSize,
+			y = ( this.y + Math.floor( mural.yPixels / 2 ) - mural.centerY ) * mural.pixelSize;
 		mural.context.fillStyle = this.color;
-		mural.context.fillRect( rectX, rectY, rectW, rectH );
+		mural.context.fillRect( x, y, mural.pixelSize, mural.pixelSize );
 
 		// Draw in the preview too
-		var x = this.x + preview.width / 2,
-			y = this.y + preview.height / 2;
+		var x = this.x + Math.floor( preview.width / 2 ) - mural.centerX,
+			y = this.y + Math.floor( preview.height / 2 ) - mural.centerY;
 		preview.context.fillStyle = this.color;
 		preview.context.fillRect( x, y, 1, 1 );
 
@@ -867,15 +866,13 @@ function Pixel( data ) {
 	}
 
 	this.erase = function () {
-		var rectX = ( this.x + Math.floor( mural.xPixels / 2 ) ) * mural.pixelSize,
-			rectY = ( this.y + Math.floor( mural.yPixels / 2 ) ) * mural.pixelSize,
-			rectW = mural.pixelSize,
-			rectH = mural.pixelSize;
-		mural.context.clearRect( rectX, rectY, rectW, rectH );
+		var x = ( this.x + Math.floor( mural.xPixels / 2 ) - mural.centerX ) * mural.pixelSize,
+			y = ( this.y + Math.floor( mural.yPixels / 2 ) - mural.centerY ) * mural.pixelSize;
+		mural.context.clearRect( x, y, mural.pixelSize, mural.pixelSize );
 
 		// Erase from the preview too
-		var x = this.x + preview.width / 2,
-			y = this.y + preview.height / 2;
+		var x = this.x + Math.floor( preview.width / 2 ) - mural.centerX,
+			y = this.y + Math.floor( preview.height / 2 ) - mural.centerY;
 		preview.context.clearRect( x, y, 1, 1 );
 
 		this.color = null;
