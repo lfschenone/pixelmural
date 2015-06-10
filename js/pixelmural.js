@@ -34,6 +34,8 @@ $( function () {
 	grid.setHeight( mural.height );
 	preview.setCanvas( document.getElementById( 'preview' ) );
 	preview.setContext( preview.canvas.getContext( '2d' ) );
+	preview.setWidth( 300 );
+	preview.setHeight( 200 );
 
 	// Bind events
 	$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
@@ -695,8 +697,8 @@ preview = {
 	canvas: null,
 	context: null,
 
-	width: 300,
-	height: 200,
+	width: null,
+	height: null,
 
 	/* Setters */
 
