@@ -10,7 +10,10 @@ Bugs
 
 Tasks
 -----
+* Author button
 * Preview button
+* Exact functionality for ALT
+* Hotkey for the brush?
 * In the API, always check if the global user exists
 * 404s, error handling
 * Mobile version (view only?)

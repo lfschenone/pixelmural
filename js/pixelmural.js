@@ -44,7 +44,7 @@ $( function () {
 	$( '#zoom-out-button' ).click( menu.clickZoomOutButton );
 	$( '#undo-button' ).click( menu.clickUndoButton );
 	$( '#redo-button' ).click( menu.clickRedoButton );
-	$( '#info-button' ).click( menu.clickInfoButton );
+	$( '#author-button' ).click( menu.clickAuthorButton );
 	$( '#move-button' ).click( menu.clickMoveButton );
 	$( '#dropper-button' ).click( menu.clickDropperButton );
 	$( '#pencil-button' ).click( menu.clickPencilButton );
@@ -52,7 +52,7 @@ $( function () {
 	$( '#bucket-button' ).click( menu.clickBucketButton );
 	$( '#eraser-button' ).click( menu.clickEraserButton );
 	$( '.menu button' ).mouseover( menu.showTooltip ).mouseout( menu.hideTooltip ).click( menu.updateButtons );
-	$( document ).keydown( keymural.keydown ).keyup( keymural.keyup ).mouseup( mouse.up );
+	$( document ).keydown( keyboard.keydown ).keyup( keyboard.keyup ).mouseup( mouse.up );
 
 	// Set 'Move' as the default action
 	$( '#move-button' ).click();
@@ -63,22 +63,9 @@ $( function () {
 
 menu = {
 
-	alert: '',
-
 	activeColor: '#000000',
 
-	showTooltip: function ( event ) {
-		var button = $( event.target );
-		var tooltip = button.attr( 'data-tooltip' );
-		if ( tooltip ) {
-			var span = $( '<span>' ).addClass( 'tooltip' ).text( tooltip );
-			button.append( span );
-		}
-	},
-
-	hideTooltip: function ( event ) {
-		$( '.tooltip' ).remove();
-	},
+	// EVENT HANDLERS
 
 	clickGridButton: function ( event ) {
 		grid.toggle();
@@ -100,10 +87,10 @@ menu = {
 		mural.redo();
 	},
 
-	clickInfoButton: function ( event ) {
+	clickAuthorButton: function ( event ) {
 		$( '#mural' ).css( 'cursor', 'default' );
-		$( '#info-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
-		mouse.downAction = 'getInfo';
+		$( '#author-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
+		mouse.downAction = 'getAuthor';
 		mouse.dragAction = null;
 		mouse.upAction = null;
 	},
@@ -144,9 +131,6 @@ menu = {
 	},
 
 	clickBucketButton: function ( event ) {
-		if ( $( '#bucket-button' ).hasClass( 'disabled' ) ) {
-			return; // There should be a server-side check
-		}
 		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#bucket-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintArea';
@@ -162,13 +146,30 @@ menu = {
 		mouse.upAction = null;
 	},
 
+	// INTERFACE ACTIONS
+
+	showTooltip: function ( event ) {
+		var button = $( event.target );
+		var tooltip = button.attr( 'data-tooltip' );
+		if ( tooltip ) {
+			var span = $( '<span>' ).addClass( 'tooltip' ).text( tooltip );
+			button.append( span );
+		}
+	},
+
+	hideTooltip: function () {
+		$( '.tooltip' ).remove();
+	},
+
 	showAlert: function ( html, duration ) {
 		$( '#alert' ).html( html ).show();
 		if ( duration ) {
-			window.setTimeout( function () {
-				$( '#alert' ).hide();
-			}, duration );
+			window.setTimeout( menu.hideAlert, duration );
 		}
+	},
+
+	hideAlert: function () {
+		$( '#alert' ).hide();
 	},
 
 	showPixelAuthor: function ( Pixel, Author ) {
@@ -182,19 +183,15 @@ menu = {
 		menu.showAlert( picture + '<p>By ' + author + '</p><p>' + age + ' ago</p>', 4000 );
 	},
 
-	/**
-	 * Update the status of each button
-	 */
 	updateButtons: function () {
-		// First reset everything
-		$( '.menu button' ).removeClass( 'disabled' ).removeAttr( 'data-tooltip' );
-
-		if ( mural.pixelSize === 1 ) {
-			$( '#zoom-out-button' ).addClass( 'disabled' );
-		}
+		$( '.menu button' ).removeClass( 'disabled' ); // First reset everything
 
 		if ( mural.pixelSize === 64 ) {
 			$( '#zoom-in-button' ).addClass( 'disabled' );
+		}
+
+		if ( mural.pixelSize === 1 ) {
+			$( '#zoom-out-button' ).addClass( 'disabled' );
 		}
 
 		if ( mural.arrayPointer === 0 ) {
@@ -205,19 +202,21 @@ menu = {
 			$( '#redo-button' ).addClass( 'disabled' );
 		}
 
-		if ( mural.pixelSize < 4 ) {
-			$( '#grid-button' ).addClass( 'disabled' );
+		if ( gUser.isAnon() ) {
+			$( '#brush-button' ).addClass( 'disabled' );
 		}
 
-		if ( gUser.status === 'anon' ) {
-			$( '#brush-button' ).addClass( 'disabled' );
+		if ( mural.pixelSize < 4 ) {
+			$( '#grid-button' ).addClass( 'disabled' );
 		}
 
 		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
 	}
 }
 
-keymural = {
+keyboard = {
+
+	// EVENT HANDLERS
 
 	keydown: function ( event ) {
 		// Alt
@@ -230,7 +229,7 @@ keymural = {
 		}
 		// A
 		if ( event.keyCode === 65 ) {
-			menu.clickInfoButton();
+			menu.clickAuthorButton();
 		}
 		// B
 		if ( event.keyCode === 66 ) {
@@ -275,9 +274,8 @@ keymural = {
 }
 
 mouse = {
-	/**
-	 * The distance from the origin of the coordinate system in virtual pixels (not real ones)
-	 */
+
+	// The distance from the origin of the coordinate system in virtual pixels (not real ones)
 	currentX: null,
 	currentY: null,
 
@@ -290,17 +288,21 @@ mouse = {
 	dragAction: null,
 	upAction: null,
 
+	// GETTERS
+
 	getCurrentX: function ( event ) {
-		var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
-		var currentX = mural.centerX - Math.floor( mural.xPixels / 2 ) + Math.floor( offsetX / mural.pixelSize );
+		var offsetX = event.pageX - $( event.target ).offset().left - 1, // The -1 is to correct a minor displacement
+			currentX = mural.centerX - Math.floor( mural.xPixels / 2 ) + Math.floor( offsetX / mural.pixelSize );
 		return currentX;
 	},
 
 	getCurrentY: function ( event ) {
-		var offsetY = event.pageY - $( event.target ).offset().top - 2; // The -2 is to correct a minor displacement
-		var currentY = mural.centerY - Math.floor( mural.yPixels / 2 ) + Math.floor( offsetY / mural.pixelSize );
+		var offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
+			currentY = mural.centerY - Math.floor( mural.yPixels / 2 ) + Math.floor( offsetY / mural.pixelSize );
 		return currentY;
 	},
+
+	// EVENT HANDLERS
 
 	down: function ( event ) {
 		mouse.state = 'down';
@@ -326,6 +328,8 @@ mouse = {
 			mouse[ mouse.upAction ]( event );
 		}
 	},
+
+	// ACTIONS
 
 	movemural1: function ( event ) {
 		mouse.diffX = 0;
@@ -366,21 +370,18 @@ mouse = {
 		menu.updateButtons();
 	},
 
-	getInfo: function ( event ) {
+	getAuthor: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
 		$.get( 'pixels', data, function ( response ) {
 			//console.log( response );
 			if ( response.Pixel ) {
-				var Pixel = new window.Pixel( response.Pixel );
-				var Author = new window.User( response.Author );
+				var Pixel = new window.Pixel( response.Pixel ),
+					Author = new window.User( response.Author );
 				menu.showPixelAuthor( Pixel, Author );
 			}
 		});
 	},
 
-	/**
-	 * Paint a single pixel
-	 */
 	paintPixel: function ( event ) {
 		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY ),
 			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
@@ -392,9 +393,6 @@ mouse = {
 		newPixel.paint().save().register( oldPixel );
 	},
 
-	/**
-	 * Erase a single pixel
-	 */
 	erasePixel: function ( event ) {
 		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY );
 
@@ -412,8 +410,8 @@ mouse = {
 		$.post( 'areas', data, function ( response ) {
 			//console.log( response );
 			if ( response.message === 'Not your pixel' ) {
-				var Pixel = new window.Pixel( response.Pixel );
-				var Author = new window.User( response.Author );
+				var Pixel = new window.Pixel( response.Pixel ),
+					Author = new window.User( response.Author );
 				menu.showPixelAuthor( Pixel, Author );
 			}
 
@@ -457,7 +455,7 @@ mural = {
 
 	background: null,
 
-	/* Getters */
+	// GETTERS
 
 	getXpixels: function () {
 		return Math.floor( mural.width / mural.pixelSize );
@@ -492,8 +490,8 @@ mural = {
 	},
 
 	/**
-	 * Builds a basic pixel object out of the coordinates and the color,
-	 * but sucks the color directly from the canvas (not the database)
+	 * Build a basic pixel object out of the coordinates and the color,
+	 * but suck the color directly from the canvas (not the database)
 	 * so it only works for visible pixels
 	 */
 	getPixel: function ( x, y ) {
@@ -509,7 +507,7 @@ mural = {
 		return Pixel;
 	},
 
-	/* Setters */
+	// SETTERS
 
 	setCanvas: function ( value ) {
 		mural.canvas = value;
@@ -556,11 +554,25 @@ mural = {
 		mural.yPixels = mural.getYpixels();
 	},
 
-	/* Actions */
+	// ACTIONS
 
-	/**
-	 * Undo/redo functionality
-	 */
+	zoomIn: function () {
+		if ( mural.pixelSize === 64 ) {
+			return;
+		}
+		mural.setPixelSize( mural.pixelSize * 2 );
+		mural.fill();
+	},
+
+	zoomOut: function () {
+		if ( mural.pixelSize === 1 ) {
+			return;
+		}
+		mural.setPixelSize( mural.pixelSize / 2 );
+		mural.fill();
+	},
+
+	// Part of the undo/redo functionality
 	oldPixels: [],
 	newPixels: [],
 	arrayPointer: 0,
@@ -583,22 +595,6 @@ mural = {
 		newPixels.paint().save();
 	},
 
-	zoomIn: function () {
-		if ( mural.pixelSize === 64 ) {
-			return;
-		}
-		mural.setPixelSize( mural.pixelSize * 2 );
-		mural.fill();
-	},
-
-	zoomOut: function () {
-		if ( mural.pixelSize === 1 ) {
-			return;
-		}
-		mural.setPixelSize( mural.pixelSize / 2 );
-		mural.fill();
-	},
-
 	fill: function () {
 		menu.showAlert( 'Loading pixels, please wait...' );
 		var data = {
@@ -617,7 +613,6 @@ mural = {
 				mural.clear();
 				mural.context.drawImage( image, 0, 0 );
 				grid.toggle().toggle();
-				preview.fill();
 			}
 			$( '#alert' ).hide();
 
@@ -625,6 +620,7 @@ mural = {
 			var BASE = $( 'base' ).attr( 'href' );
 			history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
 		});
+		preview.fill();
 	},
 
 	clear: function () {
@@ -634,19 +630,21 @@ mural = {
 
 grid = {
 
-	canvas: {},
-	context: {},
+	canvas: null,
+	context: null,
+
+	width: null,
+	height: null,
 
 	color: '#ddd',
-
 	visible: false,
 
 	setCanvas: function ( value ) {
-		grid.canvas = value
+		grid.canvas = value;
 	},
 
 	setContext: function ( value ) {
-		grid.context = value
+		grid.context = value;
 	},
 
 	setWidth: function ( value ) {
@@ -700,7 +698,7 @@ preview = {
 	width: null,
 	height: null,
 
-	/* Setters */
+	// SETTERS
 
 	setCanvas: function ( value ) {
 		preview.canvas = value;
@@ -720,7 +718,7 @@ preview = {
 		preview.canvas.setAttribute( 'height', value );
 	},
 
-	/* Actions */
+	// ACTIONS
 
 	fill: function () {
 		var data = {
@@ -763,7 +761,7 @@ function User( data ) {
 	this.gender = null;
 	this.locale = null;
 	this.link = null;
-	this.status = null;
+	this.status = 'anon';
 	this.timezone = null;
 
 	for ( var property in data ) {

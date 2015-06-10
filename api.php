@@ -11,6 +11,7 @@ $gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 
 // Initialise the global user
 $token = session_id();
+echo $token;
 $gUser = User::newFromToken( $token );
 
 // Do the request

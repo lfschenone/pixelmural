@@ -9,7 +9,7 @@ window.fbAsyncInit = function () {
 	});
 
 	FB.Event.subscribe( 'auth.statusChange', statusChangeCallback );
-	FB.getLoginStatus( statusChangeCallback );
+	//FB.getLoginStatus( statusChangeCallback );
 
 	$( '#facebook-login-button' ).click( function () {
 		FB.login();
@@ -29,13 +29,12 @@ function statusChangeCallback( response ) {
 	//console.log( response );
 	$.get( 'tokens', function ( response ) {
 		//console.log( response );
-		// Set the global user with the data from the response
-		gUser = new User( response );
+		gUser = new User( response ); // Update the global user
 	});
 
 	$( '#facebook-login-button' ).show();
 	$( '#facebook-logout-button' ).hide();
-	$( '#brush-button' ).addClass( 'disabled' ).attr( 'title', 'Log in to activate the brush' );
+	$( '#brush-button' ).addClass( 'disabled' ).attr( 'title', 'Sign in with Facebook to activate the brush' );
 
     if ( response.status === 'connected' ) {
 		$( '#facebook-login-button' ).hide();
