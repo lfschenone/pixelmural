@@ -1,6 +1,6 @@
-Pixel Mural
-===========
-An infinite mural of collaborative pixel art
+Pixel by Pixel
+==============
+An infinite canvas of collaborative pixel art
 
 Bugs
 ----

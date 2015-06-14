@@ -22,7 +22,7 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 	<script src="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.0/spectrum.min.js"></script>
 	<script src="//connect.facebook.net/en_US/sdk.js"></script>
 	<script src="js/functions.js"></script>
-	<script src="js/pixelmural.js"></script>
+	<script src="js/pixelbypixel.js"></script>
 	<script src="js/facebook.js"></script>
 	<meta charset="UTF-8">
 	<meta name="description" content="<?php echo DESCRIPTION; ?>">

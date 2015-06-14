@@ -7,7 +7,7 @@ include 'includes/functions.php';
 include 'vendor/autoload.php';
 
 // Initialize the database
-$gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
+$gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT );
 
 // Initialise the global user
 $token = session_id();
