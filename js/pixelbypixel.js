@@ -606,7 +606,7 @@ mural = {
 			'format': 'base64'
 		};
 		$.get( 'areas', data, function ( response ) {
-			console.log( response );
+			//console.log( response );
 			var image = new Image();
 			image.src = 'data:image/png;base64,' + response;
 			image.onload = function () {
