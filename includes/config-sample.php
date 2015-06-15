@@ -1,11 +1,11 @@
 <?php
 
 // Debugging
-ini_set( 'display_errors', 0 );
+ini_set( 'display_errors', 1 );
 error_reporting( E_ALL );
 
 // General settings
-define( 'BASE', 'http://pixelbypixel.co/' );
+define( 'BASE', 'http://pixelbypixel.com/' );
 define( 'TITLE', 'Pixel by Pixel' );
 define( 'DESCRIPTION', 'An infinite canvas of collaborative pixel art. Come leave your mark!' );
 date_default_timezone_set( 'America/Argentina/Buenos_Aires' );
@@ -13,14 +13,13 @@ date_default_timezone_set( 'America/Argentina/Buenos_Aires' );
 // Defaults
 define( 'DEFAULT_CENTERX', 0 );
 define( 'DEFAULT_CENTERY', 0 );
-define( 'DEFAULT_PIXELSIZE', 2 );
+define( 'DEFAULT_PIXELSIZE', 8 );
 
 // Database
-define( 'DB_HOST', '' );
-define( 'DB_USER', '' );
+define( 'DB_HOST', 'localhost' );
+define( 'DB_USER', 'root' );
 define( 'DB_PASS', '' );
-define( 'DB_NAME', '' );
-define( 'DB_PORT', 3306 );
+define( 'DB_NAME', 'pixelbypixel' );
 
 // Facebook
 define( 'FACEBOOK_APP_ID', '' );
