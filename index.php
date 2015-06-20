@@ -10,6 +10,12 @@ $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 $ogUrl = BASE . $centerX . '/' . $centerY . '/' . $pixelSize;
 $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630&pixelSize=$pixelSize&format=png";
 
+if ( $centerX >= 700 and $centerY >= 300 ) {
+	$subtitle = 'Welcome to the train events!';
+} else {
+	$subtitle = 'Welcome!';
+}
+
 ?><!DOCTYPE HTML>
 <html>
 <head>
@@ -36,6 +42,11 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 </head>
 <body>
 	<div id="fb-root"></div>
+
+	<div id="header">
+		<a href="<?php echo BASE; ?>"><h1 id="title">Pixel by Pixel</h1></a>
+		<h2 id="subtitle"><?php echo $subtitle; ?></h2>
+	</div>
 
 	<div id="tools-menu" class="menu">
 		<button id="move-button" title="Move [Spacebar]"><img src="images/move.png" alt="Move"></button>

@@ -12,13 +12,27 @@ body {
 	font-size: 15px;
 	font-weight: 300;
 	margin: 0;
-	padding: 50px;
+	padding: 100px 50px 50px 50px;
 	height: 100%;
 }
 
 button::-moz-focus-inner {
 	border: 0;
 	padding: 0;
+}
+
+#header {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#header h1 {
+	color: black;
+	display: inline-block;
+	margin: 10px;
+}
+#header h2 {
+	display: inline-block;
 }
 
 .menu {
@@ -65,7 +79,7 @@ button::-moz-focus-inner {
 }
 
 #tools-menu {
-	top: 0; left: 0;
+	top: 50px; left: 0;
 }
 
 #colors-menu {
