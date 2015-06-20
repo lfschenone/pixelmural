@@ -1,15 +1,17 @@
-window.fbAsyncInit = function () {
+$( function () {
 
 	FB.init({
-		appId: '707049712677506',
+		appId: '641443202624106',
 		xfbml: true,
 		status: true,
 		cookie: true,
-		version: 'v2.0'
+		version: 'v2.3'
 	});
 
 	FB.Event.subscribe( 'auth.statusChange', statusChangeCallback );
-	//FB.getLoginStatus( statusChangeCallback );
+	FB.getLoginStatus( statusChangeCallback );
+
+
 
 	$( '#facebook-login-button' ).click( function () {
 		FB.login();
@@ -23,7 +25,7 @@ window.fbAsyncInit = function () {
 		FB.XFBML.parse(); // Update the URL to be shared
 		FB.ui({ 'method': 'share', 'href': location.href });
 	});
-}
+});
 
 function statusChangeCallback( response ) {
 	//console.log( response );

@@ -212,7 +212,7 @@ menu = {
 
 		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
 	}
-}
+};
 
 keyboard = {
 
@@ -271,7 +271,7 @@ keyboard = {
 			menu.clickPencilButton();
 		}
 	}
-}
+};
 
 mouse = {
 
@@ -435,7 +435,7 @@ mouse = {
 			}
 		});
 	}
-}
+};
 
 mural = {
 
@@ -466,7 +466,7 @@ mural = {
 	},
 
 	getCenterX: function() {
-		var centerX = parseInt( window.location.pathname.split('/').slice( -3, -2 ) );
+		var centerX = parseInt( window.location.pathname.split( '/' ).slice( -3, -2 ) );
 		if ( !isNaN( centerX ) ) {
 			return centerX;
 		}
@@ -474,7 +474,7 @@ mural = {
 	},
 
 	getCenterY: function() {
-		var centerY = parseInt( window.location.pathname.split('/').slice( -2, -1 ) );
+		var centerY = parseInt( window.location.pathname.split( '/' ).slice( -2, -1 ) );
 		if ( !isNaN( centerY ) ) {
 			return centerY;
 		}
@@ -482,7 +482,7 @@ mural = {
 	},
 
 	getPixelSize: function() {
-		var pixelSize = parseInt( window.location.pathname.split('/').slice( -1 ) );
+		var pixelSize = parseInt( window.location.pathname.split( '/' ).slice( -1 ) );
 		if ( !isNaN( pixelSize ) ) {
 			return pixelSize;
 		}
@@ -613,7 +613,7 @@ mural = {
 				mural.clear();
 				mural.context.drawImage( image, 0, 0 );
 				grid.toggle().toggle();
-			}
+			};
 			$( '#alert' ).hide();
 
 			// Update the URL of the browser
@@ -626,7 +626,7 @@ mural = {
 	clear: function () {
 		mural.context.clearRect( 0, 0, mural.width, mural.height );
 	}
-}
+};
 
 grid = {
 
@@ -688,7 +688,7 @@ grid = {
 		grid.visible ? grid.hide() : grid.show();
 		return grid;
 	}
-}
+};
 
 preview = {
 
@@ -736,14 +736,14 @@ preview = {
 			image.onload = function () {
 				preview.clear();
 				preview.context.drawImage( image, 0, 0 );
-			}
+			};
 		});
 	},
 
 	clear: function () {
 		preview.context.clearRect( 0, 0, preview.width, preview.height );
 	}
-}
+};
 
 /**
  * User model
@@ -773,14 +773,14 @@ function User( data ) {
 			return true;
 		}
 		return false;
-	}
+	};
 
 	this.isAdmin = function () {
 		if ( this.status === 'admin' ) {
 			return true;
 		}
 		return false;
-	}
+	};
 }
 
 /**
@@ -805,7 +805,7 @@ function Pixel( data ) {
 			//console.log( response );
 			return new window.Pixel( response );
 		});
-	}
+	};
 
 	this.register = function ( oldPixel ) {
 		mural.oldPixels.splice( mural.arrayPointer, mural.oldPixels.length - mural.arrayPointer, oldPixel );
@@ -813,7 +813,7 @@ function Pixel( data ) {
 		mural.arrayPointer++;
 		menu.updateButtons();
 		return this;
-	}
+	};
 
 	this.unregister = function () {
 		for ( var i = 0; i < mural.oldPixels.length; i++ ) {
@@ -825,7 +825,7 @@ function Pixel( data ) {
 		}
 		menu.updateButtons();
 		return this;
-	}
+	};
 
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
@@ -842,7 +842,7 @@ function Pixel( data ) {
 			}
 		});
 		return this;
-	}
+	};
 
 	this.paint = function () {
 		if ( this.color === null ) {
@@ -855,13 +855,13 @@ function Pixel( data ) {
 		mural.context.fillRect( x, y, mural.pixelSize, mural.pixelSize );
 
 		// Draw in the preview too
-		var x = this.x + Math.floor( preview.width / 2 ) - mural.centerX,
-			y = this.y + Math.floor( preview.height / 2 ) - mural.centerY;
+		x = this.x + Math.floor( preview.width / 2 ) - mural.centerX,
+		y = this.y + Math.floor( preview.height / 2 ) - mural.centerY;
 		preview.context.fillStyle = this.color;
 		preview.context.fillRect( x, y, 1, 1 );
 
 		return this;
-	}
+	};
 
 	this.erase = function () {
 		var x = ( this.x + Math.floor( mural.xPixels / 2 ) - mural.centerX ) * mural.pixelSize,
@@ -869,13 +869,13 @@ function Pixel( data ) {
 		mural.context.clearRect( x, y, mural.pixelSize, mural.pixelSize );
 
 		// Erase from the preview too
-		var x = this.x + Math.floor( preview.width / 2 ) - mural.centerX,
-			y = this.y + Math.floor( preview.height / 2 ) - mural.centerY;
+		x = this.x + Math.floor( preview.width / 2 ) - mural.centerX,
+		y = this.y + Math.floor( preview.height / 2 ) - mural.centerY;
 		preview.context.clearRect( x, y, 1, 1 );
 
 		this.color = null;
 		return this;
-	}
+	};
 }
 
 /**
@@ -895,19 +895,19 @@ function Area( data ) {
 		mural.arrayPointer++;
 		menu.updateButtons();
 		return this;
-	}
+	};
 
 	this.paint = function () {
 		this.pixels.forEach( function ( Pixel ) {
 			Pixel.paint();
 		});
 		return this;
-	}
+	};
 
 	this.save = function () {
 		this.pixels.forEach( function ( Pixel ) {
 			Pixel.save(); // Very inefficient
 		});
 		return this;
-	}
+	};
 }
