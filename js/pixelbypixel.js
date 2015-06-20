@@ -211,6 +211,12 @@ menu = {
 		}
 
 		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
+
+		if ( mural.centerX > 700 && mural.centerY > 300 ) {
+			$( '#subtitle' ).text( 'Draw a train, winner gets a cake!' );
+		} else {
+			$( '#subtitle' ).text( 'Welcome!' );
+		}
 	}
 };
 
@@ -621,6 +627,7 @@ mural = {
 			history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
 		});
 		preview.fill();
+		menu.updateButtons();
 	},
 
 	clear: function () {
