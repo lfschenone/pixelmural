@@ -47,7 +47,7 @@ class Pixels extends Controller {
 			$Pixel->author_id = $gUser->id;
 			$Pixel->color = $color;
 			$Pixel->insert();
-			$RESPONSE['message'] = 'Pixel inserted';
+			$RESPONSE['message'] = 'Pixel saved';
 			$gUser->pixel_count++;
 			$gUser->update();
 		}
