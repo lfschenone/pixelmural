@@ -4,11 +4,12 @@ $( function () {
 	gUser = new User;
 
 	// Initialize Spectrum
-	$( '#color-input' ).spectrum({
+	$( '.color-input' ).spectrum({
 		preferredFormat: 'hex',
 		showButtons: false,
 		show: function ( color ) {
 			menu.activeColor = color.toHexString();
+			$( this ).next().addClass( 'active' ).siblings().removeClass( 'active' );
 		},
 		change: function ( color ) {
 			menu.activeColor = color.toHexString();
@@ -16,7 +17,7 @@ $( function () {
 		hide: function ( color ) {
 			menu.activeColor = color.toHexString();
 		}
-	});
+	}).first().next().addClass( 'active' ); // Set the first color as active
 
 	// Set the variables that must wait for the DOM to be loaded
 	mural.setCanvas( document.getElementById( 'mural' ) );
@@ -131,7 +132,7 @@ menu = {
 	},
 
 	clickBrushButton: function ( event ) {
-		if ( $( '#brush-button' ).hasClass( 'disabled' ) ) {
+		if ( gUser.isAnon() ) {
 			return; // There should be a server-side check
 		}
 		$( '#mural' ).css( 'cursor', 'default' );

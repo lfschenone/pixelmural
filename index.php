@@ -67,7 +67,16 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"></button>
 			<button id="eraser-button" title="Eraser [E]"><img src="images/eraser.png" alt="Eraser"></button>
 			<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket"></button>
-			<input id="color-input" type="color" value="#000000">
+			<div id="colors-menu">
+				<input class="color-input" type="color" value="#000000">
+				<input class="color-input" type="color" value="#0000ff">
+				<input class="color-input" type="color" value="#00ff00">
+				<input class="color-input" type="color" value="#00ffff">
+				<input class="color-input" type="color" value="#ff0000">
+				<input class="color-input" type="color" value="#ff00ff">
+				<input class="color-input" type="color" value="#ffff00">
+				<input class="color-input" type="color" value="#ffffff">
+			</div>
 		</div>
 	</div>
 

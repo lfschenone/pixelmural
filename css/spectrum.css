@@ -359,7 +359,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     color: #333;
     vertical-align: middle;
 }
-.sp-active .sp-preview {
+.sp-replacer.active .sp-preview {
     outline: 5px solid #aaf;
 }
 .sp-replacer:hover, .sp-replacer.sp-active {

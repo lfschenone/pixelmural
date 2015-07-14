@@ -80,6 +80,10 @@ button::-moz-focus-inner {
 	background: #aaf;
 }
 
+#colors-menu {
+	display: inline;
+}
+
 #facebook-menu {
 	float: right;
 	margin: 5px 10px;
