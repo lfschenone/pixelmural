@@ -674,7 +674,7 @@ grid = {
 	width: null,
 	height: null,
 
-	color: '#ddd',
+	color: '#ccc',
 	visible: false,
 
 	setCanvas: function ( value ) {
