@@ -11,8 +11,6 @@ $( function () {
 	FB.Event.subscribe( 'auth.statusChange', statusChangeCallback );
 	FB.getLoginStatus( statusChangeCallback );
 
-
-
 	$( '#facebook-login-button' ).click( function () {
 		FB.login();
 	});
@@ -30,7 +28,7 @@ $( function () {
 function statusChangeCallback( response ) {
 	//console.log( response );
 	$.get( 'tokens', function ( response ) {
-		//console.log( response );
+		console.log( response );
 		gUser = new User( response ); // Update the global user
 	});
 

@@ -4,12 +4,11 @@ $( function () {
 	gUser = new User;
 
 	// Initialize Spectrum
-	$( '.color-input' ).spectrum({
+	$( '#color-input' ).spectrum({
 		preferredFormat: 'hex',
 		showButtons: false,
 		show: function ( color ) {
 			menu.activeColor = color.toHexString();
-			$( this ).next().addClass( 'active' ).siblings().removeClass( 'active' );
 		},
 		change: function ( color ) {
 			menu.activeColor = color.toHexString();
@@ -17,14 +16,14 @@ $( function () {
 		hide: function ( color ) {
 			menu.activeColor = color.toHexString();
 		}
-	}).first().next().addClass( 'active' ); // Set the first color as active
+	});
 
 	// Set the variables that must wait for the DOM to be loaded
 	mural.setCanvas( document.getElementById( 'mural' ) );
 	mural.setContext( mural.canvas.getContext( '2d' ) );
 	mural.setWidth( $( 'body' ).width() );
 	mural.setHeight( $( 'body' ).height() );
-	mural.setBackground( '#ffffff' );
+	mural.setBackground( '#ddd' );
 	mural.setCenterX( mural.getCenterX() );
 	mural.setCenterY( mural.getCenterY() );
 	mural.setPixelSize( mural.getPixelSize() );
@@ -39,18 +38,20 @@ $( function () {
 
 	// Bind events
 	$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
+	$( '#popup-wrapper' ).click( menu.hidePopup );
+	$( '#move-button' ).click( menu.clickMoveButton );
 	$( '#grid-button' ).click( menu.clickGridButton );
+	$( '#preview-button' ).click( menu.clickPreviewButton );
 	$( '#zoom-in-button' ).click( menu.clickZoomInButton );
 	$( '#zoom-out-button' ).click( menu.clickZoomOutButton );
 	$( '#undo-button' ).click( menu.clickUndoButton );
 	$( '#redo-button' ).click( menu.clickRedoButton );
 	$( '#author-button' ).click( menu.clickAuthorButton );
-	$( '#move-button' ).click( menu.clickMoveButton );
 	$( '#dropper-button' ).click( menu.clickDropperButton );
 	$( '#pencil-button' ).click( menu.clickPencilButton );
 	$( '#brush-button' ).click( menu.clickBrushButton );
-	$( '#bucket-button' ).click( menu.clickBucketButton );
 	$( '#eraser-button' ).click( menu.clickEraserButton );
+	$( '#bucket-button' ).click( menu.clickBucketButton );
 	$( '.menu button' ).mouseover( menu.showTooltip ).mouseout( menu.hideTooltip ).click( menu.updateButtons );
 	$( document ).keydown( keyboard.keydown ).keyup( keyboard.keyup ).mouseup( mouse.up );
 
@@ -63,12 +64,18 @@ $( function () {
 
 menu = {
 
+	activeTool: 'move',
+	previousTool: null,
 	activeColor: '#000000',
 
 	// EVENT HANDLERS
 
 	clickGridButton: function ( event ) {
 		grid.toggle();
+	},
+
+	clickPreviewButton: function ( event ) {
+		preview.toggle();
 	},
 
 	clickZoomInButton: function ( event ) {
@@ -93,6 +100,7 @@ menu = {
 		mouse.downAction = 'getAuthor';
 		mouse.dragAction = null;
 		mouse.upAction = null;
+		menu.activeTool = 'author';
 	},
 
 	clickMoveButton: function ( event ) {
@@ -101,6 +109,7 @@ menu = {
 		mouse.downAction = 'movemural1';
 		mouse.dragAction = 'movemural2';
 		mouse.upAction = 'movemural3';
+		menu.activeTool = 'move';
 	},
 
 	clickDropperButton: function ( event ) {
@@ -109,6 +118,7 @@ menu = {
 		mouse.downAction = 'suckColor';
 		mouse.dragAction = 'suckColor';
 		mouse.upAction = null;
+		menu.activeTool = 'dropper';
 	},
 
 	clickPencilButton: function ( event ) {
@@ -117,6 +127,7 @@ menu = {
 		mouse.downAction = 'paintPixel';
 		mouse.dragAction = null;
 		mouse.upAction = null;
+		menu.activeTool = 'pencil';
 	},
 
 	clickBrushButton: function ( event ) {
@@ -128,6 +139,7 @@ menu = {
 		mouse.downAction = 'paintPixel';
 		mouse.dragAction = 'paintPixel';
 		mouse.upAction = null;
+		menu.activeTool = 'brush';
 	},
 
 	clickBucketButton: function ( event ) {
@@ -136,6 +148,7 @@ menu = {
 		mouse.downAction = 'paintArea';
 		mouse.dragAction = null;
 		mouse.upAction = null;
+		menu.activeTool = 'bucket';
 	},
 
 	clickEraserButton: function ( event ) {
@@ -144,6 +157,7 @@ menu = {
 		mouse.downAction = 'erasePixel';
 		mouse.dragAction = 'erasePixel';
 		mouse.upAction = null;
+		menu.activeTool = 'eraser';
 	},
 
 	// INTERFACE ACTIONS
@@ -170,6 +184,10 @@ menu = {
 
 	hideAlert: function () {
 		$( '#alert' ).hide();
+	},
+
+	hidePopup: function () {
+		$( '#popup-wrapper' ).hide();
 	},
 
 	showPixelAuthor: function ( Pixel, Author ) {
@@ -211,12 +229,6 @@ menu = {
 		}
 
 		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
-
-		if ( mural.centerX > 700 && mural.centerY > 300 ) {
-			$( '#subtitle' ).text( 'Draw a train, winner gets a cake!' );
-		} else {
-			$( '#subtitle' ).text( 'Welcome!' );
-		}
 	}
 };
 
@@ -227,6 +239,7 @@ keyboard = {
 	keydown: function ( event ) {
 		// Alt
 		if ( event.keyCode === 18 ) {
+			menu.previousTool = menu.activeTool;
 			menu.clickDropperButton();
 		}
 		// Spacebar
@@ -274,7 +287,24 @@ keyboard = {
 	keyup: function ( event ) {
 		// Alt
 		if ( event.keyCode === 18 ) {
-			menu.clickPencilButton();
+			if ( menu.previousTool === 'author' ) {
+				menu.clickAuthorButton();
+			}
+			if ( menu.previousTool === 'move' ) {
+				menu.clickMoveButton();
+			}
+			if ( menu.previousTool === 'pencil' ) {
+				menu.clickPencilButton();
+			}
+			if ( menu.previousTool === 'brush' ) {
+				menu.clickBrushButton();
+			}
+			if ( menu.previousTool === 'eraser' ) {
+				menu.clickEraserButton();
+			}
+			if ( menu.previousTool === 'bucket' ) {
+				menu.clickBucketButton();
+			}
 		}
 	}
 };
@@ -705,6 +735,8 @@ preview = {
 	width: null,
 	height: null,
 
+	visible: true,
+
 	// SETTERS
 
 	setCanvas: function ( value ) {
@@ -749,6 +781,20 @@ preview = {
 
 	clear: function () {
 		preview.context.clearRect( 0, 0, preview.width, preview.height );
+	},
+
+	show: function () {
+		$( preview.canvas ).show();
+		preview.visible = true;
+	},
+
+	hide: function () {
+		$( preview.canvas ).hide();
+		preview.visible = false;
+	},
+
+	toggle: function () {
+		preview.visible ? preview.hide() : preview.show();
 	}
 };
 

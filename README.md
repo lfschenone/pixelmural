@@ -10,9 +10,6 @@ Bugs
 
 Tasks
 -----
-* Author button
-* Preview button
-* Exact functionality for ALT
 * Hotkey for the brush?
 * In the API, always check if the global user exists
 * 404s, error handling
@@ -25,5 +22,6 @@ Tasks
 Further tasks
 -------------
 * Migrate to node.js?
+* Improve the REST API
 * i18n and l10n
 * Documentation

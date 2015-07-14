@@ -18,7 +18,7 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 	<link rel="icon" href="images/favicon.ico">
 	<link rel="stylesheet" href="css/desktop.css">
 	<link rel="stylesheet" href="css/spectrum.css">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.0/spectrum.min.js"></script>
 	<script src="//connect.facebook.net/en_US/sdk.js"></script>
 	<script src="js/functions.js"></script>
@@ -37,40 +37,38 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 <body>
 	<div id="fb-root"></div>
 
+	<div id="popup-wrapper">
+		<div id="popup">
+			<h1>Welcome to Pixel by Pixel!</h1>
+			<p>Pixel by Pixel is an infinite canvas of collaborative pixel art. The software prevents you or anyone from overwriting pixels made by other users, so your work is always protected from vandalism.</p>
+			<img src="images/play.png">
+		</div>
+	</div>
+
 	<div id="header">
-		<a href="<?php echo BASE; ?>"><h1 id="title">Pixel by Pixel</h1></a>
-		<h2 id="subtitle"></h2>
-	</div>
 
-	<div id="tools-menu" class="menu">
-		<button id="move-button" title="Move [Spacebar]"><img src="images/move.png" alt="Move"></button>
-		<button id="zoom-in-button" title="Zoom in [I]"><img src="images/zoom-in.png" alt="Zoom in"></button>
-		<button id="zoom-out-button" title="Zoom out [O]"><img src="images/zoom-out.png" alt="Zoom out"></button>
-		<button id="undo-button" title="Undo [Z]"><img src="images/undo.png" alt="Undo"></button>
-		<button id="redo-button" title="Redo [X]"><img src="images/redo.png" alt="Redo"></button>
-		<button id="dropper-button" title="Dropper [Alt]"><img src="images/dropper.png" alt="Dropper"></button>
-		<button id="pencil-button" title="Pencil [P]"><img src="images/pencil.png" alt="Pencil"></button>
-		<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"></button>
-		<button id="eraser-button" title="Eraser [E]"><img src="images/eraser.png" alt="Eraser"></button>
-		<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket"></button>
-		<button id="grid-button" title="Grid [G]"><img src="images/grid.png" alt="Grid"></button>
-	</div>
+		<div id="facebook-menu" class="menu">
+			<button id="facebook-share-button" title="Share on Facebook"><img src="images/facebook-share.png" alt="Share"></button>
+			<button id="facebook-login-button" title="Log in with Facebook"><img src="images/facebook-login.png" alt="Login"></button>
+			<button id="facebook-logout-button" title="Log out from Facebook"><img src="images/facebook-logout.png" alt="Logout"></button>
+		</div>
 
-	<div id="colors-menu" class="menu">
-		<input class="color-input" type="text" value="#000000">
-		<input class="color-input" type="text" value="#0000ff">
-		<input class="color-input" type="text" value="#00ff00">
-		<input class="color-input" type="text" value="#00ffff">
-		<input class="color-input" type="text" value="#ff0000">
-		<input class="color-input" type="text" value="#ff00ff">
-		<input class="color-input" type="text" value="#ffff00">
-		<input class="color-input" type="text" value="#ffffff">
-	</div>
-
-	<div id="facebook-menu" class="menu">
-		<button id="facebook-share-button" title="Share on Facebook"><img src="images/facebook-share.png" alt="Share"></button>
-		<button id="facebook-login-button" title="Log in with Facebook"><img src="images/facebook-login.png" alt="Login"></button>
-		<button id="facebook-logout-button" title="Log out from Facebook"><img src="images/facebook-logout.png" alt="Logout"></button>
+		<div id="tools-menu" class="menu">
+			<button id="move-button" title="Move [Spacebar]"><img src="images/move.png" alt="Move"></button>
+			<button id="grid-button" title="Grid [G]"><img src="images/grid.png" alt="Grid"></button>
+			<button id="preview-button" title="Preview"><img src="images/preview.png" alt="Preview"></button>
+			<button id="zoom-in-button" title="Zoom in [I]"><img src="images/zoom-in.png" alt="Zoom in"></button>
+			<button id="zoom-out-button" title="Zoom out [O]"><img src="images/zoom-out.png" alt="Zoom out"></button>
+			<button id="undo-button" title="Undo [Z]"><img src="images/undo.png" alt="Undo"></button>
+			<button id="redo-button" title="Redo [X]"><img src="images/redo.png" alt="Redo"></button>
+			<button id="author-button" title="Author"><img src="images/author.png" alt="Author"></button>
+			<button id="dropper-button" title="Dropper [Alt]"><img src="images/dropper.png" alt="Dropper"></button>
+			<button id="pencil-button" title="Pencil [P]"><img src="images/pencil.png" alt="Pencil"></button>
+			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"></button>
+			<button id="eraser-button" title="Eraser [E]"><img src="images/eraser.png" alt="Eraser"></button>
+			<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket"></button>
+			<input id="color-input" type="color" value="#000000">
+		</div>
 	</div>
 
 	<div id="alert"></div>

@@ -5,14 +5,13 @@ html {
 }
 
 body {
-	background: #ddd;
 	box-sizing: border-box;
 	cursor: default;
 	font-family: Helvetica;
 	font-size: 15px;
 	font-weight: 300;
 	margin: 0;
-	padding: 100px 50px 50px 50px;
+	padding: 0;
 	height: 100%;
 }
 
@@ -21,23 +20,38 @@ button::-moz-focus-inner {
 	padding: 0;
 }
 
-#header {
-	position: absolute;
+#popup-wrapper {
+	background: rgba( 0, 0, 0, 0.7 );
+	position: fixed;
 	top: 0;
 	left: 0;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+	z-index: 3;
 }
-#header h1 {
-	color: black;
-	display: inline-block;
-	margin: 10px;
+#popup {
+	background: white;
+	margin: 10% auto;
+	padding: 50px;
+	width: 50%;
+	height: 50%;
 }
-#header h2 {
-	display: inline-block;
+#popup img {
+	cursor: pointer;
+	width: 200px;
+}
+
+#header {
+	background: #eee;
+	padding: 5px;
+	position: absolute;
+	width: 100%;
+	z-index: 3;
 }
 
 .menu {
-	padding: 5px;
-	position: absolute;
+	display: inline;
 }
 .menu button {
 	background: transparent;
@@ -53,7 +67,7 @@ button::-moz-focus-inner {
 }
 .menu button img {
 	display: block;
-	height: 30px;
+	max-height: 30px;
 	pointer-events: none;
 }
 .menu button.disabled {
@@ -65,47 +79,10 @@ button::-moz-focus-inner {
 .menu button.active {
 	background: #aaf;
 }
-.menu .tooltip {
-	background: #aaa;
-	border-radius: 10px;
-	color: white;
-	font-size: small;
-	padding: 5px 10px;
-	pointer-events: none;
-	position: absolute;
-	top: 50px;
-	white-space: nowrap;
-	z-index: 2;
-}
-
-#tools-menu {
-	top: 50px; left: 0;
-}
-
-#colors-menu {
-	left: 0;
-}
-#colors-menu input {
-	background: transparent;
-	border: none;
-	cursor: pointer;
-	display: inline-block;
-	font: inherit;
-	margin: 0;
-	outline: none;
-	padding: 5px;
-	vertical-align: middle;	
-}
-#colors-menu .active {
-	outline: 5px solid #aaf;
-}
 
 #facebook-menu {
-	margin: 5px;
-	top: 0; right: 0;
-}
-#facebook-menu img {
-	height: auto;
+	float: right;
+	margin: 5px 10px;
 }
 #facebook-login-button,
 #facebook-logout-button {
@@ -139,19 +116,19 @@ button::-moz-focus-inner {
 }
 
 #mural {
-	position: relative;
+	background: #ddd;
 }
 
 #grid {
 	pointer-events: none;
 	position: absolute;
-	top: 50px; left: 50px;
+	top: 0; left: 0;
 	z-index: 1;
 }
 
 #preview {
-	background: white;
-	border: 1px solid #aaa;
+	background: #ddd;
+	border: 1px solid black;
 	pointer-events: none;
 	position: absolute;
 	left: 0;
