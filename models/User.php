@@ -11,6 +11,7 @@ class User extends Model {
 	public $update_time;
 	public $pixel_count = 0;
 	public $share_count = 0;
+	public $tools;
 	public $token;
 	public $name;
 	public $email;
@@ -105,6 +106,7 @@ class User extends Model {
 			update_time,
 			pixel_count,
 			share_count,
+			tools,
 			token,
 			name,
 			email,
@@ -113,16 +115,17 @@ class User extends Model {
 			link,
 			status,
 			timezone
-			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
+			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
 		);
 		$this->insert_time = $_SERVER['REQUEST_TIME'];
 		$this->update_time = $_SERVER['REQUEST_TIME'];
-		$Statement->bind_param( 'siiiisssssssi',
+		$Statement->bind_param( 'siiiissssssssi',
 			$this->facebook_id,
 			$this->insert_time,
 			$this->update_time,
 			$this->pixel_count,
 			$this->share_count,
+			$this->tools,
 			$this->token,
 			$this->name,
 			$this->email,
@@ -144,6 +147,7 @@ class User extends Model {
 			update_time = ?,
 			pixel_count = ?,
 			share_count = ?,
+			tools = ?,
 			token = ?,
 			name = ?,
 			email = ?,
@@ -155,12 +159,13 @@ class User extends Model {
 			WHERE id = ?'
 		);
 		$this->update_time = $_SERVER['REQUEST_TIME'];
-		$Statement->bind_param( 'iiiissssssssii',
+		$Statement->bind_param( 'iiiisssssssssii',
 			$this->facebook_id,
 			$this->insert_time,
 			$this->update_time,
 			$this->pixel_count,
 			$this->share_count,
+			$this->tools,
 			$this->token,
 			$this->name,
 			$this->email,

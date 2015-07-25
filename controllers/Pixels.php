@@ -20,8 +20,15 @@ class Pixels extends Controller {
 		$x = POST( 'x' );
 		$y = POST( 'y' );
 		$color = POST( 'color' );
+		$tool = POST( 'tool' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
+
+		if ( $tool === 'brush' and in_array( 'brush', $gUser->tools ) ) {
+			$RESPONSE['Pixel'] = $Pixel;
+			$RESPONSE['message'] = "You don't have the brush";
+			return $RESPONSE;
+		}
 
 		if ( $Pixel ) {
 			if ( $gUser->canEdit( $Pixel ) ) {

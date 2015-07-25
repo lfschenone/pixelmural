@@ -132,9 +132,6 @@ menu = {
 	},
 
 	clickBrushButton: function ( event ) {
-		if ( gUser.isAnon() ) {
-			return; // There should be a server-side check
-		}
 		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#brush-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
@@ -219,10 +216,6 @@ menu = {
 
 		if ( mural.arrayPointer === mural.newPixels.length ) {
 			$( '#redo-button' ).addClass( 'disabled' );
-		}
-
-		if ( gUser.isAnon() ) {
-			$( '#brush-button' ).addClass( 'disabled' );
 		}
 
 		if ( mural.pixelSize < 4 ) {
@@ -882,10 +875,17 @@ function Pixel( data ) {
 	};
 
 	this.save = function () {
-		var data = { 'x': this.x, 'y': this.y, 'color': this.color };
+		var data = { 'x': this.x, 'y': this.y, 'color': this.color, 'tool': menu.activeTool };
 		$.post( 'pixels', data, function ( response ) {
-			//console.log( response );
+			console.log( response );
 			menu.showAlert( response.message, 1000 );
+
+			// If the user painted with the brush and s/he didn't buy it, revert it
+			if ( response.message === "You don't have the brush" ) {
+				var Pixel = new window.Pixel( response.Pixel );
+				Pixel.paint().unregister();
+				menu.showAlert( response.message );
+			}
 
 			// If the user wasn't allowed to paint the pixel, revert it
 			if ( response.message === 'Not your pixel' ) {
