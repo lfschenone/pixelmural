@@ -889,7 +889,7 @@ function Pixel( data ) {
 					FB.ui({
 						method: 'pay',
 						action: 'purchaseitem',
-						product: 'http://pixelbypixel.co/pixel.html',
+						product: 'http://pixelbypixel.co/pixels.html',
 					});
 					var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
 					Pixel.erase().unregister();
