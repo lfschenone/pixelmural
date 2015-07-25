@@ -9,7 +9,7 @@ $( function () {
 	});
 
 	FB.Event.subscribe( 'auth.statusChange', statusChangeCallback );
-	FB.getLoginStatus( statusChangeCallback );
+	//FB.getLoginStatus( statusChangeCallback );
 
 	$( '#facebook-login-button' ).click( function () {
 		FB.login();
@@ -28,17 +28,15 @@ $( function () {
 function statusChangeCallback( response ) {
 	//console.log( response );
 	$.get( 'tokens', function ( response ) {
-		console.log( response );
+		//console.log( response );
 		gUser = new User( response ); // Update the global user
 	});
 
 	$( '#facebook-login-button' ).show();
 	$( '#facebook-logout-button' ).hide();
-	$( '#brush-button' ).addClass( 'disabled' ).attr( 'title', 'Sign in with Facebook to activate the brush' );
 
     if ( response.status === 'connected' ) {
 		$( '#facebook-login-button' ).hide();
 		$( '#facebook-logout-button' ).show();
-		$( '#brush-button' ).removeClass( 'disabled' ).attr( 'title', 'Brush' );
     }
 }

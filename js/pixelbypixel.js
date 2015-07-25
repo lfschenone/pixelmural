@@ -877,22 +877,28 @@ function Pixel( data ) {
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color, 'tool': menu.activeTool };
 		$.post( 'pixels', data, function ( response ) {
-			console.log( response );
-			menu.showAlert( response.message, 1000 );
+			//console.log( response );
+			switch ( response.code ) {
+				case 402:
+					if ( response.Pixel ) {
+						var Pixel = new window.Pixel( response.Pixel );
+						Pixel.paint().unregister();
+					} else {
+						var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
+						Pixel.erase().unregister();
+					}
+					menu.showAlert( response.message, 1000 );
+					break;
 
-			// If the user painted with the brush and s/he didn't buy it, revert it
-			if ( response.message === "You don't have the brush" ) {
-				var Pixel = new window.Pixel( response.Pixel );
-				Pixel.paint().unregister();
-				menu.showAlert( response.message );
-			}
+				case 403:
+					var Pixel = new window.Pixel( response.Pixel );
+					var Author = new window.User( response.Author );
+					Pixel.paint().unregister();
+					menu.showPixelAuthor( Pixel, Author );
+					break;
 
-			// If the user wasn't allowed to paint the pixel, revert it
-			if ( response.message === 'Not your pixel' ) {
-				var Pixel = new window.Pixel( response.Pixel );
-				var Author = new window.User( response.Author );
-				Pixel.paint().unregister();
-				menu.showPixelAuthor( Pixel, Author );
+				default:
+					menu.showAlert( response.message, 1000 );
 			}
 		});
 		return this;

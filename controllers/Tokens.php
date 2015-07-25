@@ -49,8 +49,10 @@ class Tokens extends Controller {
 		}
 
 		// Set the token
-		session_regenerate_id();
-		$gUser->token = session_id();
+		$token = md5( uniqid() );
+		$_SESSION['token'] = $token;
+		setcookie( 'token', $token, $_SERVER['REQUEST_TIME'] + 60 * 60 * 24 * 30, '/' ); // 30 days
+		$gUser->token = $token;
 		$gUser->update();
 
 		return $gUser;

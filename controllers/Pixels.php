@@ -24,9 +24,10 @@ class Pixels extends Controller {
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
 
-		if ( $tool === 'brush' and in_array( 'brush', $gUser->tools ) ) {
-			$RESPONSE['Pixel'] = $Pixel;
+		if ( $tool === 'brush' and !$gUser->brush ) {
+			$RESPONSE['code'] = 402; // Payment required
 			$RESPONSE['message'] = "You don't have the brush";
+			$RESPONSE['Pixel'] = $Pixel;
 			return $RESPONSE;
 		}
 
@@ -35,17 +36,23 @@ class Pixels extends Controller {
 				if ( $color ) {
 					$Pixel->color = $color;
 					$Pixel->update();
+					$RESPONSE['code'] = 200; // Success
 					$RESPONSE['message'] = 'Pixel updated';
+					$RESPONSE['Pixel'] = $Pixel;
 				} else {
 					$Pixel->delete();
+					$RESPONSE['code'] = 200; // Success
 					$RESPONSE['message'] = 'Pixel deleted';
+					$RESPONSE['Pixel'] = $Pixel;
 					$Author = $Pixel->getAuthor();
 					$Author->pixel_count--;
 					$Author->update();
 				}
 			} else {
-				$RESPONSE['Author'] = $Pixel->getAuthor();
+				$RESPONSE['code'] = 403; // Forbidden
 				$RESPONSE['message'] = 'Not your pixel';
+				$RESPONSE['Author'] = $Pixel->getAuthor();
+				$RESPONSE['Pixel'] = $Pixel;
 			}
 		} else if ( $color ) {
 			$Pixel = new Pixel;
@@ -54,11 +61,12 @@ class Pixels extends Controller {
 			$Pixel->author_id = $gUser->id;
 			$Pixel->color = $color;
 			$Pixel->insert();
+			$RESPONSE['code'] = 200; // Success
 			$RESPONSE['message'] = 'Pixel saved';
+			$RESPONSE['Pixel'] = $Pixel;
 			$gUser->pixel_count++;
 			$gUser->update();
 		}
-		$RESPONSE['Pixel'] = $Pixel;
 		return $RESPONSE;
 	}
 
