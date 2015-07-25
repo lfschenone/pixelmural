@@ -890,8 +890,6 @@ function Pixel( data ) {
 						method: 'pay',
 						action: 'purchaseitem',
 						product: 'http://pixelbypixel.co/pixel.html',
-						quantity: 100,
-						quantity_min: 100,
 					});
 					var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
 					Pixel.erase().unregister();
