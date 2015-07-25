@@ -10,13 +10,14 @@ Bugs
 
 Tasks
 -----
+* Delete cookie when loggin out
 * Hotkey for the brush?
 * In the API, always check if the global user exists
 * 404s, error handling
-* Mobile version (view only?)
+* Mobile version
 * Set up payments
 * Cookies to remember things like the grid and colors?
-* Optimise preview loading
+* Optimise preview loading and loading in general
 * Further customise Spectrum
 
 Further tasks
@@ -24,4 +25,4 @@ Further tasks
 * Migrate to node.js?
 * Improve the REST API
 * i18n and l10n
-* Documentation
+* API documentation?

@@ -23,11 +23,11 @@ $( function () {
 		FB.ui({ 'method': 'share', 'href': location.href });
 	});
 
-	$( '#brush-button' ).click( function () {
+	$( '#pixels-button' ).click( function () {
 		FB.ui({
 			method: 'pay',
 			action: 'purchaseitem',
-			product: 'http://pixelbypixel.co/brush.html',
+			product: 'http://pixelbypixel.co/pixels.html',
 		});
 	});
 });
@@ -37,6 +37,7 @@ function statusChangeCallback( response ) {
 	$.get( 'tokens', function ( response ) {
 		//console.log( response );
 		gUser = new User( response ); // Update the global user
+		menu.updateButtons();
 	});
 
 	$( '#facebook-login-button' ).show();

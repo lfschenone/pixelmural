@@ -80,6 +80,9 @@ button::-moz-focus-inner {
 .menu button.active {
 	background: #aaf;
 }
+.menu span {
+	font-size: 20px;
+}
 
 #facebook-menu {
 	float: right;

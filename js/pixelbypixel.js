@@ -199,7 +199,7 @@ menu = {
 	},
 
 	updateButtons: function () {
-		$( '.menu button' ).removeClass( 'disabled' ); // First reset everything
+		$( '.menu button' ).removeClass( 'disabled' ); // First enable everything
 
 		if ( mural.pixelSize === 64 ) {
 			$( '#zoom-in-button' ).addClass( 'disabled' );
@@ -220,6 +220,10 @@ menu = {
 
 		if ( mural.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
+		}
+
+		if ( gUser.isAnon() ) {
+			$( '#brush-button' ).addClass( 'disabled' );
 		}
 	}
 };
