@@ -221,10 +221,6 @@ menu = {
 		if ( mural.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
 		}
-
-		if ( gUser.isAnon() ) {
-			$( '#brush-button' ).addClass( 'disabled' );
-		}
 	}
 };
 
@@ -885,17 +881,7 @@ function Pixel( data ) {
 		$.post( 'pixels', data, function ( response ) {
 			//console.log( response );
 			switch ( response.message ) {
-				case 'Buy some pixels to continue drawing':
-					FB.ui({
-						method: 'pay',
-						action: 'purchaseitem',
-						product: 'http://pixelbypixel.co/pixels.html',
-					});
-					var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
-					Pixel.erase().unregister();
-					break;
-
-				case 'Log in to use the brush':
+				case 'Buy the brush':
 					if ( response.Pixel ) {
 						var Pixel = new window.Pixel( response.Pixel );
 						Pixel.paint().unregister();
@@ -903,7 +889,6 @@ function Pixel( data ) {
 						var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
 						Pixel.erase().unregister();
 					}
-					menu.showAlert( response.message, 1000 );
 					break;
 
 				case 'Not your pixel':

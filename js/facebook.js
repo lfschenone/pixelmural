@@ -22,15 +22,6 @@ $( function () {
 		FB.XFBML.parse(); // Update the URL to be shared
 		FB.ui({ 'method': 'share', 'href': location.href });
 	});
-
-	$( '#pixels-button' ).click( function () {
-		FB.ui({
-			method: 'pay',
-			action: 'purchaseitem',
-			product: 'http://pixelbypixel.co/pixel.html',
-			quantity_min: 100,
-		});
-	});
 });
 
 function statusChangeCallback( response ) {
@@ -39,6 +30,17 @@ function statusChangeCallback( response ) {
 		//console.log( response );
 		gUser = new User( response ); // Update the global user
 		menu.updateButtons();
+
+		if ( gUser.brush === 0 ) {
+			var money = $( '<img>' ).attr( 'src', 'images/money.png' ).addClass( 'money' );
+			$( '#brush-button' ).append( money ).click( function () {
+				FB.ui({
+					method: 'pay',
+					action: 'purchaseitem',
+					product: 'http://pixelbypixel.co/brush.html',
+				});
+			});
+		}
 	});
 
 	$( '#facebook-login-button' ).show();

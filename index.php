@@ -36,14 +36,6 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 <body>
 	<div id="fb-root"></div>
 
-	<div id="popup-wrapper">
-		<div id="popup">
-			<h1>Welcome to Pixel by Pixel!</h1>
-			<p>Pixel by Pixel is an infinite canvas of collaborative pixel art. The software prevents you or anyone from overwriting pixels made by other users, so your work is always protected from vandalism.</p>
-			<img src="images/play.png">
-		</div>
-	</div>
-
 	<div id="header">
 
 		<div id="facebook-menu" class="menu">

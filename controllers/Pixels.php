@@ -24,14 +24,8 @@ class Pixels extends Controller {
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
 
-		if ( $gUser->pixel_count > 1000 ) {
-			$RESPONSE['message'] = 'Buy some pixels to continue drawing';
-			$RESPONSE['Pixel'] = $Pixel;
-			return $RESPONSE;
-		}
-
-		if ( $gUser->isAnon() and $tool === 'brush' ) {
-			$RESPONSE['message'] = 'Log in to use the brush';
+		if ( $tool === 'brush' and !$gUser->brush ) {
+			$RESPONSE['message'] = 'Buy the brush';
 			$RESPONSE['Pixel'] = $Pixel;
 			return $RESPONSE;
 		}
