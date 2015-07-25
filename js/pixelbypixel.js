@@ -4,20 +4,19 @@ $( function () {
 	gUser = new User;
 
 	// Initialize Spectrum
-	$( '.color-input' ).spectrum({
+	$( '#color-input' ).spectrum({
 		preferredFormat: 'hex',
 		showButtons: false,
 		show: function ( color ) {
-			menu.activeColor = color.toHexString();
-			$( this ).next().addClass( 'active' ).siblings().removeClass( 'active' );
+			menu.color = color.toHexString();
 		},
 		change: function ( color ) {
-			menu.activeColor = color.toHexString();
+			menu.color = color.toHexString();
 		},
 		hide: function ( color ) {
-			menu.activeColor = color.toHexString();
+			menu.color = color.toHexString();
 		}
-	}).first().next().addClass( 'active' ); // Set the first color as active
+	});
 
 	// Set the variables that must wait for the DOM to be loaded
 	mural.setCanvas( document.getElementById( 'mural' ) );
@@ -67,7 +66,7 @@ menu = {
 
 	activeTool: 'move',
 	previousTool: null,
-	activeColor: '#000000',
+	color: '#000000',
 
 	// EVENT HANDLERS
 
@@ -208,6 +207,7 @@ menu = {
 
 		if ( mural.pixelSize === 1 ) {
 			$( '#zoom-out-button' ).addClass( 'disabled' );
+			$( '#preview-button' ).addClass( 'disabled' );
 		}
 
 		if ( mural.arrayPointer === 0 ) {
@@ -221,8 +221,6 @@ menu = {
 		if ( mural.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
 		}
-
-		$( '.sp-replacer.active' ).prev().spectrum( 'set', menu.activeColor );
 	}
 };
 
@@ -396,7 +394,7 @@ mouse = {
 			green = imageData.data[1],
 			blue  = imageData.data[2],
 			alpha = imageData.data[3];
-		menu.activeColor = alpha ? rgb2hex( red, green, blue ) : mural.background;
+		menu.color = alpha ? rgb2hex( red, green, blue ) : mural.background;
 		menu.updateButtons();
 	},
 
@@ -414,7 +412,7 @@ mouse = {
 
 	paintPixel: function ( event ) {
 		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY ),
-			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor });
+			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.color });
 
 		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
 			newPixel.color = null; // For convenience, re-painting a pixel erases it
@@ -436,7 +434,7 @@ mouse = {
 	},
 
 	paintArea: function ( event ) {
-		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.activeColor };
+		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.color };
 		$.post( 'areas', data, function ( response ) {
 			//console.log( response );
 			if ( response.message === 'Not your pixel' ) {
@@ -650,7 +648,7 @@ mural = {
 			var BASE = $( 'base' ).attr( 'href' );
 			history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
 		});
-		preview.fill();
+		preview.toggle().toggle().fill();
 		menu.updateButtons();
 	},
 
@@ -778,17 +776,21 @@ preview = {
 	},
 
 	show: function () {
-		$( preview.canvas ).show();
 		preview.visible = true;
+		if ( mural.pixelSize === 1 ) {
+			return;
+		}
+		$( preview.canvas ).show();
 	},
 
 	hide: function () {
-		$( preview.canvas ).hide();
 		preview.visible = false;
+		$( preview.canvas ).hide();
 	},
 
 	toggle: function () {
 		preview.visible ? preview.hide() : preview.show();
+		return preview;
 	}
 };
 

@@ -44,7 +44,7 @@ button::-moz-focus-inner {
 }
 
 #header {
-	background: #eee;
+	background: white;
 	padding: 5px;
 	position: absolute;
 	width: 100%;
@@ -79,10 +79,6 @@ button::-moz-focus-inner {
 }
 .menu button.active {
 	background: #aaf;
-}
-
-#colors-menu {
-	display: inline;
 }
 
 #facebook-menu {

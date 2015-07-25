@@ -55,27 +55,18 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 		<div id="tools-menu" class="menu">
 			<button id="move-button" title="Move [Spacebar]"><img src="images/move.png" alt="Move"></button>
 			<button id="grid-button" title="Grid [G]"><img src="images/grid.png" alt="Grid"></button>
-			<button id="preview-button" title="Preview"><img src="images/preview.png" alt="Preview"></button>
+			<button id="preview-button" title="Preview"><img src="images/question.png" alt="Preview"></button>
 			<button id="zoom-in-button" title="Zoom in [I]"><img src="images/zoom-in.png" alt="Zoom in"></button>
 			<button id="zoom-out-button" title="Zoom out [O]"><img src="images/zoom-out.png" alt="Zoom out"></button>
 			<button id="undo-button" title="Undo [Z]"><img src="images/undo.png" alt="Undo"></button>
 			<button id="redo-button" title="Redo [X]"><img src="images/redo.png" alt="Redo"></button>
-			<button id="author-button" title="Author"><img src="images/author.png" alt="Author"></button>
+			<button id="author-button" title="Author"><img src="images/question.png" alt="Author"></button>
 			<button id="dropper-button" title="Dropper [Alt]"><img src="images/dropper.png" alt="Dropper"></button>
 			<button id="pencil-button" title="Pencil [P]"><img src="images/pencil.png" alt="Pencil"></button>
 			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"></button>
 			<button id="eraser-button" title="Eraser [E]"><img src="images/eraser.png" alt="Eraser"></button>
 			<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket"></button>
-			<div id="colors-menu">
-				<input class="color-input" type="color" value="#000000">
-				<input class="color-input" type="color" value="#0000ff">
-				<input class="color-input" type="color" value="#00ff00">
-				<input class="color-input" type="color" value="#00ffff">
-				<input class="color-input" type="color" value="#ff0000">
-				<input class="color-input" type="color" value="#ff00ff">
-				<input class="color-input" type="color" value="#ffff00">
-				<input class="color-input" type="color" value="#ffffff">
-			</div>
+			<input id="color-input" type="color" value="#000000">
 		</div>
 	</div>
 
