@@ -19,8 +19,8 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 	<link rel="stylesheet" href="css/desktop.css">
 	<link rel="stylesheet" href="css/spectrum.css">
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script src="js/spectrum.js"></script>
 	<script src="//connect.facebook.net/en_US/sdk.js"></script>
+	<script src="js/spectrum.js"></script>
 	<script src="js/functions.js"></script>
 	<script src="js/pixelbypixel.js"></script>
 	<script src="js/facebook.js"></script>

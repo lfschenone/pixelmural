@@ -13,7 +13,6 @@ $gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 $token = SESSION( 'token', COOKIE( 'token' ) );
 $gUser = User::newFromToken( $token );
 
-// Do the request
 try {
 	$controller = GET( 'controller' );
 	$controller = ucfirst( strtolower( $controller ) ); // Normalise

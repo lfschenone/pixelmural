@@ -877,7 +877,7 @@ function Pixel( data ) {
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color, 'tool': menu.activeTool };
 		$.post( 'pixels', data, function ( response ) {
-			console.log( response );
+			//console.log( response );
 			switch ( response.code ) {
 				case 402:
 					if ( response.Pixel ) {
