@@ -16,7 +16,7 @@ $( function () {
 		hide: function ( color ) {
 			menu.color = color.toHexString();
 		}
-	});
+	}).next().attr( 'title', 'Color [C]' );
 
 	// Set the variables that must wait for the DOM to be loaded
 	mural.setCanvas( document.getElementById( 'mural' ) );
@@ -46,7 +46,6 @@ $( function () {
 	$( '#zoom-out-button' ).click( menu.clickZoomOutButton );
 	$( '#undo-button' ).click( menu.clickUndoButton );
 	$( '#redo-button' ).click( menu.clickRedoButton );
-	$( '#author-button' ).click( menu.clickAuthorButton );
 	$( '#dropper-button' ).click( menu.clickDropperButton );
 	$( '#pencil-button' ).click( menu.clickPencilButton );
 	$( '#brush-button' ).click( menu.clickBrushButton );
@@ -94,15 +93,6 @@ menu = {
 		mural.redo();
 	},
 
-	clickAuthorButton: function ( event ) {
-		$( '#mural' ).css( 'cursor', 'default' );
-		$( '#author-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
-		mouse.downAction = 'getAuthor';
-		mouse.dragAction = null;
-		mouse.upAction = null;
-		menu.activeTool = 'author';
-	},
-
 	clickMoveButton: function ( event ) {
 		$( '#mural' ).css( 'cursor', 'move' );
 		$( '#move-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
@@ -139,6 +129,15 @@ menu = {
 		menu.activeTool = 'brush';
 	},
 
+	clickEraserButton: function ( event ) {
+		$( '#mural' ).css( 'cursor', 'default' );
+		$( '#eraser-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
+		mouse.downAction = 'erasePixel';
+		mouse.dragAction = 'erasePixel';
+		mouse.upAction = null;
+		menu.activeTool = 'eraser';
+	},
+
 	clickBucketButton: function ( event ) {
 		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#bucket-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
@@ -148,13 +147,9 @@ menu = {
 		menu.activeTool = 'bucket';
 	},
 
-	clickEraserButton: function ( event ) {
+	clickColorButton: function ( event ) {
 		$( '#mural' ).css( 'cursor', 'default' );
-		$( '#eraser-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
-		mouse.downAction = 'erasePixel';
-		mouse.dragAction = 'erasePixel';
-		mouse.upAction = null;
-		menu.activeTool = 'eraser';
+		$( '.sp-replacer' ).click();
 	},
 
 	// INTERFACE ACTIONS
@@ -207,7 +202,6 @@ menu = {
 
 		if ( mural.pixelSize === 1 ) {
 			$( '#zoom-out-button' ).addClass( 'disabled' );
-			$( '#preview-button' ).addClass( 'disabled' );
 		}
 
 		if ( mural.arrayPointer === 0 ) {
@@ -220,6 +214,7 @@ menu = {
 
 		if ( mural.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
+			$( '#preview-button' ).addClass( 'disabled' );
 		}
 	}
 };
@@ -238,13 +233,13 @@ keyboard = {
 		if ( event.keyCode === 32 ) {
 			menu.clickMoveButton();
 		}
-		// A
-		if ( event.keyCode === 65 ) {
-			menu.clickAuthorButton();
-		}
 		// B
 		if ( event.keyCode === 66 ) {
 			menu.clickBucketButton();
+		}
+		// C
+		if ( event.keyCode === 67 ) {
+			menu.clickColorButton();
 		}
 		// E
 		if ( event.keyCode === 69 ) {
@@ -279,9 +274,6 @@ keyboard = {
 	keyup: function ( event ) {
 		// Alt
 		if ( event.keyCode === 18 ) {
-			if ( menu.previousTool === 'author' ) {
-				menu.clickAuthorButton();
-			}
 			if ( menu.previousTool === 'move' ) {
 				menu.clickMoveButton();
 			}
@@ -727,7 +719,7 @@ preview = {
 	width: null,
 	height: null,
 
-	visible: true,
+	visible: false,
 
 	// SETTERS
 
@@ -777,7 +769,7 @@ preview = {
 
 	show: function () {
 		preview.visible = true;
-		if ( mural.pixelSize === 1 ) {
+		if ( mural.pixelSize < 4 ) {
 			return;
 		}
 		$( preview.canvas ).show();
@@ -881,7 +873,7 @@ function Pixel( data ) {
 		$.post( 'pixels', data, function ( response ) {
 			//console.log( response );
 			switch ( response.message ) {
-				case 'Buy the brush':
+				case 'Buy the brush to use it':
 					if ( response.Pixel ) {
 						var Pixel = new window.Pixel( response.Pixel );
 						Pixel.paint().unregister();
@@ -889,6 +881,7 @@ function Pixel( data ) {
 						var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
 						Pixel.erase().unregister();
 					}
+					menu.showAlert( response.message, 1000 );
 					break;
 
 				case 'Not your pixel':
