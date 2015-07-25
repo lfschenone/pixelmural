@@ -8,15 +8,14 @@ $( function () {
 		version: 'v2.3'
 	});
 
-	FB.Event.subscribe( 'auth.statusChange', statusChangeCallback );
-	//FB.getLoginStatus( statusChangeCallback );
+	FB.getLoginStatus( statusChangeCallback );
 
 	$( '#facebook-login-button' ).click( function () {
-		FB.login();
+		FB.login( statusChangeCallback );
 	});
 
 	$( '#facebook-logout-button' ).click( function () {
-		FB.logout();
+		FB.logout( statusChangeCallback );
 	});
 
 	$( '#facebook-share-button' ).click( function () {
