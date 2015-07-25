@@ -15,7 +15,6 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 <head>
 	<title><?php echo TITLE; ?></title>
 	<base href="<?php echo BASE; ?>">
-	<link rel="icon" href="images/favicon.ico">
 	<link rel="stylesheet" href="css/desktop.css">
 	<link rel="stylesheet" href="css/spectrum.css">
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
