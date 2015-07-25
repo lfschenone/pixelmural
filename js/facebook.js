@@ -28,7 +28,7 @@ $( function () {
 			method: 'pay',
 			action: 'purchaseitem',
 			product: 'http://pixelbypixel.co/pixel.html',
-			quantity: 500,
+			quantity_min: 100,
 		});
 	});
 });
