@@ -22,6 +22,14 @@ $( function () {
 		FB.XFBML.parse(); // Update the URL to be shared
 		FB.ui({ 'method': 'share', 'href': location.href });
 	});
+
+	$( '#brush-button' ).click( function () {
+		FB.ui({
+			method: 'pay',
+			action: 'purchaseitem',
+			product: 'http://pixelbypixel.co/brush.html',
+		});
+	});
 });
 
 function statusChangeCallback( response ) {
