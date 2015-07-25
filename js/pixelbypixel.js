@@ -884,8 +884,19 @@ function Pixel( data ) {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color, 'tool': menu.activeTool };
 		$.post( 'pixels', data, function ( response ) {
 			//console.log( response );
-			switch ( response.code ) {
-				case 402:
+			switch ( response.message ) {
+				case 'Buy some pixels to continue drawing':
+					FB.ui({
+						method: 'pay',
+						action: 'purchaseitem',
+						product: 'http://pixelbypixel.co/pixel.html',
+						quantity: 500,
+					});
+					var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
+					Pixel.erase().unregister();
+					break;
+
+				case 'Log in to use the brush':
 					if ( response.Pixel ) {
 						var Pixel = new window.Pixel( response.Pixel );
 						Pixel.paint().unregister();
@@ -896,7 +907,7 @@ function Pixel( data ) {
 					menu.showAlert( response.message, 1000 );
 					break;
 
-				case 403:
+				case 'Not your pixel':
 					var Pixel = new window.Pixel( response.Pixel );
 					var Author = new window.User( response.Author );
 					Pixel.paint().unregister();

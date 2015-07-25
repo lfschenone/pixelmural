@@ -67,7 +67,6 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 			<button id="eraser-button" title="Eraser [E]"><img src="images/eraser.png" alt="Eraser"></button>
 			<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket"></button>
 			<input id="color-input" type="color" value="#000000">
-			<button id="pixels-button">1000</button>
 		</div>
 	</div>
 

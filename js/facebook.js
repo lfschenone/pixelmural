@@ -27,7 +27,8 @@ $( function () {
 		FB.ui({
 			method: 'pay',
 			action: 'purchaseitem',
-			product: 'http://pixelbypixel.co/pixels.html',
+			product: 'http://pixelbypixel.co/pixel.html',
+			quantity: 500,
 		});
 	});
 });
