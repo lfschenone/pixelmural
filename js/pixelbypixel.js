@@ -391,7 +391,7 @@ mouse = {
 
 	getAuthor: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
-		$.get( 'pixels', data, function ( response ) {
+		$.get( 'Pixels', data, function ( response ) {
 			//console.log( response );
 			if ( response.Pixel ) {
 				var Pixel = new window.Pixel( response.Pixel ),
@@ -426,7 +426,7 @@ mouse = {
 
 	paintArea: function ( event ) {
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.color };
-		$.post( 'areas', data, function ( response ) {
+		$.post( 'Areas', data, function ( response ) {
 			//console.log( response );
 			if ( response.message === 'Not your pixel' ) {
 				var Pixel = new window.Pixel( response.Pixel ),
@@ -624,7 +624,7 @@ mural = {
 			'pixelSize': mural.pixelSize,
 			'format': 'base64'
 		};
-		$.get( 'areas', data, function ( response ) {
+		$.get( 'Areas', data, function ( response ) {
 			//console.log( response );
 			var image = new Image();
 			image.src = 'data:image/png;base64,' + response;
@@ -751,7 +751,7 @@ preview = {
 			'pixelSize': 1,
 			'format': 'base64'
 		};
-		$.get( 'areas', data, function ( response ) {
+		$.get( 'Areas', data, function ( response ) {
 			//console.log( response );
 			var image = new Image();
 			image.src = 'data:image/png;base64,' + response;
@@ -841,7 +841,7 @@ function Pixel( data ) {
 
 	this.fetch = function () {
 		var data = { 'x': this.x, 'y': this.y };
-		$.get( 'pixels', data, function ( response ) {
+		$.get( 'Pixels', data, function ( response ) {
 			//console.log( response );
 			return new window.Pixel( response );
 		});
@@ -869,7 +869,7 @@ function Pixel( data ) {
 
 	this.save = function () {
 		var data = { 'x': this.x, 'y': this.y, 'color': this.color, 'tool': menu.activeTool };
-		$.post( 'pixels', data, function ( response ) {
+		$.post( 'Pixels', data, function ( response ) {
 			//console.log( response );
 			switch ( response.message ) {
 				case 'Click the price tag to buy the brush':

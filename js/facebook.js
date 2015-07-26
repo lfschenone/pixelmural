@@ -26,7 +26,7 @@ $( function () {
 
 function statusChangeCallback( response ) {
 	//console.log( response );
-	$.get( 'tokens', function ( response ) {
+	$.get( 'Tokens', function ( response ) {
 		//console.log( response );
 		gUser = new User( response ); // Update the global user
 		menu.updateButtons();
@@ -36,7 +36,7 @@ function statusChangeCallback( response ) {
 				method: 'pay',
 				action: 'purchaseitem',
 				product: 'http://pixelbypixel.co/brush.html',
-			});
+			}, verifyPayment );
 		});
 	});
 
@@ -47,4 +47,22 @@ function statusChangeCallback( response ) {
 		$( '#facebook-login-button' ).hide();
 		$( '#facebook-logout-button' ).show();
     }
+}
+
+function verifyPayment( data ) {
+	//console.log( data );
+
+	if ( !data ) {
+		menu.showAlert( 'There was an error processing your payment. Please try again!' );
+    	return;
+	}
+
+	$.post( 'FacebookPayments', data, function ( response ) {
+		//console.log( response );
+		if ( response === 'completed' ) {
+			gUser.brush = 1;
+			menu.updateButtons();
+			menu.showAlert( 'Payment complete, thanks! You now have the brush.', 3000 );
+		}
+	});
 }
