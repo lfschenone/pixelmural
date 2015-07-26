@@ -15,12 +15,10 @@ $gUser = User::newFromToken( $token );
 
 try {
 	$controller = GET( 'controller' );
-	$controller = ucfirst( strtolower( $controller ) ); // Normalise
 	if ( !class_exists( $controller ) ) {
 		throw new Exception( 'Not found', 404 );
 	}
 	$method = $_SERVER['REQUEST_METHOD'];
-	$method = strtolower( $method ); // Normalise
 	if ( !method_exists( $controller, $method ) ) {
 		throw new Exception( 'Not found', 404 );
 	}
