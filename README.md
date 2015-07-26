@@ -1,5 +1,5 @@
-Pixel by Pixel
-==============
+Pixel Mural
+===========
 An infinite canvas of collaborative pixel art
 
 Bugs

@@ -1,11 +1,11 @@
 $( function () {
 
 	FB.init({
-		appId: '641443202624106',
+		appId: '792343240878413',
 		xfbml: true,
 		status: true,
 		cookie: true,
-		version: 'v2.3'
+		version: 'v2.4'
 	});
 
 	FB.getLoginStatus( statusChangeCallback );
