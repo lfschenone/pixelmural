@@ -54,7 +54,7 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 			<button id="redo-button" title="Redo [X]"><img src="images/redo.png" alt="Redo"></button>
 			<button id="dropper-button" title="Dropper [Alt]"><img src="images/dropper.png" alt="Dropper"></button>
 			<button id="pencil-button" title="Pencil [P]"><img src="images/pencil.png" alt="Pencil"></button>
-			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"></button>
+			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"><img id="price-tag" src="images/price-tag.png" title="Click to buy the brush"></button>
 			<button id="eraser-button" title="Eraser [E]"><img src="images/eraser.png" alt="Eraser"></button>
 			<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket"></button>
 			<input id="color-input" type="color" value="#000000">

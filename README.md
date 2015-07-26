@@ -16,7 +16,6 @@ Tasks
 * 404s, error handling
 * Mobile version
 * Set up payments
-* Cookies to remember things like the grid and colors?
 * Optimise preview loading and loading in general
 * Further customise Spectrum
 

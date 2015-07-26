@@ -25,7 +25,7 @@ class Pixels extends Controller {
 		$Pixel = Pixel::newFromCoords( $x, $y );
 
 		if ( $tool === 'brush' and !$gUser->brush ) {
-			$RESPONSE['message'] = 'Buy the brush to use it';
+			$RESPONSE['message'] = 'Click the price tag to buy the brush';
 			$RESPONSE['Pixel'] = $Pixel;
 			return $RESPONSE;
 		}

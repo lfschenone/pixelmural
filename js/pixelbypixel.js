@@ -94,7 +94,6 @@ menu = {
 	},
 
 	clickMoveButton: function ( event ) {
-		$( '#mural' ).css( 'cursor', 'move' );
 		$( '#move-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'movemural1';
 		mouse.dragAction = 'movemural2';
@@ -103,7 +102,6 @@ menu = {
 	},
 
 	clickDropperButton: function ( event ) {
-		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#dropper-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'suckColor';
 		mouse.dragAction = 'suckColor';
@@ -112,7 +110,6 @@ menu = {
 	},
 
 	clickPencilButton: function ( event ) {
-		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#pencil-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
 		mouse.dragAction = null;
@@ -121,7 +118,6 @@ menu = {
 	},
 
 	clickBrushButton: function ( event ) {
-		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#brush-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintPixel';
 		mouse.dragAction = 'paintPixel';
@@ -130,7 +126,6 @@ menu = {
 	},
 
 	clickEraserButton: function ( event ) {
-		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#eraser-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'erasePixel';
 		mouse.dragAction = 'erasePixel';
@@ -139,7 +134,6 @@ menu = {
 	},
 
 	clickBucketButton: function ( event ) {
-		$( '#mural' ).css( 'cursor', 'default' );
 		$( '#bucket-button' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		mouse.downAction = 'paintArea';
 		mouse.dragAction = null;
@@ -148,7 +142,6 @@ menu = {
 	},
 
 	clickColorButton: function ( event ) {
-		$( '#mural' ).css( 'cursor', 'default' );
 		$( '.sp-replacer' ).click();
 	},
 
@@ -215,6 +208,12 @@ menu = {
 		if ( mural.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
 			$( '#preview-button' ).addClass( 'disabled' );
+		}
+
+		// Hide the price tag and then show it if required
+		$( '#price-tag' ).hide();
+		if ( gUser.brush === 0 ) {
+			$( '#price-tag' ).show();
 		}
 	}
 };
@@ -873,7 +872,7 @@ function Pixel( data ) {
 		$.post( 'pixels', data, function ( response ) {
 			//console.log( response );
 			switch ( response.message ) {
-				case 'Buy the brush to use it':
+				case 'Click the price tag to buy the brush':
 					if ( response.Pixel ) {
 						var Pixel = new window.Pixel( response.Pixel );
 						Pixel.paint().unregister();
@@ -881,7 +880,7 @@ function Pixel( data ) {
 						var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
 						Pixel.erase().unregister();
 					}
-					menu.showAlert( response.message, 1000 );
+					menu.showAlert( response.message, 2000 );
 					break;
 
 				case 'Not your pixel':

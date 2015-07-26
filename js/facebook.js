@@ -31,16 +31,13 @@ function statusChangeCallback( response ) {
 		gUser = new User( response ); // Update the global user
 		menu.updateButtons();
 
-		if ( gUser.brush === 0 ) {
-			var money = $( '<img>' ).attr( 'src', 'images/money.png' ).addClass( 'money' );
-			$( '#brush-button' ).append( money ).click( function () {
-				FB.ui({
-					method: 'pay',
-					action: 'purchaseitem',
-					product: 'http://pixelbypixel.co/brush.html',
-				});
+		$( '#price-tag' ).click( function () {
+			FB.ui({
+				method: 'pay',
+				action: 'purchaseitem',
+				product: 'http://pixelbypixel.co/brush.html',
 			});
-		}
+		});
 	});
 
 	$( '#facebook-login-button' ).show();

@@ -1,10 +1,6 @@
 <?php
 
-/**
- * Facebook Realtime Updates
- */
-
-class Updates extends Controller {
+class FacebookRealtimeUpdates extends Controller {
 
 	static function get() {
 	    $hub_mode = GET( 'hub_mode' );
@@ -15,14 +11,6 @@ class Updates extends Controller {
 	}
 
 	static function post() {
-		// TO DO
-	}
-
-	static function put() {
-		// TO DO
-	}
-
-	static function delete() {
 		// TO DO
 	}
 }
