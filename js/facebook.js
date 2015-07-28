@@ -1,7 +1,7 @@
 $( function () {
 
 	FB.init({
-		appId: '793373170775420',
+		appId: '792343240878413',
 		xfbml: true,
 		status: true,
 		cookie: true,
