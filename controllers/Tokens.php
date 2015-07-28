@@ -5,36 +5,36 @@ class Tokens extends Controller {
 	static function get() {
 		global $gUser;
 
-		Facebook\FacebookSession::setDefaultApplication( FACEBOOK_APP_ID, FACEBOOK_APP_SECRET );
-		$Helper = new Facebook\FacebookJavaScriptLoginHelper();
-		try {
-			$Session = $Helper->getSession();
-		} catch( Facebook\FacebookRequestException $FacebookRequestException ) {
-			error_log( $FacebookRequestException->getMessage() );
-		} catch( Exception $Exception ) {
-			error_log( $Exception->getMessage() );
-		}
+		$Facebook = new Facebook\Facebook([
+			'app_id' => FACEBOOK_APP_ID,
+			'app_secret' => FACEBOOK_APP_SECRET,
+			'default_graph_version' => 'v2.4',
+		]);
 
-		if ( $Session ) {
-			$FacebookRequest = new Facebook\FacebookRequest( $Session, 'GET', '/me' );
-			$GraphUser = $FacebookRequest->execute()->getGraphObject( Facebook\GraphUser::className() );
-			$gUser = User::newFromFacebookId( $GraphUser->getProperty( 'id' ) );
+		$Helper = $Facebook->getJavaScriptHelper();
+		$accessToken = $Helper->getAccessToken();
+
+		if ( $accessToken ) {
+			$Response = $Facebook->get( '/me?fields=id,name,email,link,locale,gender,timezone', $accessToken );
+			$GraphUser = $Response->getGraphUser();
+			$facebookId = $GraphUser->getId();
+			$gUser = User::newFromFacebookId( $facebookId );
 
 			// If no user matches the Facebook id, create one
 			if ( !$gUser ) {
 				$gUser = new User;
+				$gUser->facebook_id = $facebookId;
 				$gUser->status = 'user';
 				$gUser->insert();
 			}
 
-			// Update the data
-			$DATA = $GraphUser->asArray();
-			foreach ( $DATA as $key => $value ) {
-				if ( property_exists( 'User', $key ) and $key !== 'id' ) {
-					$gUser->$key = $value;
-				}
-			}
-			$gUser->facebook_id = $DATA['id']; // Because we already have an 'id' field
+			// No matter if the user is new or returning, update the data
+			$gUser->name = $GraphUser->getName();
+			$gUser->link = $GraphUser->getLink();
+			$gUser->email = $GraphUser->getProperty( 'email' );
+			$gUser->locale = $GraphUser->getProperty( 'locale' );
+			$gUser->gender = $GraphUser->getProperty( 'gender' );
+			$gUser->timezone = $GraphUser->getProperty( 'timezone' );
 
 		} else {
 

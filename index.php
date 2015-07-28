@@ -8,7 +8,7 @@ $centerY = GET( 'centerY', DEFAULT_CENTERY );
 $pixelSize = GET( 'pixelSize', DEFAULT_PIXELSIZE );
 
 $ogUrl = BASE . $centerX . '/' . $centerY . '/' . $pixelSize;
-$ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630&pixelSize=$pixelSize&format=png";
+$ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630&pixelSize=$pixelSize&format=png";
 
 ?><!DOCTYPE HTML>
 <html>
@@ -17,13 +17,14 @@ $ogImage = BASE . "areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 	<base href="<?php echo BASE; ?>">
 	<link rel="stylesheet" href="css/desktop.css">
 	<link rel="stylesheet" href="css/spectrum.css">
-	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="//connect.facebook.net/en_US/sdk.js"></script>
 	<script src="js/spectrum.js"></script>
 	<script src="js/functions.js"></script>
-	<script src="js/pixelbypixel.js"></script>
+	<script src="js/pixelmural.js"></script>
 	<script src="js/facebook.js"></script>
 	<meta charset="UTF-8">
+	<!--<meta name="viewport" content="width=device-width">-->
 	<meta name="description" content="<?php echo DESCRIPTION; ?>">
 	<meta property="og:url" content="<?php echo $ogUrl; ?>">
 	<meta property="og:title" content="<?php echo TITLE; ?>">

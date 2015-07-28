@@ -27,7 +27,7 @@ $( function () {
 function statusChangeCallback( response ) {
 	//console.log( response );
 	$.get( 'Tokens', function ( response ) {
-		//console.log( response );
+		console.log( response );
 		gUser = new User( response ); // Update the global user
 		menu.updateButtons();
 
@@ -35,7 +35,7 @@ function statusChangeCallback( response ) {
 			FB.ui({
 				method: 'pay',
 				action: 'purchaseitem',
-				product: 'http://pixelbypixel.co/brush.html',
+				product: 'https://pixelmural.com/brush.html',
 			}, verifyPayment );
 		});
 	});
@@ -50,11 +50,10 @@ function statusChangeCallback( response ) {
 }
 
 function verifyPayment( data ) {
-	//console.log( data );
+	console.log( data );
 
-	if ( !data ) {
-		menu.showAlert( 'There was an error processing your payment. Please try again!' );
-    	return;
+	if ( !data || data.error_code === 1151 ) {
+		return menu.showAlert( 'You can only buy the brush from within the Facebook app. <a href="https://apps.facebook.com/pixelmural/">Click here to go to the Facebook app!</a>' );
 	}
 
 	$.post( 'FacebookPayments', data, function ( response ) {

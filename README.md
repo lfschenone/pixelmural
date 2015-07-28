@@ -10,12 +10,11 @@ Bugs
 
 Tasks
 -----
-* Delete cookie when loggin out
+* Delete cookie on log out
 * Hotkey for the brush?
 * In the API, always check if the global user exists
 * 404s, error handling
 * Mobile version
-* Set up payments
 * Optimise preview loading and loading in general
 * Further customise Spectrum
 
