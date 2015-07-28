@@ -5,8 +5,8 @@ ini_set( 'display_errors', 1 );
 error_reporting( E_ALL );
 
 // General settings
-define( 'BASE', 'http://pixelbypixel.co/' );
-define( 'TITLE', 'Pixel by Pixel' );
+define( 'BASE', 'https://pixelmural.com/' );
+define( 'TITLE', 'Pixel Mural' );
 define( 'DESCRIPTION', 'An infinite canvas of collaborative pixel art. Come leave your mark!' );
 date_default_timezone_set( 'America/Argentina/Buenos_Aires' );
 

@@ -1,7 +1,7 @@
 $( function () {
 
 	FB.init({
-		appId: '792343240878413',
+		appId: '793373170775420',
 		xfbml: true,
 		status: true,
 		cookie: true,
@@ -26,9 +26,12 @@ $( function () {
 
 function statusChangeCallback( response ) {
 	//console.log( response );
-	$.get( 'Tokens', function ( response ) {
-		console.log( response );
+
+	$.get( 'Users', function ( response ) {
+		//console.log( response );
+
 		gUser = new User( response ); // Update the global user
+
 		menu.updateButtons();
 
 		$( '#price-tag' ).click( function () {
@@ -39,18 +42,10 @@ function statusChangeCallback( response ) {
 			}, verifyPayment );
 		});
 	});
-
-	$( '#facebook-login-button' ).show();
-	$( '#facebook-logout-button' ).hide();
-
-    if ( response.status === 'connected' ) {
-		$( '#facebook-login-button' ).hide();
-		$( '#facebook-logout-button' ).show();
-    }
 }
 
 function verifyPayment( data ) {
-	console.log( data );
+	//console.log( data );
 
 	if ( !data || data.error_code === 1151 ) {
 		return menu.showAlert( 'You can only buy the brush from within the Facebook app. <a href="https://apps.facebook.com/pixelmural/">Click here to go to the Facebook app!</a>' );
@@ -58,6 +53,7 @@ function verifyPayment( data ) {
 
 	$.post( 'FacebookPayments', data, function ( response ) {
 		//console.log( response );
+
 		if ( response === 'completed' ) {
 			gUser.brush = 1;
 			menu.updateButtons();

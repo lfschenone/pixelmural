@@ -51,7 +51,6 @@ $( function () {
 	$( '#brush-button' ).click( menu.clickBrushButton );
 	$( '#eraser-button' ).click( menu.clickEraserButton );
 	$( '#bucket-button' ).click( menu.clickBucketButton );
-	$( '.menu button' ).mouseover( menu.showTooltip ).mouseout( menu.hideTooltip ).click( menu.updateButtons );
 	$( document ).keydown( keyboard.keydown ).keyup( keyboard.keyup ).mouseup( mouse.up );
 
 	// Set 'Move' as the default action
@@ -147,19 +146,6 @@ menu = {
 
 	// INTERFACE ACTIONS
 
-	showTooltip: function ( event ) {
-		var button = $( event.target );
-		var tooltip = button.attr( 'data-tooltip' );
-		if ( tooltip ) {
-			var span = $( '<span>' ).addClass( 'tooltip' ).text( tooltip );
-			button.append( span );
-		}
-	},
-
-	hideTooltip: function () {
-		$( '.tooltip' ).remove();
-	},
-
 	showAlert: function ( html, duration ) {
 		$( '#alert' ).html( html ).show();
 		if ( duration ) {
@@ -187,7 +173,8 @@ menu = {
 	},
 
 	updateButtons: function () {
-		$( '.menu button' ).removeClass( 'disabled' ); // First enable everything
+		// First enable all the buttons, then disable the ones that should be disabled
+		$( '.menu button' ).removeClass( 'disabled' );
 
 		if ( mural.pixelSize === 64 ) {
 			$( '#zoom-in-button' ).addClass( 'disabled' );
@@ -210,11 +197,20 @@ menu = {
 			$( '#preview-button' ).addClass( 'disabled' );
 		}
 
-		// Hide the price tag and then show it if required
+		// First hide the price tag, then show it if appropriate
 		$( '#price-tag' ).hide();
 		if ( gUser.brush === 0 ) {
 			$( '#price-tag' ).show();
 		}
+
+		// First hide both buttons, then show the appropriate one
+		$( '#facebook-login-button' ).hide();
+		$( '#facebook-logout-button' ).hide();
+		if ( gUser.facebook_id ) {
+			$( '#facebook-logout-button' ).show();
+    	} else {
+			$( '#facebook-login-button' ).show();
+    	}
 	}
 };
 
