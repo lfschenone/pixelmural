@@ -56,8 +56,8 @@ function verifyPayment( data ) {
 
 		if ( response === 'completed' ) {
 			gUser.brush = 1;
-			menu.updateButtons();
 			menu.showAlert( 'Payment complete, thanks! You now have the brush.', 3000 );
 		}
+		menu.updateButtons();
 	});
 }
