@@ -277,6 +277,10 @@ keyboard = {
 		if ( event.keyCode === 80 ) {
 			menu.clickPencilButton();
 		}
+		// V
+		if ( event.keyCode === 86 ) {
+			menu.clickBrushButton();
+		}
 		// X
 		if ( event.keyCode === 88 ) {
 			menu.clickRedoButton();
@@ -466,7 +470,8 @@ mouse = {
 					newArea.paint().register( oldArea );
 					break;
 
-				case 401, 403:
+				case 401:
+				case 403:
 					if ( response.data ) {
 						var Pixel = new window.Pixel( response.data );
 						Pixel.paint().unregister();
@@ -892,7 +897,9 @@ function Pixel( data ) {
 		$.post( 'Pixels', data, function ( response ) {
 			//console.log( response );
 			switch ( response.code ) {
-				case 401, 402, 403:
+				case 401:
+				case 402:
+				case 403:
 					if ( response.data ) {
 						var Pixel = new window.Pixel( response.data );
 						Pixel.paint().unregister();

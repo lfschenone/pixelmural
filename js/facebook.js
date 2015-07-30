@@ -22,6 +22,22 @@ $( function () {
 		FB.XFBML.parse(); // Update the URL to be shared
 		FB.ui({ 'method': 'share', 'href': location.href });
 	});
+
+	$( '#price-tag' ).click( function () {
+		if ( document.referrer.indexOf( 'https://apps.facebook.com/pixelmural/' ) === 0 ) {
+			FB.ui({
+				method: 'pay',
+				action: 'purchaseitem',
+				product: 'https://pixelmural.com/brush.html',
+			}, verifyPayment );
+		} else {
+			FB.login( function ( response ) {
+				if ( response.status === 'connected' ) {
+					location.href = 'https://apps.facebook.com/pixelmural/?buy=brush';
+				}
+			});
+		}
+	});
 });
 
 function statusChangeCallback( response ) {
@@ -39,37 +55,19 @@ function statusChangeCallback( response ) {
 
 			menu.update();
 
-			preparePayment();
+			// Part of the payment flow
+			if ( document.referrer === 'https://apps.facebook.com/pixelmural/?buy=brush' ) {
+				if ( user.brush ) {
+					return; // If the user already has the brush, don't try to sell it again
+				}
+				FB.ui({
+					method: 'pay',
+					action: 'purchaseitem',
+					product: 'https://pixelmural.com/brush.html',
+				}, verifyPayment );
+			}
 		})
 	});
-}
-
-function preparePayment() {
-	$( '#price-tag' ).click( function () {
-		if ( document.referrer.indexOf( 'https://apps.facebook.com/pixelmural/' ) === 0 ) {
-			FB.ui({
-				method: 'pay',
-				action: 'purchaseitem',
-				product: 'https://pixelmural.com/brush.html',
-			}, verifyPayment );
-		} else {
-			FB.login( function ( response ) {
-				if ( response.status === 'connected' ) {
-					location.href = 'https://apps.facebook.com/pixelmural/?buy=brush';
-				}
-			});
-		}
-	});
-	if ( document.referrer === 'https://apps.facebook.com/pixelmural/?buy=brush' ) {
-		if ( user.brush ) {
-			return; // If the user already has the brush, don't try to sell it again
-		}
-		FB.ui({
-			method: 'pay',
-			action: 'purchaseitem',
-			product: 'https://pixelmural.com/brush.html',
-		}, verifyPayment );
-	}
 }
 
 function verifyPayment( data ) {
