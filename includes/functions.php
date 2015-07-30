@@ -1,5 +1,11 @@
 <?php
 
+function json( $data ) {
+	header( 'Content-Type: application/json' );
+	echo json_encode( $data, JSON_NUMERIC_CHECK );
+	exit;
+}
+
 function go( $url ) {
 	header( 'Location: ' . $url );
 	exit;

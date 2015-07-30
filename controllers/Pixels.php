@@ -2,74 +2,61 @@
 
 class Pixels extends Controller {
 
-	static function get() {
+	static function GET() {
+
 		$x = GET( 'x' );
 		$y = GET( 'y' );
+
 		$Pixel = Pixel::newFromCoords( $x, $y );
 		$RESPONSE['Pixel'] = $Pixel; // May be null
+
 		if ( $Pixel ) {
 			$Author = $Pixel->getAuthor();
 			$RESPONSE['Author'] = $Author;
 		}
-		return $RESPONSE;
+
+		json( $RESPONSE );
 	}
 
-	static function post() {
-		global $gUser;
+	static function POST() {
 
 		$x = POST( 'x' );
 		$y = POST( 'y' );
 		$color = POST( 'color' );
 		$tool = POST( 'tool' );
 
-		$Pixel = Pixel::newFromCoords( $x, $y );
+		$Pixel = Pixel::newFromCoords( $x, $y ); // May be null
 
-		if ( $tool === 'brush' and !$gUser->brush ) {
-			$RESPONSE['message'] = 'Click the price tag to buy the brush';
-			$RESPONSE['Pixel'] = $Pixel;
-			return $RESPONSE;
+		$token = SESSION( 'token' );
+		$User = User::newFromToken( $token );
+		if ( !$User ) {
+			throw new Error( 'Unauthorized', 401, $Pixel );
 		}
 
-		if ( $Pixel ) {
-			if ( $gUser->canEdit( $Pixel ) ) {
-				if ( $color ) {
-					$Pixel->color = $color;
-					$Pixel->update();
-					$RESPONSE['message'] = 'Pixel updated';
-					$RESPONSE['Pixel'] = $Pixel;
-				} else {
-					$Pixel->delete();
-					$RESPONSE['message'] = 'Pixel deleted';
-					$RESPONSE['Pixel'] = $Pixel;
-					$Author = $Pixel->getAuthor();
-					$Author->pixel_count--;
-					$Author->update();
-				}
-			} else {
-				$RESPONSE['message'] = 'Not your pixel';
-				$RESPONSE['Author'] = $Pixel->getAuthor();
-				$RESPONSE['Pixel'] = $Pixel;
-			}
-		} else if ( $color ) {
+		if ( $Pixel and !$User->canEdit( $Pixel ) ) {
+			throw new Error( 'Forbidden', 403, $Pixel );
+		}
+
+		if ( $tool === 'brush' and !$User->brush ) {
+			throw new Error( 'Payment Required', 402, $Pixel );
+		}
+
+		if ( $Pixel and $color ) {
+			$Pixel->color = $color;
+			$Pixel->update();
+		}
+
+		if ( $Pixel and !$color ) {
+			$Pixel->delete();
+		}
+
+		if ( !$Pixel and $color ) {
 			$Pixel = new Pixel;
 			$Pixel->x = $x;
 			$Pixel->y = $y;
-			$Pixel->author_id = $gUser->id;
+			$Pixel->author_id = $User->id;
 			$Pixel->color = $color;
 			$Pixel->insert();
-			$RESPONSE['message'] = 'Pixel saved';
-			$RESPONSE['Pixel'] = $Pixel;
-			$gUser->pixel_count++;
-			$gUser->update();
 		}
-		return $RESPONSE;
-	}
-
-	static function put() {
-		// TO DO
-	}
-
-	static function delete() {
-		// TO DO
 	}
 }

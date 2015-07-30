@@ -2,8 +2,13 @@
 
 class FacebookPayments {
 
-    static function post() {
-        global $gUser;
+    static function POST() {
+
+		$token = SESSION( 'token' );
+		$User = User::newFromToken( $token );
+		if ( !$User ) {
+			return 401; // Not authorised
+		}
 
         $payment_id = POST( 'payment_id' );
         $quantity = POST( 'quantity' );
@@ -11,9 +16,9 @@ class FacebookPayments {
         $signed_request = POST( 'signed_request' );
 
         if ( $status === 'completed' ) {
-            $gUser->brush = 1;
-            $gUser->update();
+            $User->brush = 1;
+            $User->update();
         }
-        return $status;
+        echo $status;
     }
 }

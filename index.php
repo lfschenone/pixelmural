@@ -22,6 +22,7 @@ $ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 	<script src="js/spectrum.js"></script>
 	<script src="js/functions.js"></script>
 	<script src="js/pixelmural.js"></script>
+	<script>var FACEBOOK_APP_ID = <?php echo FACEBOOK_APP_ID; ?>;</script>
 	<script src="js/facebook.js"></script>
 	<meta charset="UTF-8">
 	<!--<meta name="viewport" content="width=device-width">-->
@@ -53,6 +54,7 @@ $ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 			<button id="zoom-out-button" title="Zoom out [O]"><img src="images/zoom-out.png" alt="Zoom out"></button>
 			<button id="undo-button" title="Undo [Z]"><img src="images/undo.png" alt="Undo"></button>
 			<button id="redo-button" title="Redo [X]"><img src="images/redo.png" alt="Redo"></button>
+			<button id="link-button" title="Link [L]"><img src="images/link.png" alt="Link"></button>
 			<button id="dropper-button" title="Dropper [Alt]"><img src="images/dropper.png" alt="Dropper"></button>
 			<button id="pencil-button" title="Pencil [P]"><img src="images/pencil.png" alt="Pencil"></button>
 			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"><img id="price-tag" src="images/price-tag.png" title="Click to buy the brush"></button>
@@ -60,13 +62,14 @@ $ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 			<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket"></button>
 			<input id="color-input" type="color" value="#000000">
 		</div>
-	</div>
 
-	<div id="alert"></div>
+	</div>
 
 	<canvas id="mural"></canvas>
 	<canvas id="grid"></canvas>
 	<canvas id="preview"></canvas>
+
+	<img id="loading" src="images/loading.gif" alt="Loading...">
 
 </body>
 </html>

@@ -1,7 +1,7 @@
 $( function () {
 
 	FB.init({
-		appId: '792343240878413',
+		appId: FACEBOOK_APP_ID,
 		xfbml: true,
 		status: true,
 		cookie: true,
@@ -27,37 +27,59 @@ $( function () {
 function statusChangeCallback( response ) {
 	//console.log( response );
 
-	$.get( 'Users', function ( response ) {
+	// First get a token
+	$.get( 'Tokens', function ( response ) {
 		//console.log( response );
 
-		gUser = new User( response ); // Update the global user
+		// Then use the token to update the user object
+		$.get( 'Users', { 'token': response }, function ( response ) {
+			//console.log( response );
 
-		menu.updateButtons();
+			user = new User( response );
 
-		$( '#price-tag' ).click( function () {
+			menu.update();
+
+			preparePayment();
+		})
+	});
+}
+
+function preparePayment() {
+	$( '#price-tag' ).click( function () {
+		if ( document.referrer.indexOf( 'https://apps.facebook.com/pixelmural/' ) === 0 ) {
 			FB.ui({
 				method: 'pay',
 				action: 'purchaseitem',
 				product: 'https://pixelmural.com/brush.html',
 			}, verifyPayment );
-		});
+		} else {
+			FB.login( function ( response ) {
+				if ( response.status === 'connected' ) {
+					location.href = 'https://apps.facebook.com/pixelmural/?buy=brush';
+				}
+			});
+		}
 	});
+	if ( document.referrer === 'https://apps.facebook.com/pixelmural/?buy=brush' ) {
+		if ( user.brush ) {
+			return; // If the user already has the brush, don't try to sell it again
+		}
+		FB.ui({
+			method: 'pay',
+			action: 'purchaseitem',
+			product: 'https://pixelmural.com/brush.html',
+		}, verifyPayment );
+	}
 }
 
 function verifyPayment( data ) {
 	//console.log( data );
-
-	if ( !data || data.error_code === 1151 ) {
-		return menu.showAlert( 'You can only buy the brush from within the Facebook app. <a href="https://apps.facebook.com/pixelmural/">Click here to go to the Facebook app!</a>' );
-	}
-
 	$.post( 'FacebookPayments', data, function ( response ) {
 		//console.log( response );
-
 		if ( response === 'completed' ) {
-			gUser.brush = 1;
-			menu.showAlert( 'Payment complete, thanks! You now have the brush.', 3000 );
+			user.brush = 1;
+			menu.update();
+			menu.clickBrushButton();
 		}
-		menu.updateButtons();
 	});
 }

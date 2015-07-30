@@ -9,28 +9,20 @@ include 'vendor/autoload.php';
 // Initialize the database
 $gDatabase = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 
-// Initialise the global user
-$token = SESSION( 'token', COOKIE( 'token' ) );
-$gUser = User::newFromToken( $token );
-
 try {
+
 	$controller = GET( 'controller' );
 	if ( !class_exists( $controller ) ) {
-		throw new Exception( 'Not found', 404 );
+		throw new Error( 'Not Found', 404 );
 	}
+
 	$method = $_SERVER['REQUEST_METHOD'];
 	if ( !method_exists( $controller, $method ) ) {
-		throw new Exception( 'Not found', 404 );
+		throw new Error( 'Method Not Allowed', 405 );
 	}
 
-	$RESPONSE = $controller::$method(); // Main call
+	$controller::$method(); // Main call	
 
-} catch ( Exception $Exception ) {
-
-	$RESPONSE['code'] = $Exception->getCode();
-	$RESPONSE['message'] = $Exception->getMessage();
+} catch ( Error $Error ) {
+	json( $Error );
 }
-
-// Output the response
-header( 'Content-Type: application/json' );
-echo json_encode( $RESPONSE, JSON_NUMERIC_CHECK );

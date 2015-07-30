@@ -6,21 +6,23 @@ Bugs
 ----
 * Sometimes the bucket doesn't paint all the pixels it should. Not sure how to reproduce it. The bug probably comes from the SQL statement.
 * When repainting a pixel by clicking on its exact border, the pencil doesn't erase it, instead it updates it to the same color
-* When two users are connected from the same ip, the global user of the second doesn't initialise correctly, and his pixels are not saved.
+* Spectrum bug: when selecting a color, if you click the brush or the mural directly after, the color is reverted.
+This is contrary to the documented behaviour, and may be related to https://github.com/bgrins/spectrum/issues/301
+* When clicking the price tag, the facebook login dialog opens twice
+* When selecting a tool like the pencil, and pressing the spacebar, the tool switches to move but then returns!
 
 Tasks
 -----
-* Delete cookie on log out
-* Hotkey for the brush?
-* In the API, always check if the global user exists
-* 404s, error handling
-* Mobile version
-* Optimise preview loading and loading in general
+* Hotkey for the brush
 * Further customise Spectrum
+* Move with the arrows
+* Zoom with the mouse wheel
 
 Further tasks
 -------------
+* Improve moving and zooming
+* Optimise loading
 * Migrate to node.js?
-* Improve the REST API
-* i18n and l10n
 * API documentation?
+* Mobile version
+* Steam version, contact Daniel Steer

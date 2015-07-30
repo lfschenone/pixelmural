@@ -9,8 +9,6 @@ class User extends Model {
 	public $facebook_id;
 	public $insert_time;
 	public $update_time;
-	public $pixel_count = 0;
-	public $share_count = 0;
 	public $brush = 0;
 	public $token;
 	public $name;
@@ -104,8 +102,6 @@ class User extends Model {
 			facebook_id,
 			insert_time,
 			update_time,
-			pixel_count,
-			share_count,
 			brush,
 			token,
 			name,
@@ -115,16 +111,14 @@ class User extends Model {
 			link,
 			status,
 			timezone
-			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
 		);
 		$this->insert_time = $_SERVER['REQUEST_TIME'];
 		$this->update_time = $_SERVER['REQUEST_TIME'];
-		$Statement->bind_param( 'siiiiisssssssi',
+		$Statement->bind_param( 'siiisssssssi',
 			$this->facebook_id,
 			$this->insert_time,
 			$this->update_time,
-			$this->pixel_count,
-			$this->share_count,
 			$this->brush,
 			$this->token,
 			$this->name,
@@ -145,8 +139,6 @@ class User extends Model {
 			facebook_id = ?,
 			insert_time = ?,
 			update_time = ?,
-			pixel_count = ?,
-			share_count = ?,
 			brush = ?,
 			token = ?,
 			name = ?,
@@ -159,12 +151,10 @@ class User extends Model {
 			WHERE id = ?'
 		);
 		$this->update_time = $_SERVER['REQUEST_TIME'];
-		$Statement->bind_param( 'iiiiissssssssii',
+		$Statement->bind_param( 'iiissssssssii',
 			$this->facebook_id,
 			$this->insert_time,
 			$this->update_time,
-			$this->pixel_count,
-			$this->share_count,
 			$this->brush,
 			$this->token,
 			$this->name,

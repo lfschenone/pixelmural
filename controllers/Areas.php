@@ -2,7 +2,7 @@
 
 class Areas extends Controller {
 
-	static function get() {
+	static function GET() {
 		global $gDatabase;
 
 		$width = GET( 'width' );
@@ -32,17 +32,21 @@ class Areas extends Controller {
 			$y2 = $y1 + $pixelSize - 1;
 			$Image->drawFilledRectangle( $x1, $y1, $x2, $y2 );
 		}
-		if ( $format === 'base64' ) {
-			return $Image->getBase64();
-		}
-		if ( $format === 'png' ) {
-			$Image->draw();
-			exit;
+
+		switch ( $format ) {
+
+			case 'base64':
+				echo $Image->getBase64();
+				break;
+
+			case 'png':
+				$Image->draw();
+				break;
 		}
 	}
 
-	static function post() {
-		global $gUser, $gDatabase;
+	static function POST() {
+		global $gDatabase;
 
 		$x = POST( 'x' );
 		$y = POST( 'y' );
@@ -51,19 +55,20 @@ class Areas extends Controller {
 		$firstPixel = Pixel::newFromCoords( $x, $y );
 
 		if ( !$firstPixel ) {
-			$RESPONSE['message'] = 'No pixel';
-			return $RESPONSE;
+			throw new Error( 'Pixel Not Found', 404 );
 		}
 
-		if ( !$gUser->canEdit( $firstPixel ) ) {
-			$RESPONSE['gUser'] = $gUser;
-			$RESPONSE['Pixel'] = $firstPixel;
-			$RESPONSE['Author'] = $firstPixel->getAuthor();
-			$RESPONSE['message'] = 'Not your pixel';
-			return $RESPONSE;
+		$token = SESSION( 'token' );
+		$User = User::newFromToken( $token );
+		if ( !$User ) {
+			throw new Error( 'Unauthorized', 401, $firstPixel );
 		}
 
-		$oldAreaData[] = clone $firstPixel; // Save the data of the old pixels for the the undo/redo functionality
+		if ( !$User->canEdit( $firstPixel ) ) {
+			throw new Error( 'Forbidden', 403, $firstPixel );
+		}
+
+		$oldAreaData[] = clone $firstPixel; // Save the data of the old pixels for the undo/redo functionality
 		$oldColor = $firstPixel->color;
 		$firstPixel->color = $color;
 		$firstPixel->update();
@@ -109,17 +114,10 @@ class Areas extends Controller {
 				$QUEUE[] = $Neighbor;
 			}
 		}
-		$RESPONSE['message'] = 'Area painted';
+		$RESPONSE['code'] = 200; // OK
 		$RESPONSE['oldAreaData'] = $oldAreaData;
 		$RESPONSE['newAreaData'] = $newAreaData;
-		return $RESPONSE;
-	}
 
-	static function put() {
-		// TO DO
-	}
-
-	static function delete() {
-		// TO DO
+		json( $RESPONSE );
 	}
 }
