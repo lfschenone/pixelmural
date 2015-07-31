@@ -846,7 +846,7 @@ function User( data ) {
 
 	this.update = function () {
 		$.post( 'Users', this.getData(), function ( response ) {
-			console.log( response );
+			//console.log( response );
 		});
 	};
 }

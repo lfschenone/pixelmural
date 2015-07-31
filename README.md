@@ -12,6 +12,7 @@ This is contrary to the documented behaviour, and may be related to https://gith
 
 Tasks
 -----
+* Validate links
 * Always fit the screen perfectly
 
 Further tasks
