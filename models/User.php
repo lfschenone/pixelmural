@@ -96,6 +96,14 @@ class User extends Model {
 		return false;
 	}
 
+	function normalise() {
+		$this->link = trim( $this->link );
+	}
+
+	function validate() {
+		$this->link = is_url( $this->link ) ? $this->link : '';
+	}
+
 	function insert() {
 		global $gDatabase;
 		$Statement = $gDatabase->prepare( 'INSERT INTO users (

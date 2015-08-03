@@ -10,6 +10,8 @@ class Users extends Controller {
 
 	static function POST() {
 		$User = new User( $_POST );
+		$User->normalise();
+		$User->validate();
 		$User->update();
 		json( $User );
 	}

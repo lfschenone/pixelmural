@@ -18,16 +18,11 @@ $( function () {
 	// Set the variables that must wait for the DOM to be loaded
 	mural.setCanvas( document.getElementById( 'mural' ) );
 	mural.setContext( mural.canvas.getContext( '2d' ) );
-	mural.setWidth( $( 'body' ).width() );
-	mural.setHeight( $( 'body' ).height() );
-	mural.setBackground( '#ddd' );
 	mural.setCenterX( mural.getCenterX() );
 	mural.setCenterY( mural.getCenterY() );
 	mural.setPixelSize( mural.getPixelSize() );
 	grid.setCanvas( document.getElementById( 'grid' ) );
 	grid.setContext( grid.canvas.getContext( '2d' ) );
-	grid.setWidth( mural.width );
-	grid.setHeight( mural.height );
 	preview.setCanvas( document.getElementById( 'preview' ) );
 	preview.setContext( preview.canvas.getContext( '2d' ) );
 	preview.setWidth( 300 );
@@ -49,11 +44,12 @@ $( function () {
 	$( '#bucket-button' ).click( menu.clickBucketButton );
 	$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( document ).keydown( keyboard.keydown ).keyup( keyboard.keyup );
+	$( window ).resize( mural.resize );
 
 	// Set 'move' as the default action
 	menu.clickMoveButton();
 
-	// Fill the mural
+	// Fill the board
 	mural.update();
 });
 
@@ -93,15 +89,11 @@ menu = {
 
 	clickZoomInButton: function () {
 		mural.zoomIn();
-		grid.update();
-		preview.update();
 		menu.update();
 	},
 
 	clickZoomOutButton: function () {
 		mural.zoomOut();
-		grid.update();
-		preview.update();
 		menu.update();
 	},
 
@@ -395,7 +387,6 @@ mouse = {
 	moveMural3: function ( event ) {
 		if ( mouse.diffX || mouse.diffY ) {
 			mural.update();
-			preview.update();
 		} else {
 			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
 			$.get( 'Pixels', data, function ( response ) {
@@ -414,7 +405,10 @@ mouse = {
 			green = imageData.data[1],
 			blue  = imageData.data[2],
 			alpha = imageData.data[3];
-		menu.color = alpha ? rgb2hex( red, green, blue ) : mural.background;
+		if ( !alpha ) {
+			return; // The user clicked the background
+		}
+		menu.color = rgb2hex( red, green, blue );
 		menu.update();
 	},
 
@@ -502,8 +496,6 @@ mural = {
 	xPixels: null,
 	yPixels: null,
 
-	background: null,
-
 	// GETTERS
 
 	getXpixels: function () {
@@ -566,18 +558,19 @@ mural = {
 		mural.context = value;
 	},
 
-	setBackground: function ( value ) {
-		mural.background = value;
-		$( mural.canvas ).css( 'background', value );
-	},
-
 	setWidth: function ( value ) {
+		if ( mural.width === value ) {
+			return;
+		}
 		mural.width = value;
 		mural.canvas.setAttribute( 'width', value );
 		mural.xPixels = mural.getXpixels();
 	},
 
 	setHeight: function ( value ) {
+		if ( mural.height === value ) {
+			return;
+		}
 		mural.height = value;
 		mural.canvas.setAttribute( 'height', value );
 		mural.yPixels = mural.getYpixels();
@@ -621,8 +614,18 @@ mural = {
 		mural.update();
 	},
 
+	timeout: null,
+	resize: function () {
+		clearTimeout( mural.timeout );
+		mural.timeout = setTimeout( mural.update, 200 );	
+	},
+
 	update: function () {
 		menu.showLoading();
+
+		mural.setWidth( window.innerWidth );
+		mural.setHeight( window.innerHeight );
+
 		var data = {
 			'width': mural.width,
 			'height': mural.height,
@@ -636,14 +639,21 @@ mural = {
 			var image = new Image();
 			image.src = 'data:image/png;base64,' + response;
 			image.onload = function () {
-				mural.context.clearRect( 0, 0, mural.width, mural.height );
-				mural.context.drawImage( image, 0, 0 );
-			};
-			menu.hideLoading();
+				// Make sure that the user hasn't moved again or zoomed while waiting for the server response
+				if ( data.centerX === mural.centerX && data.centerY === mural.centerY && data.pixelSize === mural.pixelSize ) {
+					mural.context.clearRect( 0, 0, mural.width, mural.height );
+					mural.context.drawImage( image, 0, 0 );
 
-			// Update the URL of the browser
-			var BASE = $( 'base' ).attr( 'href' );
-			history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
+					grid.update();
+					preview.update();
+
+					menu.hideLoading();
+
+					// Update the URL of the browser
+					var BASE = $( 'base' ).attr( 'href' );
+					history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
+				}
+			};
 		});
 	}
 };
@@ -669,11 +679,17 @@ grid = {
 	},
 
 	setWidth: function ( value ) {
+		if ( grid.width === value ) {
+			return;
+		}
 		grid.width = value;
 		grid.canvas.setAttribute( 'width', value );
 	},
 
 	setHeight: function ( value ) {
+		if ( grid.height === value ) {
+			return;
+		}
 		grid.height = value;
 		grid.canvas.setAttribute( 'height', value );
 	},
@@ -702,6 +718,8 @@ grid = {
 			grid.hide();
 			return;
 		}
+		grid.setWidth( mural.width );
+		grid.setHeight( mural.height );
 		grid.context.clearRect( 0, 0, grid.canvas.width, grid.canvas.height );
 		grid.context.beginPath();
 		for ( var x = 0; x <= mural.xPixels; x++ ) {

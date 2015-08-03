@@ -59,6 +59,7 @@ button::-moz-focus-inner {
 	position: absolute;
 	right: 20px;
 	bottom: 20px;
+	z-index: 2;
 }
 
 #price-tag {
