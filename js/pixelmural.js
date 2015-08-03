@@ -210,15 +210,12 @@ menu = {
 
 		$( '#color-input' ).spectrum( 'set', menu.color );
 
-		$( '#price-tag' ).show()
-		if ( user.brush ) {
-			$( '#price-tag' ).hide();
-		}
-
 		if ( user.facebook_id ) {
+			$( '#facebook-icon' ).hide();
 			$( '#facebook-login-button' ).hide();
 			$( '#facebook-logout-button' ).show();
     	} else {
+    		$( '#facebook-icon' ).show();
 			$( '#facebook-login-button' ).show();
 			$( '#facebook-logout-button' ).hide();
     	}
@@ -391,7 +388,7 @@ mouse = {
 			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
 			$.get( 'Pixels', data, function ( response ) {
 				if ( response.Author && response.Author.link ) {
-					window.open( response.Author.link );
+					window.open( response.Author.link, '_self' );
 				}
 			});
 		}
@@ -916,7 +913,6 @@ function Pixel( data ) {
 			//console.log( response );
 			switch ( response.code ) {
 				case 401:
-				case 402:
 				case 403:
 					if ( response.data ) {
 						var Pixel = new window.Pixel( response.data );

@@ -86,6 +86,13 @@ class User extends Model {
 		return false;
 	}
 
+	function isAnon() {
+		if ( $this->status === 'anon' ) {
+			return true;
+		}
+		return false;
+	}
+
 	function canEdit( $Pixel ) {
 		if ( $this->id === $Pixel->author_id ) {
 			return true;

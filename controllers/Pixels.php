@@ -33,12 +33,12 @@ class Pixels extends Controller {
 			throw new Error( 'Unauthorized', 401, $Pixel );
 		}
 
-		if ( $Pixel and !$User->canEdit( $Pixel ) ) {
-			throw new Error( 'Forbidden', 403, $Pixel );
+		if ( $tool === 'brush' and $User->isAnon() ) {
+			throw new Error( 'Unauthorized', 401, $Pixel );
 		}
 
-		if ( $tool === 'brush' and !$User->brush ) {
-			throw new Error( 'Payment Required', 402, $Pixel );
+		if ( $Pixel and !$User->canEdit( $Pixel ) ) {
+			throw new Error( 'Forbidden', 403, $Pixel );
 		}
 
 		if ( $Pixel and $color ) {

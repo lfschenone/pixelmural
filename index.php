@@ -57,7 +57,7 @@ $ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 			<button id="link-button" title="Link [L]"><img src="images/link.png" alt="Link"></button>
 			<button id="dropper-button" title="Dropper [Alt]"><img src="images/dropper.png" alt="Dropper"></button>
 			<button id="pencil-button" title="Pencil [P]"><img src="images/pencil.png" alt="Pencil"></button>
-			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"><img id="price-tag" src="images/price-tag.png" title="Click to buy the brush"></button>
+			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"><img id="facebook-icon" src="images/facebook-icon.png" title="Log in with Facebook to use the brush"></button>
 			<button id="eraser-button" title="Eraser [E]"><img src="images/eraser.png" alt="Eraser"></button>
 			<button id="bucket-button" title="Bucket [B]"><img src="images/bucket.png" alt="Bucket"></button>
 			<input id="color-input" type="color" value="#000000">
