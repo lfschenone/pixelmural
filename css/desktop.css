@@ -73,6 +73,12 @@ button::-moz-focus-inner {
 	margin: 5px 10px;
 }
 
+#profile-picture {
+	margin: 0 5px;
+	max-height: 30px;
+	vertical-align: middle;
+}
+
 #mural {
 	background: #ddd;
 }
@@ -94,4 +100,39 @@ button::-moz-focus-inner {
 	left: 0;
 	bottom: 0;
 	z-index: 2;
+}
+
+/* Spectrum */
+
+.sp-preview {
+	border: 1px solid black;
+	margin: 0;
+	width: 29px;
+	height: 29px;
+}
+.sp-replacer {
+	background: none;
+	border: none;
+	padding: 5px;
+}
+.sp-container,
+.sp-color,
+.sp-hue {
+	border: 1px solid black;
+}
+.sp-active {
+	border: none;
+}
+.sp-dd {
+	display: none;
+}
+.sp-top {
+	display: block;
+	margin: 0;
+}
+.sp-picker-container {
+	background: white;
+	border: none;
+	margin: 0;
+	padding: 10px;
 }

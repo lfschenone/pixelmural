@@ -42,9 +42,16 @@ $( function () {
 	$( '#brush-button' ).click( menu.clickBrushButton );
 	$( '#eraser-button' ).click( menu.clickEraserButton );
 	$( '#bucket-button' ).click( menu.clickBucketButton );
+	$( '#facebook-icon' ).click( facebook.login );
+	$( '#facebook-login-button' ).click( facebook.login );
+	$( '#facebook-logout-button' ).click( facebook.logout );
+	$( '#facebook-share-button' ).click( facebook.share );
 	$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 	$( document ).keydown( keyboard.keydown ).keyup( keyboard.keyup );
 	$( window ).resize( mural.resize );
+
+	// Initialise Facebook
+	facebook.init();
 
 	// Set 'move' as the default action
 	menu.clickMoveButton();
@@ -54,6 +61,47 @@ $( function () {
 });
 
 user = new User; // Dummy user
+
+facebook = {
+
+	init: function () {
+		FB.init({
+			appId: FACEBOOK_APP_ID,
+			xfbml: true,
+			status: true,
+			cookie: true,
+			version: 'v2.4'
+		});
+		FB.getLoginStatus( facebook.statusChangeCallback );
+	},
+
+	login: function () {
+		FB.login( facebook.statusChangeCallback );
+	},
+
+	logout: function () {
+		FB.logout( facebook.statusChangeCallback );
+	},
+
+	share: function () {
+		FB.XFBML.parse(); // Update the URL to be shared
+		FB.ui({ 'method': 'share', 'href': location.href });
+	},
+
+	statusChangeCallback: function ( response ) {
+		//console.log( response );
+		// First get a token
+		$.get( 'Tokens', function ( response ) {
+			//console.log( response );
+			// Then use the token to update the user object
+			$.get( 'Users', { 'token': response }, function ( response ) {
+				//console.log( response );
+				user = new User( response );
+				menu.update();
+			});
+		});
+	}
+};
 
 menu = {
 
@@ -214,10 +262,12 @@ menu = {
 			$( '#facebook-icon' ).hide();
 			$( '#facebook-login-button' ).hide();
 			$( '#facebook-logout-button' ).show();
+			$( '#profile-picture' ).attr( 'src', 'http://graph.facebook.com/' + user.facebook_id + '/picture' );
     	} else {
     		$( '#facebook-icon' ).show();
 			$( '#facebook-login-button' ).show();
 			$( '#facebook-logout-button' ).hide();
+			$( '#profile-picture' ).attr( 'src', 'images/anon.png' );
     	}
 	}
 };
@@ -834,7 +884,6 @@ function User( data ) {
 			'facebook_id': this.facebook_id,
 			'insert_time': this.insert_time,
 			'update_time': this.update_time,
-			'brush': this.brush,
 			'name': this.name,
 			'email': this.email,
 			'gender': this.gender,
@@ -992,4 +1041,12 @@ function Area( data ) {
 		});
 		return this;
 	};
+}
+
+/**
+ * Handy functions
+ */
+
+function rgb2hex( r, g, b ) {
+    return '#' + ( ( 1 << 24 ) + ( r << 16 ) + ( g << 8 ) + b ).toString( 16 ).slice( 1 );
 }

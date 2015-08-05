@@ -15,15 +15,13 @@ $ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 <head>
 	<title><?php echo TITLE; ?></title>
 	<base href="<?php echo BASE; ?>">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.1/spectrum.min.css">
 	<link rel="stylesheet" href="css/desktop.css">
-	<link rel="stylesheet" href="css/spectrum.css">
 	<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="//connect.facebook.net/en_US/sdk.js"></script>
-	<script src="js/spectrum.js"></script>
-	<script src="js/functions.js"></script>
-	<script src="js/pixelmural.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.1/spectrum.min.js"></script>
 	<script>var FACEBOOK_APP_ID = <?php echo FACEBOOK_APP_ID; ?>;</script>
-	<script src="js/facebook.js"></script>
+	<script src="js/pixelmural.js"></script>
 	<meta charset="UTF-8">
 	<!--<meta name="viewport" content="width=device-width">-->
 	<meta name="description" content="<?php echo DESCRIPTION; ?>">
@@ -44,6 +42,7 @@ $ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 			<button id="facebook-share-button" title="Share on Facebook"><img src="images/facebook-share.png" alt="Share"></button>
 			<button id="facebook-login-button" title="Log in with Facebook"><img src="images/facebook-login.png" alt="Login"></button>
 			<button id="facebook-logout-button" title="Log out from Facebook"><img src="images/facebook-logout.png" alt="Logout"></button>
+			<img id="profile-picture" src="images/anon.png">
 		</div>
 
 		<div id="tools-menu" class="menu">

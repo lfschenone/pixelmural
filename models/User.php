@@ -9,7 +9,6 @@ class User extends Model {
 	public $facebook_id;
 	public $insert_time;
 	public $update_time;
-	public $brush = 0;
 	public $token;
 	public $name;
 	public $email;
@@ -117,7 +116,6 @@ class User extends Model {
 			facebook_id,
 			insert_time,
 			update_time,
-			brush,
 			token,
 			name,
 			email,
@@ -126,15 +124,14 @@ class User extends Model {
 			link,
 			status,
 			timezone
-			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
+			) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
 		);
 		$this->insert_time = $_SERVER['REQUEST_TIME'];
 		$this->update_time = $_SERVER['REQUEST_TIME'];
-		$Statement->bind_param( 'siiisssssssi',
+		$Statement->bind_param( 'iiisssssssi',
 			$this->facebook_id,
 			$this->insert_time,
 			$this->update_time,
-			$this->brush,
 			$this->token,
 			$this->name,
 			$this->email,
@@ -154,7 +151,6 @@ class User extends Model {
 			facebook_id = ?,
 			insert_time = ?,
 			update_time = ?,
-			brush = ?,
 			token = ?,
 			name = ?,
 			email = ?,
@@ -166,11 +162,10 @@ class User extends Model {
 			WHERE id = ?'
 		);
 		$this->update_time = $_SERVER['REQUEST_TIME'];
-		$Statement->bind_param( 'iiissssssssii',
+		$Statement->bind_param( 'iiisssssssii',
 			$this->facebook_id,
 			$this->insert_time,
 			$this->update_time,
-			$this->brush,
 			$this->token,
 			$this->name,
 			$this->email,

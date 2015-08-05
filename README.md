@@ -12,15 +12,13 @@ This is contrary to the documented behaviour, and may be related to https://gith
 
 Tasks
 -----
-* Fix bugs
+* Switch to Facebook Anonymous Login
+* Move with the arrows
+* Zoom with the wheel
+* Zoom locally before loading from the server
 
-Further tasks
--------------
-* Improve moving and zooming
-	- Move with the arrows
-	- Zoom with the wheel
-	- Zoom on the client before loading from the server
-	- Only load the new parts?
+Tasks if and when there is enough traffic
+-----------------------------------------
 * Optimise loading
 * Migrate to node.js?
 * API documentation?
