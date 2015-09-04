@@ -20,6 +20,7 @@ $ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 	<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="//connect.facebook.net/en_US/sdk.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.1/spectrum.min.js"></script>
+	<script src="js/jquery.hotkeys.js"></script>
 	<script>var FACEBOOK_APP_ID = <?php echo FACEBOOK_APP_ID; ?>;</script>
 	<script src="js/pixelmural.js"></script>
 	<meta charset="UTF-8">
@@ -53,7 +54,7 @@ $ogImage = BASE . "Areas?centerX=$centerX&centerY=$centerY&width=1200&height=630
 			<button id="zoom-out-button" title="Zoom out [O]"><img src="images/zoom-out.png" alt="Zoom out"></button>
 			<button id="undo-button" title="Undo [Z]"><img src="images/undo.png" alt="Undo"></button>
 			<button id="redo-button" title="Redo [X]"><img src="images/redo.png" alt="Redo"></button>
-			<button id="link-button" title="Link [L]"><img src="images/link.png" alt="Link"></button>
+			<!--<button id="link-button" title="Link [L]"><img src="images/link.png" alt="Link"></button>-->
 			<button id="dropper-button" title="Dropper [Alt]"><img src="images/dropper.png" alt="Dropper"></button>
 			<button id="pencil-button" title="Pencil [P]"><img src="images/pencil.png" alt="Pencil"></button>
 			<button id="brush-button" title="Brush"><img src="images/brush.png" alt="Brush"><img id="facebook-icon" src="images/facebook-icon.png" title="Log in with Facebook to use the brush"></button>

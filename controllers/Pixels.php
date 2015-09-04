@@ -8,11 +8,10 @@ class Pixels extends Controller {
 		$y = GET( 'y' );
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
-		$RESPONSE['Pixel'] = $Pixel; // May be null
 
 		if ( $Pixel ) {
-			$Author = $Pixel->getAuthor();
-			$RESPONSE['Author'] = $Author;
+			$RESPONSE['Pixel'] = $Pixel;
+			$RESPONSE['Author'] = $Pixel->getAuthor();
 		}
 
 		json( $RESPONSE );

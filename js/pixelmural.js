@@ -1,5 +1,8 @@
 $( function () {
 
+	// Initialise Facebook
+	facebook.init();
+
 	// Initialize Spectrum
 	$( '#color-input' ).spectrum({
 		preferredFormat: 'hex',
@@ -17,43 +20,16 @@ $( function () {
 
 	// Set the variables that must wait for the DOM to be loaded
 	mural.setCanvas( document.getElementById( 'mural' ) );
-	mural.setContext( mural.canvas.getContext( '2d' ) );
 	mural.setCenterX( mural.getCenterX() );
 	mural.setCenterY( mural.getCenterY() );
 	mural.setPixelSize( mural.getPixelSize() );
 	grid.setCanvas( document.getElementById( 'grid' ) );
-	grid.setContext( grid.canvas.getContext( '2d' ) );
 	preview.setCanvas( document.getElementById( 'preview' ) );
-	preview.setContext( preview.canvas.getContext( '2d' ) );
 	preview.setWidth( 300 );
 	preview.setHeight( 200 );
 
-	// Bind events
-	$( '#move-button' ).click( menu.clickMoveButton );
-	$( '#grid-button' ).click( menu.clickGridButton );
-	$( '#preview-button' ).click( menu.clickPreviewButton );
-	$( '#zoom-in-button' ).click( menu.clickZoomInButton );
-	$( '#zoom-out-button' ).click( menu.clickZoomOutButton );
-	$( '#undo-button' ).click( menu.clickUndoButton );
-	$( '#redo-button' ).click( menu.clickRedoButton );
-	$( '#link-button' ).click( menu.clickLinkButton );
-	$( '#dropper-button' ).click( menu.clickDropperButton );
-	$( '#pencil-button' ).click( menu.clickPencilButton );
-	$( '#brush-button' ).click( menu.clickBrushButton );
-	$( '#eraser-button' ).click( menu.clickEraserButton );
-	$( '#bucket-button' ).click( menu.clickBucketButton );
-	$( '#facebook-icon' ).click( facebook.login );
-	$( '#facebook-login-button' ).click( facebook.login );
-	$( '#facebook-logout-button' ).click( facebook.logout );
-	$( '#facebook-share-button' ).click( facebook.share );
-	$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
-	$( document ).keydown( keyboard.keydown ).keyup( keyboard.keyup );
-	$( window ).resize( mural.resize );
-
-	// Initialise Facebook
-	facebook.init();
-
 	// Set 'move' as the default action
+	menu.bindEvents();
 	menu.clickMoveButton();
 
 	// Fill the board
@@ -116,6 +92,60 @@ menu = {
 	arrayPointer: 0,
 
 	// EVENT HANDLERS
+
+	bindEvents: function () {
+		$( '#move-button' ).click( menu.clickMoveButton );
+		$( '#grid-button' ).click( menu.clickGridButton );
+		$( '#preview-button' ).click( menu.clickPreviewButton );
+		$( '#zoom-in-button' ).click( menu.clickZoomInButton );
+		$( '#zoom-out-button' ).click( menu.clickZoomOutButton );
+		$( '#undo-button' ).click( menu.clickUndoButton );
+		$( '#redo-button' ).click( menu.clickRedoButton );
+		//$( '#link-button' ).click( menu.clickLinkButton );
+		$( '#dropper-button' ).click( menu.clickDropperButton );
+		$( '#pencil-button' ).click( menu.clickPencilButton );
+		$( '#brush-button' ).click( menu.clickBrushButton );
+		$( '#eraser-button' ).click( menu.clickEraserButton );
+		$( '#bucket-button' ).click( menu.clickBucketButton );
+		$( '#facebook-icon' ).click( facebook.login );
+		$( '#facebook-login-button' ).click( facebook.login );
+		$( '#facebook-logout-button' ).click( facebook.logout );
+		$( '#facebook-share-button' ).click( facebook.share );
+		$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
+
+		$( window ).resize( mural.resize );
+
+		$( document ).bind( 'keydown', 'Space', menu.clickMoveButton );
+		$( document ).bind( 'keydown', 'b', menu.clickBucketButton );
+		$( document ).bind( 'keydown', 'c', menu.clickColorButton );
+		$( document ).bind( 'keydown', 'd', menu.clickDropperButton );
+		$( document ).bind( 'keydown', 'e', menu.clickEraserButton );
+		$( document ).bind( 'keydown', 'g', menu.clickGridButton );
+		$( document ).bind( 'keydown', 'i', menu.clickZoomInButton );
+		//$( document ).bind( 'keydown', 'l', menu.clickLinkButton );
+		$( document ).bind( 'keydown', 'o', menu.clickZoomOutButton );
+		$( document ).bind( 'keydown', 'p', menu.clickPencilButton );
+		$( document ).bind( 'keydown', 'v', menu.clickBrushButton );
+		$( document ).bind( 'keydown', 'x', menu.clickRedoButton );
+		$( document ).bind( 'keydown', 'z', menu.clickUndoButton );
+
+		// For convenience, select the dropper when pressing Alt, and return to the painting tool when releasing
+		$( document ).bind( 'keydown', 'Alt', function () {
+			menu.previousTool = menu.activeTool;
+			menu.clickDropperButton();
+		});
+		$( document ).bind( 'keyup', 'Alt', function () {
+			if ( menu.previousTool === 'pencil' ) {
+				menu.clickPencilButton();
+			}
+			if ( menu.previousTool === 'brush' ) {
+				menu.clickBrushButton();
+			}
+			if ( menu.previousTool === 'bucket' ) {
+				menu.clickBucketButton();
+			}
+		});
+	},
 
 	clickMoveButton: function () {
 		mouse.downAction = mouse.moveMural1;
@@ -228,6 +258,22 @@ menu = {
 		$( '#loading' ).hide();
 	},
 
+	showPixelAuthor: function ( Pixel, Author ) {
+		var picture = '<img src="images/anon.png">',
+			author = Author.name,
+			date = new Date( Pixel.insert_time * 1000 ),
+			date = '<br>' + date.toUTCString();
+		if ( Author.facebook_id ) {
+			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture">';
+			author = '<a target="_blank" href="https://www.facebook.com/app_scoped_user_id/' + Author.facebook_id + '/">' + Author.name + '</a>';
+		}
+		var span = $( '<span>' ).attr( 'id', 'author' ).html( picture + author + date );
+		$( 'body' ).append( span );
+		window.setTimeout( function () {
+			span.remove();
+		}, 4000 );
+	},
+
 	update: function () {
 		// First enable all the buttons, then disable the ones that should be disabled
 		$( '.menu button' ).removeClass( 'disabled' );
@@ -269,86 +315,6 @@ menu = {
 			$( '#facebook-logout-button' ).hide();
 			$( '#profile-picture' ).attr( 'src', 'images/anon.png' );
     	}
-	}
-};
-
-keyboard = {
-
-	keydown: function ( event ) {
-		// Alt
-		if ( event.keyCode === 18 ) {
-			menu.previousTool = menu.activeTool;
-			menu.clickDropperButton();
-		}
-		// Spacebar
-		if ( event.keyCode === 32 ) {
-			menu.clickMoveButton();
-		}
-		// B
-		if ( event.keyCode === 66 ) {
-			menu.clickBucketButton();
-		}
-		// C
-		if ( event.keyCode === 67 ) {
-			menu.clickColorButton();
-		}
-		// E
-		if ( event.keyCode === 69 ) {
-			menu.clickEraserButton();
-		}
-		// G
-		if ( event.keyCode === 71 ) {
-			menu.clickGridButton();
-		}
-		// I
-		if ( event.keyCode === 73 ) {
-			menu.clickZoomInButton();
-		}
-		// L
-		if ( event.keyCode === 76 ) {
-			menu.clickLinkButton();
-		}
-		// O
-		if ( event.keyCode === 79 ) {
-			menu.clickZoomOutButton();
-		}
-		// P
-		if ( event.keyCode === 80 ) {
-			menu.clickPencilButton();
-		}
-		// V
-		if ( event.keyCode === 86 ) {
-			menu.clickBrushButton();
-		}
-		// X
-		if ( event.keyCode === 88 ) {
-			menu.clickRedoButton();
-		}
-		// Z
-		if ( event.keyCode === 90 ) {
-			menu.clickUndoButton();
-		}
-	},
-
-	keyup: function ( event ) {
-		// Alt
-		if ( event.keyCode === 18 ) {
-			if ( menu.previousTool === 'move' ) {
-				menu.clickMoveButton();
-			}
-			if ( menu.previousTool === 'pencil' ) {
-				menu.clickPencilButton();
-			}
-			if ( menu.previousTool === 'brush' ) {
-				menu.clickBrushButton();
-			}
-			if ( menu.previousTool === 'eraser' ) {
-				menu.clickEraserButton();
-			}
-			if ( menu.previousTool === 'bucket' ) {
-				menu.clickBucketButton();
-			}
-		}
 	}
 };
 
@@ -437,8 +403,8 @@ mouse = {
 		} else {
 			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
 			$.get( 'Pixels', data, function ( response ) {
-				if ( response.Author && response.Author.link ) {
-					window.open( response.Author.link, '_self' );
+				if ( response ) {
+					menu.showPixelAuthor( response.Pixel, response.Author );
 				}
 			});
 		}
@@ -578,8 +544,9 @@ mural = {
 	},
 
 	/**
-	 * Build a basic pixel object out of the coordinates and the color,
-	 * but suck the color directly from the canvas (not the database)
+	 * Build a basic pixel object out of the coordinates and the color
+	 *
+	 * Sucks the color directly from the canvas (not the database)
 	 * so it only works for visible pixels
 	 */
 	getPixel: function ( x, y ) {
@@ -599,10 +566,7 @@ mural = {
 
 	setCanvas: function ( value ) {
 		mural.canvas = value;
-	},
-
-	setContext: function ( value ) {
-		mural.context = value;
+		mural.context = value.getContext( '2d' );
 	},
 
 	setWidth: function ( value ) {
@@ -719,10 +683,7 @@ grid = {
 
 	setCanvas: function ( value ) {
 		grid.canvas = value;
-	},
-
-	setContext: function ( value ) {
-		grid.context = value;
+		grid.context = value.getContext( '2d' );
 	},
 
 	setWidth: function ( value ) {
@@ -796,10 +757,7 @@ preview = {
 
 	setCanvas: function ( value ) {
 		preview.canvas = value;
-	},
-
-	setContext: function ( value ) {
-		preview.context = value;
+		preview.context = value.getContext( '2d' );
 	},
 
 	setWidth: function ( value ) {

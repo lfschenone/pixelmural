@@ -82,7 +82,7 @@ class Areas extends Controller {
 			// have the same color as the first pixel, and haven't been painted yet
 			$Statement = $gDatabase->prepare( 'SELECT * FROM pixels WHERE
 				author_id = ? AND
-				insert_time < ? AND
+				update_time < ? AND
 				color = ? AND (
 				( x = ? + 1 AND y = ? ) OR
 				( x = ? - 1 AND y = ? ) OR

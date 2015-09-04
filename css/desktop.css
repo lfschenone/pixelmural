@@ -102,7 +102,28 @@ button::-moz-focus-inner {
 	z-index: 2;
 }
 
-/* Spectrum */
+#author {
+	background: lightyellow;
+	border-radius: 10px;
+	margin: 10px;
+	padding: 10px;
+	position: absolute;
+	left: 0; bottom: 0;
+    user-select: none;
+    z-index: 2;
+}
+#author img {
+	display: block;
+	float: left;
+	margin-right: 10px;
+	width: 50px; height: 50px;
+}
+#author p {
+	margin: 0 0 5px 60px;
+	overflow: hidden;
+}
+
+/* Spectrum overrides */
 
 .sp-preview {
 	border: 1px solid black;
@@ -113,7 +134,8 @@ button::-moz-focus-inner {
 .sp-replacer {
 	background: none;
 	border: none;
-	padding: 5px;
+	margin: 5px;
+	padding: 0;
 }
 .sp-container,
 .sp-color,

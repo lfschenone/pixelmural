@@ -14,7 +14,7 @@ class User extends Model {
 	public $email;
 	public $gender;
 	public $locale;
-	public $link;
+	public $link = '';
 	public $status;
 	public $timezone;
 
