@@ -21,7 +21,7 @@ try {
 		throw new Error( 'Method Not Allowed', 405 );
 	}
 
-	$controller::$method(); // Main call	
+	$controller::$method(); // Main call
 
 } catch ( Error $Error ) {
 	json( $Error );
