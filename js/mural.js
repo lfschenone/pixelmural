@@ -200,10 +200,10 @@ mural = {
 			mural.jqXHR.abort(); // Abort any unfinished updates
 		}
 
-		showLoading();
-
 		mural.setWidth( window.innerWidth );
 		mural.setHeight( window.innerHeight );
+
+		showLoading();
 
 		var data = {
 			'width': mural.width,
