@@ -57,7 +57,7 @@ button::-moz-focus-inner {
 
 #loading {
 	max-height: 30px;
-	position: absolute;
+	position: fixed;
 	right: 20px;
 	bottom: 20px;
 	z-index: 2;
