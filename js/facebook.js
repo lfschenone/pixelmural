@@ -12,9 +12,9 @@ facebook = {
 
 		// Bind events
 		$( '#facebook-icon' ).click( facebook.login );
+		$( '#facebook-share-button' ).click( facebook.share );
 		$( '#facebook-login-button' ).click( facebook.login );
 		$( '#facebook-logout-button' ).click( facebook.logout );
-		$( '#facebook-share-button' ).click( facebook.share );
 	},
 
 	login: function () {
