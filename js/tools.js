@@ -46,10 +46,6 @@ tools = {
 		$( '#eraser-button' ).click( tools.clickEraserButton );
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
-		$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
-		$( '#mural' ).on( 'touchstart', touch.start ).on( 'touchmove', touch.move ).on( 'touchend', touch.end );
-
-		$( window ).resize( mural.resize );
 
 		$( document ).bind( 'keydown', 'Space', tools.clickMoveButton );
 		$( document ).bind( 'keydown', 'b', tools.clickBucketButton );
