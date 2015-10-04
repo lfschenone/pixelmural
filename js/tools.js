@@ -46,10 +46,6 @@ tools = {
 		$( '#eraser-button' ).click( tools.clickEraserButton );
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
-		$( '#facebook-icon' ).click( facebook.login );
-		$( '#facebook-login-button' ).click( facebook.login );
-		$( '#facebook-logout-button' ).click( facebook.logout );
-		$( '#facebook-share-button' ).click( facebook.share );
 		$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
 		$( '#mural' ).on( 'touchstart', touch.start ).on( 'touchmove', touch.move ).on( 'touchend', touch.end );
 
