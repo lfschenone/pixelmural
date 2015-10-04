@@ -27,8 +27,6 @@ mural = {
 		mural.update();
 
 		// Bind events
-		$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
-		$( '#mural' ).on( 'touchstart', touch.start ).on( 'touchmove', touch.move ).on( 'touchend', touch.end );
 		$( window ).resize( mural.resize );
 	},
 

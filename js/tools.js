@@ -47,6 +47,9 @@ tools = {
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
 
+		$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
+		$( '#mural' ).on( 'touchstart', touch.start ).on( 'touchmove', touch.move ).on( 'touchend', touch.end );
+
 		$( document ).bind( 'keydown', 'Space', tools.clickMoveButton );
 		$( document ).bind( 'keydown', 'b', tools.clickBucketButton );
 		$( document ).bind( 'keydown', 'c', tools.clickColorButton );
