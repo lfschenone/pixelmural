@@ -200,8 +200,8 @@ mural = {
 			mural.jqXHR.abort(); // Abort any unfinished updates
 		}
 
-		mural.setWidth( window.innerWidth );
-		mural.setHeight( window.innerHeight );
+		mural.setWidth( window.outerWidth );
+		mural.setHeight( window.outerHeight );
 
 		showLoading();
 
