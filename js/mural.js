@@ -128,16 +128,6 @@ mural = {
 		mural.yPixels = mural.getYpixels();
 	},
 
-	// EVENTS
-
-	onTouchMove: function ( jGesturesObject ) {
-		console.log( jGesturesObject );
-	},
-
-	onTouchEnd: function ( jGesturesObject ) {
-		console.log( jGesturesObject );
-	},
-
 	// ACTIONS
 
 	zoomIn: function () {

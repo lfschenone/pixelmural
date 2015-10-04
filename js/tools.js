@@ -47,9 +47,6 @@ tools = {
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
 
-		$( '#mural' ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
-		$( '#mural' ).on( 'touchstart', touch.start ).on( 'touchmove', touch.move ).on( 'touchend', touch.end );
-
 		$( document ).bind( 'keydown', 'Space', tools.clickMoveButton );
 		$( document ).bind( 'keydown', 'b', tools.clickBucketButton );
 		$( document ).bind( 'keydown', 'c', tools.clickColorButton );
@@ -193,22 +190,6 @@ tools = {
 
 	// INTERFACE ACTIONS
 
-	showPixelAuthor: function ( Pixel, Author ) {
-		var picture = '<img src="images/anon.png">',
-			author = Author.name,
-			date = new Date( Pixel.insert_time * 1000 ),
-			date = '<br>' + date.toUTCString();
-		if ( Author.facebook_id ) {
-			picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture">';
-			author = '<a target="_blank" href="https://www.facebook.com/app_scoped_user_id/' + Author.facebook_id + '/">' + Author.name + '</a>';
-		}
-		var span = $( '<span>' ).attr( 'id', 'author' ).html( picture + author + date );
-		$( 'body' ).append( span );
-		window.setTimeout( function () {
-			span.remove();
-		}, 4000 );
-	},
-
 	update: function () {
 		// First enable all the buttons, then disable the ones that should be disabled
 		$( '.menu button' ).removeClass( 'disabled' );
@@ -240,269 +221,6 @@ tools = {
 		$( '#color-input' ).spectrum( 'set', tools.color );
 	}
 };
-
-mouse = {
-
-	// The distance from the origin of the coordinate system in virtual pixels (not real ones)
-	currentX: null,
-	currentY: null,
-
-	previousX: null,
-	previousY: null,
-
-	state: 'up',
-
-	downAction: null,
-	dragAction: null,
-	upAction: null,
-
-	// GETTERS
-
-	getCurrentX: function ( event ) {
-		var offsetX = event.pageX - $( event.target ).offset().left - 1, // The -1 is to correct a minor displacement
-			currentX = mural.centerX - Math.floor( mural.xPixels / 2 ) + Math.floor( offsetX / mural.pixelSize );
-		return currentX;
-	},
-
-	getCurrentY: function ( event ) {
-		var offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
-			currentY = mural.centerY - Math.floor( mural.yPixels / 2 ) + Math.floor( offsetY / mural.pixelSize );
-		return currentY;
-	},
-
-	// EVENT HANDLERS
-
-	down: function ( event ) {
-		mouse.state = 'down';
-		mouse.downAction( event );
-	},
-
-	move: function ( event ) {
-		mouse.previousX = mouse.currentX;
-		mouse.previousY = mouse.currentY;
-
-		mouse.currentX = mouse.getCurrentX( event );
-		mouse.currentY = mouse.getCurrentY( event );
-
-		// If the mouse is being dragged
-		if ( mouse.state === 'down' && ( mouse.currentX !== mouse.previousX || mouse.currentY !== mouse.previousY ) && mouse.dragAction ) {
-			mouse.dragAction( event );
-		}
-	},
-
-	up: function ( event ) {
-		mouse.state = 'up';
-		if ( mouse.upAction ) {
-			mouse.upAction( event );
-		}
-	},
-
-	// ACTIONS
-
-	moveMural1: function ( event ) {
-		mouse.diffX = 0;
-		mouse.diffY = 0;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-	},
-
-	moveMural2: function ( event ) {
-		mural.centerX += mouse.previousX - mouse.currentX;
-		mural.centerY += mouse.previousY - mouse.currentY;
-
-		mouse.diffX += ( mouse.currentX - mouse.previousX ) * mural.pixelSize;
-		mouse.diffY += ( mouse.currentY - mouse.previousY ) * mural.pixelSize;
-
-		mural.context.clearRect( 0, 0, mural.width, mural.height );
-		mural.context.putImageData( mural.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
-
-		// Bugfix: without this, the mural flickers when moving
-		mouse.currentX = mouse.getCurrentX( event );
-		mouse.currentY = mouse.getCurrentY( event );
-	},
-
-	moveMural3: function ( event ) {
-		if ( mouse.diffX || mouse.diffY ) {
-			mural.update();
-			preview.update();
-		} else {
-			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
-			$.get( 'Pixels', data, function ( response ) {
-				if ( response ) {
-					tools.showPixelAuthor( response.Pixel, response.Author );
-				}
-			});
-		}
-	},
-
-	paintPixel: function ( event ) {
-		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY ),
-			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': tools.color });
-
-		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
-			newPixel.color = null; // For convenience, re-painting a pixel erases it
-		}
-
-		newPixel.paint().save().register( oldPixel );
-	},
-
-	erasePixel: function ( event ) {
-		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY );
-
-		if ( oldPixel.color === null ) {
-			return; // The pixel doesn't exist, no need to continue
-		}
-
-		var newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY });
-
-		newPixel.erase().save().register( oldPixel );
-	},
-
-	suckColor: function ( event ) {
-		var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
-			offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
-			imageData = mural.context.getImageData( offsetX, offsetY, 1, 1 ),
-			red   = imageData.data[0],
-			green = imageData.data[1],
-			blue  = imageData.data[2],
-			alpha = imageData.data[3];
-		if ( !alpha ) {
-			return; // The user clicked the background
-		}
-		tools.color = rgb2hex( red, green, blue );
-		tools.update();
-	},
-
-	paintArea: function ( event ) {
-		showLoading();
-		var data = {
-			'x': mouse.currentX,
-			'y': mouse.currentY,
-			'color': tools.color
-		};
-		$.post( 'Areas', data, function ( response ) {
-			//console.log( response );
-			switch ( response.code ) {
-				case 200:
-					var newArea = new window.Area,
-						newPixelData,
-						newPixel,
-						oldArea = new window.Area,
-						oldPixelData,
-						oldPixel;
-					for ( var i = 0; i < response.newAreaData.length; i++ ) {
-						newPixelData = response.newAreaData[ i ];
-						newPixel = new window.Pixel( newPixelData );
-						newArea.pixels.push( newPixel );
-	
-						oldPixelData = response.oldAreaData[ i ];
-						oldPixel = new window.Pixel( oldPixelData );
-						oldArea.pixels.push( oldPixel );
-					}
-					newArea.paint().register( oldArea );
-					break;
-
-				case 401:
-				case 403:
-					if ( response.data ) {
-						var Pixel = new window.Pixel( response.data );
-						Pixel.paint().unregister();
-					} else {
-						var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
-						Pixel.erase().unregister();
-					}
-					break;
-			}
-			hideLoading();
-		});
-	}
-};
-
-touch = {
-
-	// The distance from the origin of the coordinate system in virtual pixels (not real ones)
-	currentX: null,
-	currentY: null,
-
-	previousX: null,
-	previousY: null,
-
-	// GETTERS
-
-	getCurrentX: function ( event ) {
-		var offsetX = event.pageX - $( event.target ).offset().left - 1, // The -1 is to correct a minor displacement
-			currentX = mural.centerX - Math.floor( mural.xPixels / 2 ) + Math.floor( offsetX / mural.pixelSize );
-		return currentX;
-	},
-
-	getCurrentY: function ( event ) {
-		var offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
-			currentY = mural.centerY - Math.floor( mural.yPixels / 2 ) + Math.floor( offsetY / mural.pixelSize );
-		return currentY;
-	},
-
-	// EVENT HANDLERS
-
-	down: function ( event ) {
-		mouse.state = 'down';
-		mouse.downAction( event );
-	},
-
-	move: function ( event ) {
-		mouse.previousX = mouse.currentX;
-		mouse.previousY = mouse.currentY;
-
-		mouse.currentX = mouse.getCurrentX( event );
-		mouse.currentY = mouse.getCurrentY( event );
-
-		// If the mouse is being dragged
-		if ( mouse.state === 'down' && ( mouse.currentX !== mouse.previousX || mouse.currentY !== mouse.previousY ) && mouse.dragAction ) {
-			mouse.dragAction( event );
-		}
-	},
-
-	up: function ( event ) {
-		mouse.state = 'up';
-		if ( mouse.upAction ) {
-			mouse.upAction( event );
-		}
-	},
-
-	// ACTIONS
-
-	moveMural1: function ( event ) {
-		mouse.diffX = 0;
-		mouse.diffY = 0;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-	},
-
-	moveMural2: function ( event ) {
-		mural.centerX += mouse.previousX - mouse.currentX;
-		mural.centerY += mouse.previousY - mouse.currentY;
-
-		mouse.diffX += ( mouse.currentX - mouse.previousX ) * mural.pixelSize;
-		mouse.diffY += ( mouse.currentY - mouse.previousY ) * mural.pixelSize;
-
-		mural.context.clearRect( 0, 0, mural.width, mural.height );
-		mural.context.putImageData( mural.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
-
-		// Bugfix: without this, the mural flickers when moving
-		mouse.currentX = mouse.getCurrentX( event );
-		mouse.currentY = mouse.getCurrentY( event );
-	},
-
-	moveMural3: function ( event ) {
-		if ( mouse.diffX || mouse.diffY ) {
-			mural.update();
-		} else {
-			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
-			$.get( 'Pixels', data, function ( response ) {
-				if ( response ) {
-					tools.showPixelAuthor( response.Pixel, response.Author );
-				}
-			});
-		}
-	}
-}
 
 grid = {
 
@@ -650,65 +368,6 @@ preview = {
 };
 
 /**
- * User model
- */
-function User( data ) {
-
-	this.id = null;
-	this.facebook_id = null;
-	this.insert_time = null;
-	this.update_time = null;
-	this.brush = 0;
-	this.name = null;
-	this.email = null;
-	this.gender = null;
-	this.locale = null;
-	this.link = null;
-	this.status = 'anon';
-	this.timezone = null;
-
-	for ( var property in data ) {
-		this[ property ] = data[ property ];
-	}
-
-	this.getData = function () {
-		return {
-			'id': this.id,
-			'facebook_id': this.facebook_id,
-			'insert_time': this.insert_time,
-			'update_time': this.update_time,
-			'name': this.name,
-			'email': this.email,
-			'gender': this.gender,
-			'locale': this.locale,
-			'link': this.link,
-			'status': this.status,
-			'timezone': this.timezone,
-		}
-	}
-
-	this.isAnon = function () {
-		if ( this.status === 'anon' ) {
-			return true;
-		}
-		return false;
-	};
-
-	this.isAdmin = function () {
-		if ( this.status === 'admin' ) {
-			return true;
-		}
-		return false;
-	};
-
-	this.update = function () {
-		$.post( 'Users', this.getData(), function ( response ) {
-			//console.log( response );
-		});
-	};
-}
-
-/**
  * Pixel model
  */
 function Pixel( data ) {
@@ -747,12 +406,12 @@ function Pixel( data ) {
 	/**
 	 * Contacts the server to save the current pixel data
 	 *
-	 * When starting a request, we set an interval that after one second fires the loading icon.
-	 * If the server responds in less than a second, the interval is cleared and the loading icon is never shown.
+	 * When starting a request, we set a timeout that after one second fires the loading icon.
+	 * If the server responds in less than a second, the timeout is cleared and the loading icon is never shown.
 	 * But if the connection dies or delays too much, the icon is shown and the user won't continue drawing in vain. Probably.
 	 */
 	this.save = function () {
-		var interval = setInterval( showLoading, 1000 ), // Show the loading icon after one second
+		var timeout = setTimeout( showLoading, 1000 ), // Show the loading icon after one second
 			data = {
 			'x': this.x,
 			'y': this.y,
@@ -760,7 +419,7 @@ function Pixel( data ) {
 			'tool': tools.activeTool
 		};
 		$.post( 'Pixels', data, function ( response ) {
-			clearInterval( interval ); // On success, cancel the interval we set above
+			clearTimeout( timeout ); // On success, cancel the timeout we set above
 			//console.log( response );
 			switch ( response.code ) {
 				case 401:
