@@ -33,7 +33,7 @@ button::-moz-focus-inner {
 	border: none;
 	box-sizing: border-box;
 	cursor: pointer;
-	display: inline-block;
+	display: inline-block !important;
 	font: inherit;
 	margin: 0;
 	outline: none;

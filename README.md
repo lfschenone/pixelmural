@@ -18,9 +18,12 @@ Tasks
 * Fix the encoding issue with Facebook names
 * Zoom with the wheel
 * Zoom locally before loading from the server
+* SVG icons?
+* Accesskeys?
 
 Tasks if and when there is enough traffic
 -----------------------------------------
+* Custom icons
 * Only load new pixels
 * Use WebSockets
 * Live updating
