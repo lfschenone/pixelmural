@@ -8,13 +8,13 @@ $( function () {
 		preferredFormat: 'hex',
 		showButtons: false,
 		show: function ( color ) {
-			menu.color = color.toHexString();
+			gui.color = color.toHexString();
 		},
 		change: function ( color ) {
-			menu.color = color.toHexString();
+			gui.color = color.toHexString();
 		},
 		hide: function ( color ) {
-			menu.color = color.toHexString();
+			gui.color = color.toHexString();
 		}
 	}).next().attr( 'title', 'Color [C]' );
 
@@ -29,8 +29,8 @@ $( function () {
 	preview.setHeight( 200 );
 
 	// Set 'move' as the default action
-	menu.bindEvents();
-	menu.clickMoveButton();
+	gui.bindEvents();
+	gui.clickMoveButton();
 
 	// Fill the board
 	mural.update();
@@ -73,40 +73,32 @@ facebook = {
 			$.get( 'Users', { 'token': response }, function ( response ) {
 				//console.log( response );
 				user = new User( response );
-				menu.update();
+				gui.update();
 			});
 		});
 	}
 };
 
-menu = {
-
-	activeTool: null,
-	previousTool: null,
+gui = {
 
 	color: '#000000',
-
-	// Part of the undo/redo functionality
-	oldPixels: [],
-	newPixels: [],
-	arrayPointer: 0,
 
 	// EVENT HANDLERS
 
 	bindEvents: function () {
-		$( '#move-button' ).click( menu.clickMoveButton );
-		$( '#grid-button' ).click( menu.clickGridButton );
-		$( '#preview-button' ).click( menu.clickPreviewButton );
-		$( '#zoom-in-button' ).click( menu.clickZoomInButton );
-		$( '#zoom-out-button' ).click( menu.clickZoomOutButton );
-		$( '#undo-button' ).click( menu.clickUndoButton );
-		$( '#redo-button' ).click( menu.clickRedoButton );
-		//$( '#link-button' ).click( menu.clickLinkButton );
-		$( '#dropper-button' ).click( menu.clickDropperButton );
-		$( '#pencil-button' ).click( menu.clickPencilButton );
-		$( '#brush-button' ).click( menu.clickBrushButton );
-		$( '#eraser-button' ).click( menu.clickEraserButton );
-		$( '#bucket-button' ).click( menu.clickBucketButton );
+		$( '#move-button' ).click( gui.clickMoveButton );
+		$( '#grid-button' ).click( gui.clickGridButton );
+		$( '#preview-button' ).click( gui.clickPreviewButton );
+		$( '#zoom-in-button' ).click( gui.clickZoomInButton );
+		$( '#zoom-out-button' ).click( gui.clickZoomOutButton );
+		$( '#undo-button' ).click( gui.clickUndoButton );
+		$( '#redo-button' ).click( gui.clickRedoButton );
+		//$( '#link-button' ).click( gui.clickLinkButton );
+		$( '#pencil-button' ).click( gui.clickPencilButton );
+		$( '#brush-button' ).click( gui.clickBrushButton );
+		$( '#eraser-button' ).click( gui.clickEraserButton );
+		$( '#dropper-button' ).click( gui.clickDropperButton );
+		$( '#bucket-button' ).click( gui.clickBucketButton );
 		$( '#facebook-icon' ).click( facebook.login );
 		$( '#facebook-login-button' ).click( facebook.login );
 		$( '#facebook-logout-button' ).click( facebook.logout );
@@ -115,44 +107,37 @@ menu = {
 
 		$( window ).resize( mural.resize );
 
-		$( document ).bind( 'keydown', 'Space', menu.clickMoveButton );
-		$( document ).bind( 'keydown', 'b', menu.clickBucketButton );
-		$( document ).bind( 'keydown', 'c', menu.clickColorButton );
-		$( document ).bind( 'keydown', 'd', menu.clickDropperButton );
-		$( document ).bind( 'keydown', 'e', menu.clickEraserButton );
-		$( document ).bind( 'keydown', 'g', menu.clickGridButton );
-		$( document ).bind( 'keydown', 'i', menu.clickZoomInButton );
-		//$( document ).bind( 'keydown', 'l', menu.clickLinkButton );
-		$( document ).bind( 'keydown', 'o', menu.clickZoomOutButton );
-		$( document ).bind( 'keydown', 'p', menu.clickPencilButton );
-		$( document ).bind( 'keydown', 'v', menu.clickBrushButton );
-		$( document ).bind( 'keydown', 'x', menu.clickRedoButton );
-		$( document ).bind( 'keydown', 'z', menu.clickUndoButton );
-
-		// For convenience, select the dropper when pressing Alt, and return to the painting tool when releasing
-		$( document ).bind( 'keydown', 'Alt', function () {
-			menu.previousTool = menu.activeTool;
-			menu.clickDropperButton();
-		});
-		$( document ).bind( 'keyup', 'Alt', function () {
-			if ( menu.previousTool === 'pencil' ) {
-				menu.clickPencilButton();
-			}
-			if ( menu.previousTool === 'brush' ) {
-				menu.clickBrushButton();
-			}
-			if ( menu.previousTool === 'bucket' ) {
-				menu.clickBucketButton();
-			}
-		});
+		$( document ).bind( 'keydown', 'Space', gui.clickMoveButton );
+		$( document ).bind( 'keydown', 'b', gui.clickBucketButton );
+		$( document ).bind( 'keydown', 'c', gui.clickColorButton );
+		$( document ).bind( 'keydown', 'd', gui.clickDropperButton );
+		$( document ).bind( 'keydown', 'e', gui.clickEraserButton );
+		$( document ).bind( 'keydown', 'g', gui.clickGridButton );
+		$( document ).bind( 'keydown', 'i', gui.clickZoomInButton );
+		//$( document ).bind( 'keydown', 'l', gui.clickLinkButton );
+		$( document ).bind( 'keydown', 'o', gui.clickZoomOutButton );
+		$( document ).bind( 'keydown', 'p', gui.clickPencilButton );
+		$( document ).bind( 'keydown', 'v', gui.clickBrushButton );
+		$( document ).bind( 'keydown', 'x', gui.clickRedoButton );
+		$( document ).bind( 'keydown', 'z', gui.clickUndoButton );
+		$( document ).bind( 'keydown', 'Left', mural.moveLeft );
+		$( document ).bind( 'keydown', 'Up', mural.moveUp );
+		$( document ).bind( 'keydown', 'Right', mural.moveRight );
+		$( document ).bind( 'keydown', 'Down', mural.moveDown );
+		$( document ).bind( 'keydown', 'Alt', mural.clickDropperButton );
+		$( document ).bind( 'keyup', 'Alt', mural.clickPreviousTool );
+		$( document ).bind( 'keyup', 'Left', mural.update );
+		$( document ).bind( 'keyup', 'Up', mural.update );
+		$( document ).bind( 'keyup', 'Right', mural.update );
+		$( document ).bind( 'keyup', 'Down', mural.update );
 	},
 
 	clickMoveButton: function () {
 		mouse.downAction = mouse.moveMural1;
 		mouse.dragAction = mouse.moveMural2;
 		mouse.upAction = mouse.moveMural3;
-		menu.activeTool = 'move';
-		menu.update();
+		gui.activeTool = 'move';
+		gui.update();
 	},
 
 	clickGridButton: function () {
@@ -167,32 +152,39 @@ menu = {
 
 	clickZoomInButton: function () {
 		mural.zoomIn();
-		menu.update();
+		gui.update();
 	},
 
 	clickZoomOutButton: function () {
 		mural.zoomOut();
-		menu.update();
+		gui.update();
 	},
 
+	/**
+	 * Undo/redo functionality
+	 */
+	arrayPointer: 0,
+
+	oldPixels: [],
 	clickUndoButton: function () {
-		if ( menu.arrayPointer === 0 ) {
-			return;
+		if ( gui.arrayPointer === 0 ) {
+			return; // There's nothing else to undo
 		}
-		menu.arrayPointer--;
-		var oldPixels = menu.oldPixels[ menu.arrayPointer ];
+		gui.arrayPointer--;
+		var oldPixels = gui.oldPixels[ gui.arrayPointer ];
 		oldPixels.paint().save();
-		menu.update();
+		gui.update();
 	},
 
+	newPixels: [],
 	clickRedoButton: function () {
-		if ( menu.arrayPointer === menu.newPixels.length ) {
-			return;
+		if ( gui.arrayPointer === gui.newPixels.length ) {
+			return; // There's nothing else to redo
 		}
-		var newPixels = menu.newPixels[ menu.arrayPointer ];
-		menu.arrayPointer++;
+		var newPixels = gui.newPixels[ gui.arrayPointer ];
+		gui.arrayPointer++;
 		newPixels.paint().save();
-		menu.update();
+		gui.update();
 	},
 
 	clickLinkButton: function () {
@@ -208,44 +200,59 @@ menu = {
 		mouse.downAction = mouse.suckColor;
 		mouse.dragAction = mouse.suckColor;
 		mouse.upAction = null;
-		menu.activeTool = 'dropper';
-		menu.update();
+		gui.previousTool = gui.activeTool;
+		gui.activeTool = 'dropper';
+		gui.update();
 	},
 
 	clickPencilButton: function () {
 		mouse.downAction = mouse.paintPixel;
 		mouse.dragAction = null;
 		mouse.upAction = null;
-		menu.activeTool = 'pencil';
-		menu.update();
+		gui.activeTool = 'pencil';
+		gui.update();
 	},
 
 	clickBrushButton: function () {
 		mouse.downAction = mouse.paintPixel;
 		mouse.dragAction = mouse.paintPixel;
 		mouse.upAction = null;
-		menu.activeTool = 'brush';
-		menu.update();
+		gui.activeTool = 'brush';
+		gui.update();
 	},
 
 	clickEraserButton: function () {
 		mouse.downAction = mouse.erasePixel;
 		mouse.dragAction = mouse.erasePixel;
 		mouse.upAction = null;
-		menu.activeTool = 'eraser';
-		menu.update();
+		gui.activeTool = 'eraser';
+		gui.update();
 	},
 
 	clickBucketButton: function () {
 		mouse.downAction = mouse.paintArea;
 		mouse.dragAction = null;
 		mouse.upAction = null;
-		menu.activeTool = 'bucket';
-		menu.update();
+		gui.activeTool = 'bucket';
+		gui.update();
 	},
 
 	clickColorButton: function () {
 		$( '#color-input' ).spectrum( 'toggle' );
+	},
+
+	activeTool: null,
+	previousTool: null,
+	clickPreviousTool: function () {
+		if ( gui.previousTool === 'pencil' ) {
+			gui.clickPencilButton();
+		}
+		if ( gui.previousTool === 'brush' ) {
+			gui.clickBrushButton();
+		}
+		if ( gui.previousTool === 'bucket' ) {
+			gui.clickBucketButton();
+		}		
 	},
 
 	// INTERFACE ACTIONS
@@ -286,11 +293,11 @@ menu = {
 			$( '#zoom-out-button' ).addClass( 'disabled' );
 		}
 
-		if ( menu.arrayPointer === 0 ) {
+		if ( gui.arrayPointer === 0 ) {
 			$( '#undo-button' ).addClass( 'disabled' );
 		}
 
-		if ( menu.arrayPointer === menu.newPixels.length ) {
+		if ( gui.arrayPointer === gui.newPixels.length ) {
 			$( '#redo-button' ).addClass( 'disabled' );
 		}
 
@@ -300,9 +307,9 @@ menu = {
 		}
 
 		$( '.menu button' ).removeClass( 'active' );
-		$( '#' + menu.activeTool + '-button' ).addClass( 'active' );
+		$( '#' + gui.activeTool + '-button' ).addClass( 'active' );
 
-		$( '#color-input' ).spectrum( 'set', menu.color );
+		$( '#color-input' ).spectrum( 'set', gui.color );
 
 		if ( user.facebook_id ) {
 			$( '#facebook-icon' ).hide();
@@ -404,30 +411,15 @@ mouse = {
 			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
 			$.get( 'Pixels', data, function ( response ) {
 				if ( response ) {
-					menu.showPixelAuthor( response.Pixel, response.Author );
+					gui.showPixelAuthor( response.Pixel, response.Author );
 				}
 			});
 		}
 	},
 
-	suckColor: function ( event ) {
-		var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
-			offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
-			imageData = mural.context.getImageData( offsetX, offsetY, 1, 1 ),
-			red   = imageData.data[0],
-			green = imageData.data[1],
-			blue  = imageData.data[2],
-			alpha = imageData.data[3];
-		if ( !alpha ) {
-			return; // The user clicked the background
-		}
-		menu.color = rgb2hex( red, green, blue );
-		menu.update();
-	},
-
 	paintPixel: function ( event ) {
 		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY ),
-			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': menu.color });
+			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': gui.color });
 
 		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
 			newPixel.color = null; // For convenience, re-painting a pixel erases it
@@ -448,12 +440,27 @@ mouse = {
 		newPixel.erase().save().register( oldPixel );
 	},
 
+	suckColor: function ( event ) {
+		var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
+			offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
+			imageData = mural.context.getImageData( offsetX, offsetY, 1, 1 ),
+			red   = imageData.data[0],
+			green = imageData.data[1],
+			blue  = imageData.data[2],
+			alpha = imageData.data[3];
+		if ( !alpha ) {
+			return; // The user clicked the background
+		}
+		gui.color = rgb2hex( red, green, blue );
+		gui.update();
+	},
+
 	paintArea: function ( event ) {
-		menu.showLoading();
+		gui.showLoading();
 		var data = {
 			'x': mouse.currentX,
 			'y': mouse.currentY,
-			'color': menu.color
+			'color': gui.color
 		};
 		$.post( 'Areas', data, function ( response ) {
 			//console.log( response );
@@ -488,7 +495,7 @@ mouse = {
 					}
 					break;
 			}
-			menu.hideLoading();
+			gui.hideLoading();
 		});
 	}
 };
@@ -546,7 +553,7 @@ mural = {
 	/**
 	 * Build a basic pixel object out of the coordinates and the color
 	 *
-	 * Sucks the color directly from the canvas (not the database)
+	 * The color is sucked directly from the canvas, not the database,
 	 * so it only works for visible pixels
 	 */
 	getPixel: function ( x, y ) {
@@ -625,14 +632,51 @@ mural = {
 		mural.update();
 	},
 
+	moveLeft: function () {
+		mural.centerX--;
+		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
+		mural.clear();
+		mural.context.putImageData( mural.imageData, mural.pixelSize, 0 );
+	},
+
+	moveUp: function () {
+		mural.centerY--;
+		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
+		mural.clear();
+		mural.context.putImageData( mural.imageData, 0, mural.pixelSize );
+	},
+
+	moveRight: function () {
+		mural.centerX++;
+		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
+		mural.clear();
+		mural.context.putImageData( mural.imageData, -mural.pixelSize, 0 );
+	},
+
+	moveDown: function () {
+		mural.centerY++;
+		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
+		mural.clear();
+		mural.context.putImageData( mural.imageData, 0, -mural.pixelSize );
+	},
+
 	timeout: null,
 	resize: function () {
 		clearTimeout( mural.timeout );
 		mural.timeout = setTimeout( mural.update, 200 );	
 	},
 
+	clear: function () {
+		mural.context.clearRect( 0, 0, mural.width, mural.height );
+	},
+
+	jqXHR: null, // This will hold the jQuery XMLHTTPRequest object created for every AJAX call
 	update: function () {
-		menu.showLoading();
+		if ( mural.jqXHR ) {
+			mural.jqXHR.abort(); // Abort any unfinished updates
+		}
+
+		gui.showLoading();
 
 		mural.setWidth( window.innerWidth );
 		mural.setHeight( window.innerHeight );
@@ -645,25 +689,22 @@ mural = {
 			'pixelSize': mural.pixelSize,
 			'format': 'base64'
 		};
-		$.get( 'Areas', data, function ( response ) {
+		mural.jqXHR = $.get( 'Areas', data, function ( response ) {
 			//console.log( response );
 			var image = new Image();
 			image.src = 'data:image/png;base64,' + response;
 			image.onload = function () {
-				// Make sure that the user hasn't moved again or zoomed while waiting for the server response
-				if ( data.centerX === mural.centerX && data.centerY === mural.centerY && data.pixelSize === mural.pixelSize ) {
-					mural.context.clearRect( 0, 0, mural.width, mural.height );
-					mural.context.drawImage( image, 0, 0 );
+				mural.context.clearRect( 0, 0, mural.width, mural.height );
+				mural.context.drawImage( image, 0, 0 );
 
-					grid.update();
-					preview.update();
+				grid.update();
+				preview.update();
 
-					menu.hideLoading();
+				gui.hideLoading();
 
-					// Update the URL of the browser
-					var BASE = $( 'base' ).attr( 'href' );
-					history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
-				}
+				// Update the URL of the browser
+				var BASE = $( 'base' ).attr( 'href' );
+				history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
 			};
 		});
 	}
@@ -890,33 +931,42 @@ function Pixel( data ) {
 	}
 
 	this.register = function ( oldPixel ) {
-		menu.oldPixels.splice( menu.arrayPointer, menu.oldPixels.length - menu.arrayPointer, oldPixel );
-		menu.newPixels.splice( menu.arrayPointer, menu.newPixels.length - menu.arrayPointer, this );
-		menu.arrayPointer++;
-		menu.update();
+		gui.oldPixels.splice( gui.arrayPointer, gui.oldPixels.length - gui.arrayPointer, oldPixel );
+		gui.newPixels.splice( gui.arrayPointer, gui.newPixels.length - gui.arrayPointer, this );
+		gui.arrayPointer++;
+		gui.update();
 		return this;
 	};
 
 	this.unregister = function () {
-		for ( var i = 0; i < menu.oldPixels.length; i++ ) {
-			if ( menu.oldPixels[ i ].x === this.x && menu.oldPixels[ i ].y === this.y ) {
-				menu.oldPixels.splice( i, 1 );
-				menu.newPixels.splice( i, 1 );
-				menu.arrayPointer--;
+		for ( var i = 0; i < gui.oldPixels.length; i++ ) {
+			if ( gui.oldPixels[ i ].x === this.x && gui.oldPixels[ i ].y === this.y ) {
+				gui.oldPixels.splice( i, 1 );
+				gui.newPixels.splice( i, 1 );
+				gui.arrayPointer--;
 			}
 		}
-		menu.update();
+		gui.update();
 		return this;
 	};
 
+	/**
+	 * Contacts the server to save the current pixel data
+	 *
+	 * When starting a request, we set an interval that after one second fires the loading icon.
+	 * If the server responds in less than a second, the interval is cleared and the loading icon is never shown.
+	 * But if the connection dies or delays too much, the icon is shown and the user won't continue drawing in vain. Probably.
+	 */
 	this.save = function () {
-		var data = {
+		var interval = setInterval( gui.showLoading, 1000 ), // Show the loading icon after one second
+			data = {
 			'x': this.x,
 			'y': this.y,
 			'color': this.color,
-			'tool': menu.activeTool
+			'tool': gui.activeTool
 		};
 		$.post( 'Pixels', data, function ( response ) {
+			clearInterval( interval ); // On success, cancel the interval we set above
 			//console.log( response );
 			switch ( response.code ) {
 				case 401:
@@ -979,10 +1029,10 @@ function Area( data ) {
 	}
 
 	this.register = function ( oldArea ) {
-		menu.oldPixels.splice( menu.arrayPointer, menu.oldPixels.length - menu.arrayPointer, oldArea );
-		menu.newPixels.splice( menu.arrayPointer, menu.newPixels.length - menu.arrayPointer, this );
-		menu.arrayPointer++;
-		menu.update();
+		gui.oldPixels.splice( gui.arrayPointer, gui.oldPixels.length - gui.arrayPointer, oldArea );
+		gui.newPixels.splice( gui.arrayPointer, gui.newPixels.length - gui.arrayPointer, this );
+		gui.arrayPointer++;
+		gui.update();
 		return this;
 	};
 
