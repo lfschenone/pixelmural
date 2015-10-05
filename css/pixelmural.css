@@ -22,6 +22,7 @@ button::-moz-focus-inner {
 
 #header {
 	background: white;
+	box-sizing: border-box;
 	padding: 5px;
 	position: absolute;
 	width: 100%;
@@ -71,7 +72,7 @@ button::-moz-focus-inner {
 
 #facebook-menu {
 	float: right;
-	margin: 5px 10px;
+	margin: 5px;
 }
 
 #profile-picture {
