@@ -111,6 +111,7 @@ button::-moz-focus-inner {
 	position: absolute;
 	left: 0; bottom: 0;
     user-select: none;
+	white-space: nowrap;
     z-index: 2;
 }
 #author img {
@@ -118,10 +119,6 @@ button::-moz-focus-inner {
 	float: left;
 	margin-right: 10px;
 	width: 50px; height: 50px;
-}
-#author p {
-	margin: 0 0 5px 60px;
-	overflow: hidden;
 }
 #author a {
 	white-space: nowrap;
