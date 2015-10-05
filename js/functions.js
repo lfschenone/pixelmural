@@ -31,7 +31,7 @@ function showPixelAuthor( Pixel, Author ) {
 	}
 	var span = $( '<span>' ).attr( 'id', 'author' ).html( picture + author + date + link );
 	$( 'body' ).append( span );
-	window.setTimeout( hidePixelAuthor, 4000 );
+	timeout = setTimeout( hidePixelAuthor, 4000 );
 }
 
 function hidePixelAuthor() {
