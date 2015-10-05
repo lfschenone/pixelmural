@@ -12,15 +12,18 @@ tools = {
 			preferredFormat: 'hex',
 			showButtons: false,
 			show: function ( color ) {
+				tools.stroke = $( this ).data( 'stroke' );
 				tools.color = color.toHexString();
 			},
 			change: function ( color ) {
+				tools.stroke = $( this ).data( 'stroke' );
 				tools.color = color.toHexString();
 			},
 			hide: function ( color ) {
+				tools.stroke = $( this ).data( 'stroke' );
 				tools.color = color.toHexString();
 			}
-		}).next().attr( 'title', 'Color [C]' );
+		});
 
 		// Set the variables that must wait for the DOM to be loaded
 		grid.setCanvas( document.getElementById( 'grid' ) );
@@ -137,9 +140,9 @@ tools = {
 	},
 
 	clickPencilButton: function () {
-		mouse.downAction = mouse.paintPixel;
-		mouse.dragAction = null;
-		mouse.upAction = null;
+		mouse.downAction = mouse.moveMural1;
+		mouse.dragAction = mouse.moveMural2;
+		mouse.upAction = mouse.paintPixel;
 		tools.activeTool = 'pencil';
 		tools.update();
 	},

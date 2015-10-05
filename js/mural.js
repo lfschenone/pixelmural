@@ -328,6 +328,12 @@ mouse = {
 	},
 
 	paintPixel: function ( event ) {
+		if ( mouse.diffX || mouse.diffY ) {
+			mural.update();
+			preview.update();
+			return;
+		}
+
 		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY ),
 			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': tools.color });
 

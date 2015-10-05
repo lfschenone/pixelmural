@@ -129,12 +129,9 @@ button::-moz-focus-inner {
 }
 
 /* Spectrum overrides */
-
 .sp-preview {
 	border: 1px solid black;
 	margin: 0;
-	width: 29px;
-	height: 29px;
 }
 .sp-replacer {
 	background: none;
@@ -162,4 +159,16 @@ button::-moz-focus-inner {
 	border: none;
 	margin: 0;
 	padding: 10px;
+}
+#color-input-1 + .sp-replacer .sp-preview {
+	width: 9px;
+	height: 9px;
+}
+#color-input-2 + .sp-replacer .sp-preview {
+	width: 19px;
+	height: 19px;
+}
+#color-input-3 + .sp-replacer .sp-preview {
+	width: 29px;
+	height: 29px;
 }

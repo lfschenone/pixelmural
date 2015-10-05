@@ -15,8 +15,8 @@ by being the first, is the active button by default.
 Tasks
 -----
 * Stroke
-* Send pixels by batches
 * Mobile version
+* Send pixels by batches
 * Download button
 * Erase ugly drawings
 * Stateless API
