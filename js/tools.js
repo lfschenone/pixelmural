@@ -41,7 +41,6 @@ tools = {
 		$( '#redo-button' ).click( tools.clickRedoButton );
 		$( '#link-button' ).click( tools.clickLinkButton );
 		$( '#pencil-button' ).click( tools.clickPencilButton );
-		$( '#brush-button' ).click( tools.clickBrushButton );
 		$( '#eraser-button' ).click( tools.clickEraserButton );
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
@@ -49,14 +48,12 @@ tools = {
 		$( document ).bind( 'keydown', 'Space', tools.clickMoveButton );
 		$( document ).bind( 'keydown', 'b', tools.clickBucketButton );
 		$( document ).bind( 'keydown', 'c', tools.clickColorButton );
-		$( document ).bind( 'keydown', 'd', tools.clickDropperButton );
 		$( document ).bind( 'keydown', 'e', tools.clickEraserButton );
 		$( document ).bind( 'keydown', 'g', tools.clickGridButton );
 		$( document ).bind( 'keydown', 'i', tools.clickZoomInButton );
 		$( document ).bind( 'keydown', 'l', tools.clickLinkButton );
 		$( document ).bind( 'keydown', 'o', tools.clickZoomOutButton );
 		$( document ).bind( 'keydown', 'p', tools.clickPencilButton );
-		$( document ).bind( 'keydown', 'v', tools.clickBrushButton );
 		$( document ).bind( 'keydown', 'x', tools.clickRedoButton );
 		$( document ).bind( 'keydown', 'z', tools.clickUndoButton );
 		$( document ).bind( 'keydown', 'Left', mural.moveLeft );
@@ -145,12 +142,7 @@ tools = {
 		tools.update();
 	},
 
-	clickBrushButton: function () {
-		mouse.downAction = mouse.paintPixel;
-		mouse.dragAction = mouse.paintPixel;
-		mouse.upAction = null;
-		tools.activeTool = 'brush';
-		tools.update();
+	clickLinkButton: function () {
 	},
 
 	clickEraserButton: function () {
@@ -178,9 +170,6 @@ tools = {
 	clickPreviousTool: function () {
 		if ( tools.previousTool === 'pencil' ) {
 			tools.clickPencilButton();
-		}
-		if ( tools.previousTool === 'brush' ) {
-			tools.clickBrushButton();
 		}
 		if ( tools.previousTool === 'bucket' ) {
 			tools.clickBucketButton();
