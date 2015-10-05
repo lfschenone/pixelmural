@@ -197,8 +197,8 @@ mural = {
 			mural.jqXHR.abort(); // Abort any unfinished updates
 		}
 
-		mural.setWidth( window.outerWidth );
-		mural.setHeight( window.outerHeight );
+		mural.setWidth( $( 'body' ).width() );
+		mural.setHeight( $( 'body' ).height() );
 
 		showLoading();
 
