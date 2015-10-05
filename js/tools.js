@@ -2,11 +2,13 @@ tools = {
 
 	color: '#000000',
 
+	stroke: 1,
+
 	// EVENT HANDLERS
 
 	init: function () {
 		// Initialize Spectrum
-		$( '#color-input' ).spectrum({
+		$( '.color-input' ).spectrum({
 			preferredFormat: 'hex',
 			showButtons: false,
 			show: function ( color ) {
@@ -143,6 +145,16 @@ tools = {
 	},
 
 	clickLinkButton: function () {
+		var link = ''; // Default
+		if ( user.link ) {
+			link = user.link;
+		}
+		result = prompt( 'Link all your pixels to the following URL:', link );
+		if ( result === null ) {
+			return; // The user pressed cancel
+		}
+		user.link = result;
+		user.update();
 	},
 
 	clickEraserButton: function () {

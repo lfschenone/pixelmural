@@ -3,13 +3,17 @@
 class Users extends Controller {
 
 	static function GET() {
-		$token = GET( 'token' );
+		$token = SESSION( 'token' );
 		$User = User::newFromToken( $token );
 		json( $User );
 	}
 
 	static function POST() {
-		$User = new User( $_POST );
+		$token = SESSION( 'token' );
+		$User = User::newFromToken( $token );
+		foreach ( $_POST as $key => $value ) {
+			$User->$key = $value;
+		}
 		$User->normalise();
 		$User->validate();
 		$User->update();

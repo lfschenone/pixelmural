@@ -31,7 +31,16 @@ facebook = {
 	},
 
 	statusChangeCallback: function ( response ) {
-		$.get( 'Tokens' ); // Get a token
+		//console.log( response );
+		// First get a token
+		$.get( 'Tokens', function ( response ) {
+			//console.log( response );
+			// Then use the token to update the user object
+			$.get( 'Users', { 'token': response }, function ( response ) {
+				//console.log( response );
+				user = new User( response );
+			});
+		});
 		if ( response.status === 'connected' ) {
 			$( '#facebook-icon' ).hide();
 			$( '#facebook-login-button' ).hide();
