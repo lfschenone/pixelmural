@@ -15,6 +15,7 @@ function hideLoading() {
 }
 
 function showPixelAuthor( Pixel, Author ) {
+	hidePixelAuthor();
 	var picture = '<img src="images/anon.png">',
 		author = Author.name,
 		date = new Date( Pixel.insert_time * 1000 ),
@@ -26,9 +27,9 @@ function showPixelAuthor( Pixel, Author ) {
 	}
 	var span = $( '<span>' ).attr( 'id', 'author' ).html( picture + author + date + link );
 	$( 'body' ).append( span );
-/*
-	window.setTimeout( function () {
-		span.remove();
-	}, 4000 );
-*/
+	window.setTimeout( hidePixelAuthor, 4000 );
+}
+
+function hidePixelAuthor() {
+	$( '#author' ).remove();
 }
