@@ -123,6 +123,9 @@ button::-moz-focus-inner {
 	margin: 0 0 5px 60px;
 	overflow: hidden;
 }
+#author a {
+	white-space: nowrap;
+}
 
 /* Spectrum overrides */
 

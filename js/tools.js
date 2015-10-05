@@ -47,17 +47,17 @@ tools = {
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
 
-		$( document ).bind( 'keydown', 'Space', tools.clickMoveButton );
-		$( document ).bind( 'keydown', 'b', tools.clickBucketButton );
-		$( document ).bind( 'keydown', 'c', tools.clickColorButton );
-		$( document ).bind( 'keydown', 'e', tools.clickEraserButton );
-		$( document ).bind( 'keydown', 'g', tools.clickGridButton );
-		$( document ).bind( 'keydown', 'i', tools.clickZoomInButton );
-		$( document ).bind( 'keydown', 'l', tools.clickLinkButton );
-		$( document ).bind( 'keydown', 'o', tools.clickZoomOutButton );
-		$( document ).bind( 'keydown', 'p', tools.clickPencilButton );
-		$( document ).bind( 'keydown', 'x', tools.clickRedoButton );
-		$( document ).bind( 'keydown', 'z', tools.clickUndoButton );
+		$( document ).bind( 'keypress', 'Space', tools.clickMoveButton );
+		$( document ).bind( 'keypress', 'b', tools.clickBucketButton );
+		$( document ).bind( 'keypress', 'c', tools.clickColorButton );
+		$( document ).bind( 'keypress', 'e', tools.clickEraserButton );
+		$( document ).bind( 'keypress', 'g', tools.clickGridButton );
+		$( document ).bind( 'keypress', 'i', tools.clickZoomInButton );
+		$( document ).bind( 'keypress', 'l', tools.clickLinkButton );
+		$( document ).bind( 'keypress', 'o', tools.clickZoomOutButton );
+		$( document ).bind( 'keypress', 'p', tools.clickPencilButton );
+		$( document ).bind( 'keypress', 'x', tools.clickRedoButton );
+		$( document ).bind( 'keypress', 'z', tools.clickUndoButton );
 		$( document ).bind( 'keydown', 'Left', mural.moveLeft );
 		$( document ).bind( 'keydown', 'Up', mural.moveUp );
 		$( document ).bind( 'keydown', 'Right', mural.moveRight );
