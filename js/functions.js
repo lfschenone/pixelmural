@@ -14,8 +14,12 @@ function hideLoading() {
 	$( '#loading' ).hide();
 }
 
+var timeout = null;
 function showPixelAuthor( Pixel, Author ) {
-	hidePixelAuthor();
+	if ( timeout ) {
+		clearTimeout( timeout );
+		hidePixelAuthor();
+	}
 	var picture = '<img src="images/anon.png">',
 		author = Author.name,
 		date = new Date( Pixel.insert_time * 1000 ),
