@@ -107,7 +107,7 @@ class User extends Model {
 	}
 
 	function validate() {
-		$this->link = is_url( $this->link ) ? $this->link : '';
+		$this->link = is_url( $this->link ) ? $this->link : null;
 	}
 
 	function insert() {

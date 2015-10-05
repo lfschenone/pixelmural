@@ -9,11 +9,7 @@ class Users extends Controller {
 	}
 
 	static function POST() {
-		$token = SESSION( 'token' );
-		$User = User::newFromToken( $token );
-		foreach ( $_POST as $key => $value ) {
-			$User->$key = $value;
-		}
+		$User = new User( $_POST ); // Unsafe!
 		$User->normalise();
 		$User->validate();
 		$User->update();
