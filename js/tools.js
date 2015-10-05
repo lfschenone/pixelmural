@@ -1,36 +1,35 @@
-$( function () {
-
-	// Initialize Spectrum
-	$( '#color-input' ).spectrum({
-		preferredFormat: 'hex',
-		showButtons: false,
-		show: function ( color ) {
-			tools.color = color.toHexString();
-		},
-		change: function ( color ) {
-			tools.color = color.toHexString();
-		},
-		hide: function ( color ) {
-			tools.color = color.toHexString();
-		}
-	}).next().attr( 'title', 'Color [C]' );
-
-	// Set the variables that must wait for the DOM to be loaded
-	grid.setCanvas( document.getElementById( 'grid' ) );
-	preview.setCanvas( document.getElementById( 'preview' ) );
-	preview.setWidth( 300 );
-	preview.setHeight( 200 );
-
-	// Set 'move' as the default action
-	tools.bindEvents();
-	tools.clickMoveButton();
-});
-
 tools = {
 
 	color: '#000000',
 
 	// EVENT HANDLERS
+
+	init: function () {
+		// Initialize Spectrum
+		$( '#color-input' ).spectrum({
+			preferredFormat: 'hex',
+			showButtons: false,
+			show: function ( color ) {
+				tools.color = color.toHexString();
+			},
+			change: function ( color ) {
+				tools.color = color.toHexString();
+			},
+			hide: function ( color ) {
+				tools.color = color.toHexString();
+			}
+		}).next().attr( 'title', 'Color [C]' );
+
+		// Set the variables that must wait for the DOM to be loaded
+		grid.setCanvas( document.getElementById( 'grid' ) );
+		preview.setCanvas( document.getElementById( 'preview' ) );
+		preview.setWidth( 300 );
+		preview.setHeight( 200 );
+
+		// Set 'move' as the default action
+		tools.bindEvents();
+		tools.clickMoveButton();
+	},
 
 	bindEvents: function () {
 		$( '#move-button' ).click( tools.clickMoveButton );
@@ -40,7 +39,7 @@ tools = {
 		$( '#zoom-out-button' ).click( tools.clickZoomOutButton );
 		$( '#undo-button' ).click( tools.clickUndoButton );
 		$( '#redo-button' ).click( tools.clickRedoButton );
-		//$( '#link-button' ).click( tools.clickLinkButton );
+		$( '#link-button' ).click( tools.clickLinkButton );
 		$( '#pencil-button' ).click( tools.clickPencilButton );
 		$( '#brush-button' ).click( tools.clickBrushButton );
 		$( '#eraser-button' ).click( tools.clickEraserButton );
@@ -54,7 +53,7 @@ tools = {
 		$( document ).bind( 'keydown', 'e', tools.clickEraserButton );
 		$( document ).bind( 'keydown', 'g', tools.clickGridButton );
 		$( document ).bind( 'keydown', 'i', tools.clickZoomInButton );
-		//$( document ).bind( 'keydown', 'l', tools.clickLinkButton );
+		$( document ).bind( 'keydown', 'l', tools.clickLinkButton );
 		$( document ).bind( 'keydown', 'o', tools.clickZoomOutButton );
 		$( document ).bind( 'keydown', 'p', tools.clickPencilButton );
 		$( document ).bind( 'keydown', 'v', tools.clickBrushButton );
@@ -64,8 +63,8 @@ tools = {
 		$( document ).bind( 'keydown', 'Up', mural.moveUp );
 		$( document ).bind( 'keydown', 'Right', mural.moveRight );
 		$( document ).bind( 'keydown', 'Down', mural.moveDown );
-		$( document ).bind( 'keydown', 'Alt', mural.clickDropperButton );
-		$( document ).bind( 'keyup', 'Alt', mural.clickPreviousTool );
+		$( document ).bind( 'keydown', 'Alt', tools.clickDropperButton );
+		$( document ).bind( 'keyup', 'Alt', tools.clickPreviousTool );
 		$( document ).bind( 'keyup', 'Left', mural.update );
 		$( document ).bind( 'keyup', 'Up', mural.update );
 		$( document ).bind( 'keyup', 'Right', mural.update );
@@ -503,3 +502,5 @@ function Area( data ) {
 		return this;
 	};
 }
+
+$( tools.init );
