@@ -10,6 +10,7 @@ This is contrary to the documented behaviour, and may be related to https://gith
 * When selecting a tool like the pencil, and pressing the spacebar, the tool switches to move but then returns.
 It surely has to do with the functionality that by pressing the spacebar, the active button is pressed, and the move tool,
 by being the first, is the active button by default.
+* Get rid of the scrollbar
 
 Tasks
 -----
@@ -34,3 +35,4 @@ Tasks if and when there is enough traffic
 * Migrate to node.js?
 * API documentation?
 * Steam version, contact Daniel Steer
+* Rotate?
