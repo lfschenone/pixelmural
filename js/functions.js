@@ -24,7 +24,7 @@ function showPixelAuthor( Pixel, Author ) {
 		author = Author.name,
 		date = new Date( Pixel.insert_time * 1000 ),
 		date = '<br>' + date.toUTCString(),
-		link = Author.link ? '<br><a href="' + Author.link + '/">' + Author.link + '</a>' : '<br>&nbsp;';
+		link = Author.link ? '<br><a href="' + Author.link + '">' + Author.link + '</a>' : "<br>&nbsp;";
 	if ( Author.facebook_id ) {
 		picture = '<img src="http://graph.facebook.com/' + Author.facebook_id + '/picture">';
 		author = '<a href="https://www.facebook.com/app_scoped_user_id/' + Author.facebook_id + '/">' + Author.name + '</a>';
