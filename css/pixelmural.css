@@ -1,6 +1,5 @@
 html {
 	margin: 0;
-	overflow: hidden;
 	padding: 0;
 	height: 100%;
 }
@@ -12,7 +11,9 @@ body {
 	font-size: 15px;
 	font-weight: 300;
 	margin: 0;
+	overflow: hidden;
 	padding: 0;
+	position: relative;
 	height: 100%;
 }
 
