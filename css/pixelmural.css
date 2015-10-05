@@ -107,7 +107,7 @@ button::-moz-focus-inner {
 	background: lightyellow;
 	border-radius: 10px;
 	margin: 10px;
-	padding: 10px;
+	padding: 10px 70px 10px 10px; /* The 70px compensate for the floating image */
 	position: absolute;
 	left: 0; bottom: 0;
     user-select: none;
