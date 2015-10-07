@@ -166,7 +166,7 @@ tools = {
 			FB.ui({
 				method: 'pay',
 				action: 'purchaseitem',
-				product: 'https://pixelmural.com/stroke3.html',
+				product: '//pixelmural.com/stroke3.html',
 			}, verifyPayment );
 		} else {
 			FB.login( function ( response ) {
