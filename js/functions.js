@@ -44,7 +44,7 @@ function verifyPayment( data ) {
 		//console.log( response );
 		if ( response === 'completed' ) {
 			user.stroke = 3;
-			menu.update();
+			tools.update();
 		}
 	});
 }
