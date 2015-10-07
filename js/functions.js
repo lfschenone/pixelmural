@@ -37,3 +37,14 @@ function showPixelAuthor( Pixel, Author ) {
 function hidePixelAuthor() {
 	$( '#author' ).remove();
 }
+
+function verifyPayment( data ) {
+	//console.log( data );
+	$.post( 'FacebookPayments', data, function ( response ) {
+		//console.log( response );
+		if ( response === 'completed' ) {
+			user.stroke = 3;
+			menu.update();
+		}
+	});
+}
