@@ -43,30 +43,31 @@ tools = {
 		$( '#stroke-2-price-tag' ).click( facebook.login );
 		$( '#stroke-3-price-tag' ).click( tools.clickStroke3PriceTag );
 
-		$( document ).bind( 'keypress', 'b', tools.clickBucketButton );
-		$( document ).bind( 'keypress', 'e', tools.clickEraserButton );
-		$( document ).bind( 'keypress', 'g', tools.clickGridButton );
-		$( document ).bind( 'keypress', 'i', tools.clickZoomInButton );
-		$( document ).bind( 'keypress', 'l', tools.clickLinkButton );
-		$( document ).bind( 'keypress', 'o', tools.clickZoomOutButton );
-		$( document ).bind( 'keypress', 'p', tools.clickPencilButton );
-		$( document ).bind( 'keypress', 'x', tools.clickRedoButton );
-		$( document ).bind( 'keypress', 'z', tools.clickUndoButton );
-		$( document ).bind( 'keydown', 'Left', mural.moveLeft );
-		$( document ).bind( 'keydown', 'Up', mural.moveUp );
-		$( document ).bind( 'keydown', 'Right', mural.moveRight );
-		$( document ).bind( 'keydown', 'Down', mural.moveDown );
-		$( document ).bind( 'keydown', 'Alt', tools.clickDropperButton );
-		$( document ).bind( 'keyup', 'Alt', tools.clickPreviousTool );
-		$( document ).bind( 'keyup', 'Left', mural.update );
-		$( document ).bind( 'keyup', 'Up', mural.update );
-		$( document ).bind( 'keyup', 'Right', mural.update );
-		$( document ).bind( 'keyup', 'Down', mural.update );
+		$( document )
+			.bind( 'keypress', 'b', tools.clickBucketButton )
+			.bind( 'keypress', 'g', tools.clickGridButton )
+			.bind( 'keypress', 'i', tools.clickZoomInButton )
+			.bind( 'keypress', 'l', tools.clickLinkButton )
+			.bind( 'keypress', 'o', tools.clickZoomOutButton )
+			.bind( 'keypress', 'p', tools.clickPencilButton )
+			.bind( 'keypress', 'x', tools.clickRedoButton )
+			.bind( 'keypress', 'z', tools.clickUndoButton )
+			.bind( 'keydown', 'Left', mural.moveLeft )
+			.bind( 'keydown', 'Up', mural.moveUp )
+			.bind( 'keydown', 'Right', mural.moveRight )
+			.bind( 'keydown', 'Down', mural.moveDown )
+			.bind( 'keydown', 'Alt', tools.clickDropperButton )
+			.bind( 'keyup', 'Left', mural.update )
+			.bind( 'keyup', 'Up', mural.update )
+			.bind( 'keyup', 'Right', mural.update )
+			.bind( 'keyup', 'Down', mural.update )
+			.bind( 'keyup', 'Alt', tools.clickPreviousTool );
 	},
 
 	clickGridButton: function () {
 		grid.toggle();
 		grid.update();
+		return false;
 	},
 
 	clickPreviewButton: function () {
@@ -159,6 +160,7 @@ tools = {
 		mouse.upAction = null;
 		tools.activeTool = 'bucket';
 		tools.update();
+		return false;
 	},
 
 	clickStroke3PriceTag: function () {

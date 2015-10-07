@@ -11,12 +11,11 @@ This is contrary to the documented behaviour, and may be related to https://gith
 It surely has to do with the functionality that by pressing the spacebar, the active button is pressed, and the move tool,
 by being the first, is the active button by default.
 * Get rid of the scrollbar
+* Sometimes, when you drag, the menu is selected
 
 Tasks
 -----
-* Stroke
-* Mobile version
-* Download button?
+* Mobile version - zoom!
 * Erase ugly drawings
 * The bucket doesn't work well with big areas
 * Stateless API
@@ -27,6 +26,7 @@ Tasks
 
 Tasks if and when there is enough traffic
 -----------------------------------------
+* Download button?
 * Custom SVG icons
 * Only load new pixels
 * Use WebSockets

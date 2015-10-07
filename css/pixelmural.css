@@ -139,7 +139,7 @@ button::-moz-focus-inner {
 .sp-replacer {
 	background: none;
 	border: none;
-	margin: 5px;
+	margin: 5px 10px;
 	overflow: visible;
 	padding: 0;
 	position: relative;
