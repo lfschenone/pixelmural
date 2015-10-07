@@ -41,7 +41,7 @@ tools = {
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
 		$( '#stroke-2-price-tag' ).click( facebook.login );
-		$( '#stroke-3-price-tag' ).click( tools.clickBucketButton );
+		$( '#stroke-3-price-tag' ).click( tools.clickStroke3Tag );
 
 		$( document ).bind( 'keypress', 'b', tools.clickBucketButton );
 		$( document ).bind( 'keypress', 'e', tools.clickEraserButton );
@@ -159,6 +159,15 @@ tools = {
 		mouse.upAction = null;
 		tools.activeTool = 'bucket';
 		tools.update();
+	},
+
+	clickStroke3Tag: function () {
+		FB.ui({
+			method: 'pay',
+			action: 'purchaseitem',
+			product: 'http://pixelmural/stroke3.html',
+		});
+		return false;
 	},
 
 	activeTool: null,
