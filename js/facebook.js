@@ -48,8 +48,8 @@ facebook = {
 
 				// Part of the payment flow
 				if ( document.referrer === 'https://apps.facebook.com/pixelmural/?buy=stroke3' ) {
-					if ( user.brush ) {
-						return; // If the user already has the brush, don't try to sell it again
+					if ( user.stroke === 3 ) {
+						return; // If the user already has stroke 3, don't try to sell it again
 					}
 					FB.ui({
 						method: 'pay',
