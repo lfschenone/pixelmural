@@ -48,7 +48,7 @@ facebook = {
 		if ( response.status === 'connected' ) {
 			$( '#facebook-login-button' ).hide();
 			$( '#facebook-logout-button' ).show();
-			$( '#profile-picture' ).attr( 'src', 'http://graph.facebook.com/' + response.authResponse.userID + '/picture' );
+			$( '#profile-picture' ).attr( 'src', '//graph.facebook.com/' + response.authResponse.userID + '/picture' );
     	} else {
 			$( '#facebook-login-button' ).show();
 			$( '#facebook-logout-button' ).hide();
