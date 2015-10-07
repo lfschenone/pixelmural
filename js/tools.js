@@ -31,13 +31,13 @@ tools = {
 		preview.setWidth( 300 );
 		preview.setHeight( 200 );
 
-		// Set 'move' as the default action
 		tools.bindEvents();
-		tools.clickMoveButton();
+
+		// Set the pencil as the default action
+		tools.clickPencilButton();
 	},
 
 	bindEvents: function () {
-		$( '#move-button' ).click( tools.clickMoveButton );
 		$( '#grid-button' ).click( tools.clickGridButton );
 		$( '#preview-button' ).click( tools.clickPreviewButton );
 		$( '#zoom-in-button' ).click( tools.clickZoomInButton );
@@ -50,7 +50,6 @@ tools = {
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
 
-		$( document ).bind( 'keypress', 'Space', tools.clickMoveButton );
 		$( document ).bind( 'keypress', 'b', tools.clickBucketButton );
 		$( document ).bind( 'keypress', 'c', tools.clickColorButton );
 		$( document ).bind( 'keypress', 'e', tools.clickEraserButton );
@@ -71,14 +70,6 @@ tools = {
 		$( document ).bind( 'keyup', 'Up', mural.update );
 		$( document ).bind( 'keyup', 'Right', mural.update );
 		$( document ).bind( 'keyup', 'Down', mural.update );
-	},
-
-	clickMoveButton: function () {
-		mouse.downAction = move.down;
-		mouse.dragAction = move.drag;
-		mouse.upAction = move.up;
-		tools.activeTool = 'move';
-		tools.update();
 	},
 
 	clickGridButton: function () {
@@ -108,25 +99,27 @@ tools = {
 	 */
 	arrayPointer: 0,
 
-	oldPixels: [],
+	oldData: [],
 	clickUndoButton: function () {
 		if ( tools.arrayPointer === 0 ) {
 			return; // There's nothing else to undo
 		}
 		tools.arrayPointer--;
-		var oldPixels = tools.oldPixels[ tools.arrayPointer ];
-		oldPixels.paint().save();
+		var oldAreaData = tools.oldData[ tools.arrayPointer ],
+			oldArea = new window.Area( oldAreaData );
+		oldArea.paint().save();
 		tools.update();
 	},
 
-	newPixels: [],
+	newData: [],
 	clickRedoButton: function () {
-		if ( tools.arrayPointer === tools.newPixels.length ) {
+		if ( tools.arrayPointer === tools.newData.length ) {
 			return; // There's nothing else to redo
 		}
-		var newPixels = tools.newPixels[ tools.arrayPointer ];
+		var newAreaData = tools.newData[ tools.arrayPointer ],
+			newArea = new window.Area( newAreaData );
 		tools.arrayPointer++;
-		newPixels.paint().save();
+		newArea.paint().save();
 		tools.update();
 	},
 
@@ -169,9 +162,9 @@ tools = {
 	},
 
 	clickBucketButton: function () {
-		mouse.downAction = null;
+		mouse.downAction = bucket.paintArea;
 		mouse.dragAction = null;
-		mouse.upAction = bucket.paintArea;
+		mouse.upAction = null;
 		tools.activeTool = 'bucket';
 		tools.update();
 	},
@@ -209,7 +202,7 @@ tools = {
 			$( '#undo-button' ).addClass( 'disabled' );
 		}
 
-		if ( tools.arrayPointer === tools.newPixels.length ) {
+		if ( tools.arrayPointer === tools.newData.length ) {
 			$( '#redo-button' ).addClass( 'disabled' );
 		}
 
@@ -222,44 +215,6 @@ tools = {
 		$( '#' + tools.activeTool + '-button' ).addClass( 'active' );
 
 		$( '#color-input' ).spectrum( 'set', tools.color );
-	}
-};
-
-move = {
-
-	down: function () {
-		mouse.diffX = 0;
-		mouse.diffY = 0;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-	},
-
-	drag: function ( event ) {
-		mural.centerX += mouse.previousX - mouse.currentX;
-		mural.centerY += mouse.previousY - mouse.currentY;
-
-		mouse.diffX += ( mouse.currentX - mouse.previousX ) * mural.pixelSize;
-		mouse.diffY += ( mouse.currentY - mouse.previousY ) * mural.pixelSize;
-
-		mural.context.clearRect( 0, 0, mural.width, mural.height );
-		mural.context.putImageData( mural.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
-
-		// Bugfix: without this, the mural flickers when moving, not sure why
-		mouse.currentX = mouse.getCurrentX( event );
-		mouse.currentY = mouse.getCurrentY( event );
-	},
-
-	up: function ( event ) {
-		if ( mouse.diffX || mouse.diffY ) {
-			mural.update();
-			preview.update();
-			return;
-		}
-		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
-		$.get( 'Pixels', data, function ( response ) {
-			if ( response ) {
-				showPixelAuthor( response.Pixel, response.Author );
-			}
-		});
 	}
 };
 
@@ -293,46 +248,67 @@ pencil = {
 			return;
 		}
 
-		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY ),
-			newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY, 'color': tools.color });
+		var x = mouse.currentX,
+			y = mouse.currentY,
+			color = tools.color;
 
-		if ( newPixel.color === oldPixel.color && mouse.currentX === mouse.previousX && mouse.currentY === mouse.previousY ) {
-			newPixel.color = null; // For convenience, re-painting a pixel erases it
+		// For convenience, re-painting a pixel erases it
+		if ( color === mural.getPixelColor( x, y ) && x === mouse.previousX && y === mouse.previousY ) {
+			color = null;
 		}
 
-		newPixel.paint().save().register( oldPixel );
+		var newAreaData = [{ 'x': x, 'y': y, 'color': color }];
+
+		if ( tools.stroke > 1 ) {
+			newAreaData.push({ 'x': x + 1, 'y': y + 0, 'color': color });
+			newAreaData.push({ 'x': x + 0, 'y': y + 1, 'color': color });
+			newAreaData.push({ 'x': x + 1, 'y': y + 1, 'color': color });
+		}
+
+		if ( tools.stroke > 2 ) {
+			newAreaData.push({ 'x': x - 1, 'y': y + 1, 'color': color });
+			newAreaData.push({ 'x': x - 1, 'y': y + 0, 'color': color });
+			newAreaData.push({ 'x': x - 1, 'y': y - 1, 'color': color });
+			newAreaData.push({ 'x': x + 0, 'y': y - 1, 'color': color });
+			newAreaData.push({ 'x': x + 1, 'y': y - 1, 'color': color });
+		}
+
+		var newArea = new window.Area( newAreaData );
+		newArea.paint().save( true );
 	}
 };
 
 eraser = {
 
 	erasePixel: function ( event ) {
-		var oldPixel = mural.getPixel( mouse.currentX, mouse.currentY );
 
-		if ( oldPixel.color === null ) {
-			return; // The pixel doesn't exist, no need to continue
+		var x = mouse.currentX,
+			y = mouse.currentY
+			newAreaData = [{ 'x': x, 'y': y, 'color': null }];
+
+		if ( tools.stroke > 1 ) {
+			newAreaData.push({ 'x': x + 1, 'y': y + 0, 'color': null });
+			newAreaData.push({ 'x': x + 0, 'y': y + 1, 'color': null });
+			newAreaData.push({ 'x': x + 1, 'y': y + 1, 'color': null });
 		}
 
-		var newPixel = new Pixel({ 'x': mouse.currentX, 'y': mouse.currentY });
+		if ( tools.stroke > 2 ) {
+			newAreaData.push({ 'x': x - 1, 'y': y + 1, 'color': null });
+			newAreaData.push({ 'x': x - 1, 'y': y + 0, 'color': null });
+			newAreaData.push({ 'x': x - 1, 'y': y - 1, 'color': null });
+			newAreaData.push({ 'x': x + 0, 'y': y - 1, 'color': null });
+			newAreaData.push({ 'x': x + 1, 'y': y - 1, 'color': null });
+		}
 
-		newPixel.erase().save().register( oldPixel );
+		var newArea = new window.Area( newAreaData );
+		newArea.erase().save( true );
 	}
 };
 
 dropper = {
 
 	suckColor: function ( event ) {
-		var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
-			offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
-			imageData = mural.context.getImageData( offsetX, offsetY, 1, 1 ),
-			red   = imageData.data[0],
-			green = imageData.data[1],
-			blue  = imageData.data[2],
-			alpha = imageData.data[3];
-		if ( !alpha ) {
-			return; // The user clicked the background
-		}
-		tools.color = rgb2hex( red, green, blue );
+		tools.color = mural.getPixelColor( mouse.currentX, mouse.currentY );
 		tools.update();
 	}
 };
@@ -340,47 +316,45 @@ dropper = {
 bucket = {
 
 	paintArea: function ( event ) {
-		showLoading();
-		var data = {
-			'x': mouse.currentX,
-			'y': mouse.currentY,
-			'color': tools.color
-		};
-		$.post( 'Areas', data, function ( response ) {
-			//console.log( response );
-			switch ( response.code ) {
-				case 200:
-					var newArea = new window.Area,
-						newPixelData,
-						newPixel,
-						oldArea = new window.Area,
-						oldPixelData,
-						oldPixel;
-					for ( var i = 0; i < response.newAreaData.length; i++ ) {
-						newPixelData = response.newAreaData[ i ];
-						newPixel = new window.Pixel( newPixelData );
-						newArea.pixels.push( newPixel );
-	
-						oldPixelData = response.oldAreaData[ i ];
-						oldPixel = new window.Pixel( oldPixelData );
-						oldArea.pixels.push( oldPixel );
-					}
-					newArea.paint().register( oldArea );
-					break;
+		var x = mouse.currentX,
+			y = mouse.currentY,
+			color = tools.color,
+			oldAreaData = [{ 'x': x, 'y': y, 'color': mural.getPixelColor( x, y ) }],
+			newPixelData,
+			newPixel,
+			newAreaData = [],
+			neighbors = [];
 
-				case 401:
-				case 403:
-					if ( response.data ) {
-						var Pixel = new window.Pixel( response.data );
-						Pixel.paint().unregister();
-					} else {
-						var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
-						Pixel.erase().unregister();
+		showLoading();
+		while ( oldAreaData.length ) {
+			oldPixelData = oldAreaData.shift();
+			x = oldPixelData.x;
+			y = oldPixelData.y;
+			newPixelData = { 'x': x, 'y': y, 'color': color };
+			newPixel = new window.Pixel( newPixelData );
+			newPixel.paint();
+			newAreaData.push( newPixelData );
+			neighbors = [
+				{ 'x': x, 'y': y - 1, 'color': mural.getPixelColor( x, y - 1 ) },
+				{ 'x': x + 1, 'y': y, 'color': mural.getPixelColor( x + 1, y ) },
+				{ 'x': x, 'y': y + 1, 'color': mural.getPixelColor( x, y + 1 ) },
+				{ 'x': x - 1, 'y': y, 'color': mural.getPixelColor( x - 1, y ) }
+			];
+			neighbors.forEach( function ( neighbor ) {
+				if ( neighbor.color && neighbor.color === oldPixelData.color ) {
+					for ( var i = 0; i < oldAreaData.length; i++ ) {
+						if ( oldAreaData[ i ].x === neighbor.x && oldAreaData[ i ].y === neighbor.y ) {
+							return; // Make sure the neighbor is not in oldAreaData already
+						}
 					}
-					break;
-			}
-			hideLoading();
-		});
+					oldAreaData.push( neighbor );
+				}
+			});
+		}
+		hideLoading();
+
+		var newArea = new window.Area( newAreaData );
+		newArea.save( true );
 	}
 };
 
@@ -536,68 +510,18 @@ function Pixel( data ) {
 
 	this.x = null;
 	this.y = null;
+	this.color = null;
 	this.author_id = null;
 	this.insert_time = null;
 	this.update_time = null;
-	this.color = null;
 
 	for ( var property in data ) {
 		this[ property ] = data[ property ];
 	}
 
-	this.register = function ( oldPixel ) {
-		tools.oldPixels.splice( tools.arrayPointer, tools.oldPixels.length - tools.arrayPointer, oldPixel );
-		tools.newPixels.splice( tools.arrayPointer, tools.newPixels.length - tools.arrayPointer, this );
-		tools.arrayPointer++;
-		tools.update();
-		return this;
-	};
-
-	this.unregister = function () {
-		for ( var i = 0; i < tools.oldPixels.length; i++ ) {
-			if ( tools.oldPixels[ i ].x === this.x && tools.oldPixels[ i ].y === this.y ) {
-				tools.oldPixels.splice( i, 1 );
-				tools.newPixels.splice( i, 1 );
-				tools.arrayPointer--;
-			}
-		}
-		tools.update();
-		return this;
-	};
-
-	/**
-	 * Contacts the server to save the current pixel data
-	 *
-	 * When starting a request, we set a timeout that after one second fires the loading icon.
-	 * If the server responds in less than a second, the timeout is cleared and the loading icon is never shown.
-	 * But if the connection dies or delays too much, the icon is shown and the user won't continue drawing in vain. Probably.
-	 */
-	this.save = function () {
-		var timeout = setTimeout( showLoading, 1000 ), // Show the loading icon after one second
-			data = {
-			'x': this.x,
-			'y': this.y,
-			'color': this.color,
-			'tool': tools.activeTool
-		};
-		$.post( 'Pixels', data, function ( response ) {
-			clearTimeout( timeout ); // On success, cancel the timeout we set above
-			//console.log( response );
-			switch ( response.code ) {
-				case 401:
-				case 403:
-					if ( response.data ) {
-						var Pixel = new window.Pixel( response.data );
-						Pixel.paint().unregister();
-					} else {
-						var Pixel = new window.Pixel({ 'x': data.x, 'y': data.y });
-						Pixel.erase().unregister();
-					}
-					break;
-			}
-		});
-		return this;
-	};
+	this.getData = function () {
+		return { 'x': this.x, 'y': this.y, 'color': this.color };
+	}
 
 	this.paint = function () {
 		if ( this.color === null ) {
@@ -637,30 +561,43 @@ function Pixel( data ) {
  */
 function Area( data ) {
 
-	this.pixels = [];
-
-	for ( var property in data ) {
-		this[ property ] = data[ property ];
-	}
-
-	this.register = function ( oldArea ) {
-		tools.oldPixels.splice( tools.arrayPointer, tools.oldPixels.length - tools.arrayPointer, oldArea );
-		tools.newPixels.splice( tools.arrayPointer, tools.newPixels.length - tools.arrayPointer, this );
-		tools.arrayPointer++;
-		tools.update();
-		return this;
-	};
+	this.data = data;
 
 	this.paint = function () {
-		this.pixels.forEach( function ( Pixel ) {
-			Pixel.paint();
+		var pixel;
+		this.data.forEach( function ( data ) {
+			pixel = new window.Pixel( data );
+			pixel.paint();
 		});
 		return this;
 	};
 
-	this.save = function () {
-		this.pixels.forEach( function ( Pixel ) {
-			Pixel.save(); // Very inefficient
+	this.erase = function () {
+		var pixel;
+		this.data.forEach( function ( data ) {
+			pixel = new window.Pixel( data );
+			pixel.erase();
+		});
+		return this;
+	};
+
+	this.save = function ( undoable ) {
+		var timeout = setTimeout( showLoading, 1000 );
+		$.post( 'Areas', { 'areaData': this.data }, function ( response ) {
+			//console.log( response );
+
+			if ( undoable ) {
+				tools.oldData.splice( tools.arrayPointer, tools.oldData.length - tools.arrayPointer, response.oldAreaData );
+				tools.newData.splice( tools.arrayPointer, tools.newData.length - tools.arrayPointer, response.newAreaData );
+				tools.arrayPointer++;
+				tools.update();
+			}
+
+			var newArea = new window.Area( response.newAreaData );
+			newArea.paint();
+
+			clearTimeout( timeout );
+			hideLoading();
 		});
 		return this;
 	};

@@ -93,6 +93,9 @@ class User extends Model {
 	}
 
 	function canEdit( $Pixel ) {
+		if ( !$Pixel->author_id ) {
+			return true;
+		}
 		if ( $this->id === $Pixel->author_id ) {
 			return true;
 		}

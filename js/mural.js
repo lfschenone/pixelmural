@@ -72,12 +72,9 @@ mural = {
 	},
 
 	/**
-	 * Build a basic pixel object out of the coordinates and the color
-	 *
-	 * The color is sucked directly from the canvas, not the database,
-	 * so it only works for visible pixels
+	 * Returns the color of a visible pixel
 	 */
-	getPixel: function ( x, y ) {
+	getPixelColor: function ( x, y ) {
 		var rectX = Math.abs( mural.centerX - Math.floor( mural.xPixels / 2 ) - x ) * mural.pixelSize,
 			rectY = Math.abs( mural.centerY - Math.floor( mural.yPixels / 2 ) - y ) * mural.pixelSize,
 			imageData = mural.context.getImageData( rectX, rectY, 1, 1 ),
@@ -85,9 +82,8 @@ mural = {
 			green = imageData.data[1],
 			blue  = imageData.data[2],
 			alpha = imageData.data[3],
-			color = alpha ? rgb2hex( red, green, blue ) : null,
-			Pixel = new window.Pixel({ 'x': x, 'y': y, 'color': color });
-		return Pixel;
+			color = alpha ? rgb2hex( red, green, blue ) : null;
+		return color;
 	},
 
 	// SETTERS

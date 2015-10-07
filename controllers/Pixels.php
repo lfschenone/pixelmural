@@ -19,27 +19,21 @@ class Pixels extends Controller {
 
 	static function POST() {
 
-		$x = POST( 'x' );
-		$y = POST( 'y' );
-		$color = POST( 'color' );
-		$tool = POST( 'tool' );
-
-		$Pixel = Pixel::newFromCoords( $x, $y ); // May be null
-
 		$token = SESSION( 'token' );
 		$User = User::newFromToken( $token );
 		if ( !$User ) {
 			throw new Error( 'Unauthorized', 401, $Pixel );
 		}
 
-		if ( $tool === 'brush' and $User->isAnon() ) {
-			throw new Error( 'Unauthorized', 401, $Pixel );
-		}
+		$x = POST( 'x' );
+		$y = POST( 'y' );
+		$Pixel = Pixel::newFromCoords( $x, $y ); // May be null
 
 		if ( $Pixel and !$User->canEdit( $Pixel ) ) {
 			throw new Error( 'Forbidden', 403, $Pixel );
 		}
 
+		$color = POST( 'color' );
 		if ( $Pixel and $color ) {
 			$Pixel->color = $color;
 			$Pixel->update();

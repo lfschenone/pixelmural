@@ -22,18 +22,19 @@ class Pixel extends Model {
 		if ( $DATA ) {
 			return new Pixel( $DATA );
 		}
+		return new Pixel( compact( 'x', 'y' ) );
 	}
 
 	function getAuthor() {
 		return User::newFromId( $this->author_id );
 	}
 
-	function fetch() {
-		global $gDatabase;
-		if ( !$this->x or !$this->y ) {
-			return;
-		}
-		return Pixel::newFromCoords( $this->x, $this->y );
+	function getData() {
+		return array(
+			'x' => $this->x,
+			'y' => $this->y,
+			'color' => $this->color
+		);
 	}
 
 	function insert() {
@@ -62,6 +63,9 @@ class Pixel extends Model {
 
 	function update() {
 		global $gDatabase;
+		if ( $this->color === null ) {
+			return $this->delete();
+		}
 		$Statement = $gDatabase->prepare( 'UPDATE pixels SET
 			author_id = ?,
 			insert_time = ?,

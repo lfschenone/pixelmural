@@ -15,7 +15,7 @@ class Tokens extends Controller {
 		try {
 
 			$accessToken = $Helper->getAccessToken();
-			$Response = $Facebook->get( '/me?fields=id,name,email,link,locale,gender,timezone', $accessToken );
+			$Response = $Facebook->get( '/me?fields=id,name,email,locale,gender,timezone', $accessToken );
 			$GraphUser = $Response->getGraphUser();
 			$facebookId = $GraphUser->getId();
 			$User = User::newFromFacebookId( $facebookId );
@@ -30,7 +30,6 @@ class Tokens extends Controller {
 
 			// Update the data
 			$User->name = $GraphUser->getName();
-			//$User->link = $GraphUser->getProperty( 'link' );
 			$User->email = $GraphUser->getProperty( 'email' );
 			$User->locale = $GraphUser->getProperty( 'locale' );
 			$User->gender = $GraphUser->getProperty( 'gender' );

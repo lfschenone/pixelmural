@@ -52,7 +52,7 @@ facebook = {
 			$( '#facebook-logout-button' ).hide();
 			$( '#profile-picture' ).attr( 'src', 'images/anon.png' );
     	}
-	},
+	}
 };
 
 $( facebook.init );

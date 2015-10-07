@@ -16,19 +16,18 @@ Tasks
 -----
 * Stroke
 * Mobile version
-* Send pixels by batches
 * Download button
 * Erase ugly drawings
+* The bucket doesn't work well with big areas
 * Stateless API
 * Fix the encoding issue with Facebook names
 * Zoom with the wheel
 * Zoom locally before loading from the server
-* SVG icons?
 * Accesskeys?
 
 Tasks if and when there is enough traffic
 -----------------------------------------
-* Custom icons
+* Custom SVG icons
 * Only load new pixels
 * Use WebSockets
 * Live updating
