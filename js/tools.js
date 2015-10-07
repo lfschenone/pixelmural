@@ -162,11 +162,19 @@ tools = {
 	},
 
 	clickStroke3Tag: function () {
-		FB.ui({
-			method: 'pay',
-			action: 'purchaseitem',
-			product: 'http://pixelmural/stroke3.html',
-		});
+		if ( document.referrer.indexOf( 'https://apps.facebook.com/pixelmural/' ) === 0 ) {
+			FB.ui({
+				method: 'pay',
+				action: 'purchaseitem',
+				product: 'https://pixelmural.com/stroke3.html',
+			}, verifyPayment );
+		} else {
+			FB.login( function ( response ) {
+				if ( response.status === 'connected' ) {
+					location.href = 'https://apps.facebook.com/pixelmural/?buy=stroke3';
+				}
+			});
+		}
 		return false;
 	},
 
