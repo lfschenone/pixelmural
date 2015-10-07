@@ -41,7 +41,7 @@ tools = {
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
 		$( '#stroke-2-price-tag' ).click( facebook.login );
-		$( '#stroke-3-price-tag' ).click( tools.clickStroke3Tag );
+		$( '#stroke-3-price-tag' ).click( tools.clickStroke3PriceTag );
 
 		$( document ).bind( 'keypress', 'b', tools.clickBucketButton );
 		$( document ).bind( 'keypress', 'e', tools.clickEraserButton );
@@ -161,7 +161,7 @@ tools = {
 		tools.update();
 	},
 
-	clickStroke3Tag: function () {
+	clickStroke3PriceTag: function () {
 		if ( document.referrer === 'https://apps.facebook.com/' ) {
 			FB.ui({
 				method: 'pay',

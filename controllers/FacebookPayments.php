@@ -16,7 +16,7 @@ class FacebookPayments {
         $signed_request = POST( 'signed_request' );
 
         if ( $status === 'completed' ) {
-            $User->stroke = 2;
+            $User->stroke = 3;
             $User->update();
         }
         echo $status;
