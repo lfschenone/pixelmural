@@ -162,6 +162,7 @@ tools = {
 	},
 
 	clickStroke3Tag: function () {
+console.log( document.referrer );
 		if ( document.referrer.indexOf( 'https://apps.facebook.com/pixelmural/' ) === 0 ) {
 			FB.ui({
 				method: 'pay',
