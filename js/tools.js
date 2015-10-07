@@ -45,6 +45,7 @@ tools = {
 
 		$( document )
 			.bind( 'keypress', 'b', tools.clickBucketButton )
+			.bind( 'keypress', 'e', tools.clickEraserButton )
 			.bind( 'keypress', 'g', tools.clickGridButton )
 			.bind( 'keypress', 'i', tools.clickZoomInButton )
 			.bind( 'keypress', 'l', tools.clickLinkButton )
