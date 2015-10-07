@@ -15,17 +15,17 @@ by being the first, is the active button by default.
 
 Tasks
 -----
-* Mobile version - zoom!
+* Mobile version
 * Erase ugly drawings
 * The bucket doesn't work well with big areas
 * Stateless API
 * Fix the encoding issue with Facebook names
 * Zoom with the wheel
 * Zoom locally before loading from the server
-* Accesskeys?
 
 Tasks if and when there is enough traffic
 -----------------------------------------
+* Accesskeys?
 * Download button?
 * Custom SVG icons
 * Only load new pixels
