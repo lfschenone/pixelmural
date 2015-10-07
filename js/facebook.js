@@ -39,9 +39,23 @@ facebook = {
 			// Then use the token to update the user object
 			$.get( 'Users', { 'token': response }, function ( response ) {
 				//console.log( response );
+
 				user = new User( response );
+
 				if ( tools ) {
 					tools.update();
+				}
+
+				// Part of the payment flow
+				if ( document.referrer === 'https://apps.facebook.com/pixelmural/?buy=stroke3' ) {
+					if ( user.brush ) {
+						return; // If the user already has the brush, don't try to sell it again
+					}
+					FB.ui({
+						method: 'pay',
+						action: 'purchaseitem',
+						product: '//pixelmural.com/stroke3.html',
+					}, verifyPayment );
 				}
 			});
 		});
