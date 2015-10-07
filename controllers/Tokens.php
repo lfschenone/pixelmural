@@ -25,6 +25,7 @@ class Tokens extends Controller {
 				$User = new User;
 				$User->facebook_id = $facebookId;
 				$User->status = 'user';
+				$User->stroke = 2;
 				$User->insert();
 			}
 
@@ -44,6 +45,7 @@ class Tokens extends Controller {
 				$User = new User;
 				$User->name = $ip; // IPs are the names of anonymous users
 				$User->status = 'anon';
+				$User->stroke = 1;
 				$User->insert();
 			}
 		}

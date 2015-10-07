@@ -374,7 +374,6 @@ function User( data ) {
 	this.facebook_id = null;
 	this.insert_time = null;
 	this.update_time = null;
-	this.brush = 0;
 	this.name = null;
 	this.email = null;
 	this.gender = null;
@@ -382,6 +381,7 @@ function User( data ) {
 	this.link = null;
 	this.status = 'anon';
 	this.timezone = null;
+	this.stroke = null;
 
 	for ( var property in data ) {
 		this[ property ] = data[ property ];
@@ -400,6 +400,7 @@ function User( data ) {
 			'link': this.link,
 			'status': this.status,
 			'timezone': this.timezone,
+			'stroke': this.stroke,
 		}
 	}
 

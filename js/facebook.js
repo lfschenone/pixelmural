@@ -17,8 +17,9 @@ facebook = {
 		$( '#facebook-logout-button' ).click( facebook.logout );
 	},
 
-	login: function () {
+	login: function ( event ) {
 		FB.login( facebook.statusChangeCallback );
+		return false;
 	},
 
 	logout: function () {
@@ -39,15 +40,16 @@ facebook = {
 			$.get( 'Users', { 'token': response }, function ( response ) {
 				//console.log( response );
 				user = new User( response );
+				if ( tools ) {
+					tools.update();
+				}
 			});
 		});
 		if ( response.status === 'connected' ) {
-			$( '#facebook-icon' ).hide();
 			$( '#facebook-login-button' ).hide();
 			$( '#facebook-logout-button' ).show();
 			$( '#profile-picture' ).attr( 'src', 'http://graph.facebook.com/' + response.authResponse.userID + '/picture' );
     	} else {
-    		$( '#facebook-icon' ).show();
 			$( '#facebook-login-button' ).show();
 			$( '#facebook-logout-button' ).hide();
 			$( '#profile-picture' ).attr( 'src', 'images/anon.png' );

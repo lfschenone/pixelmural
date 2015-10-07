@@ -48,20 +48,35 @@ class Areas extends Controller {
 	static function POST() {
 		global $gDatabase;
 
+		$tool = POST( 'tool' );
+		$stroke = POST( 'stroke' );
+		$AREA = POST( 'area' );
+
+		$RESPONSE['oldAreaData'] = array();
+		$RESPONSE['newAreaData'] = array();
+
+		// First get the old area data
+		foreach ( $AREA as $DATA ) {
+			$Pixel = Pixel::newFromCoords( $DATA['x'], $DATA['y'] );
+			$PIXELS[] = $Pixel;
+			$RESPONSE['oldAreaData'][] = $Pixel->getData();
+		}
+
 		$token = SESSION( 'token' );
 		$User = User::newFromToken( $token );
 		if ( !$User ) {
-			throw new Error( 'Unauthorized', 401, $Pixel );
+			$RESPONSE['error'] = 1;
+			$RESPONSE['newAreaData'] = $RESPONSE['oldAreaData'];
+			json( $RESPONSE );
 		}
 
-		$AREADATA = POST( 'areaData' );
-		$RESPONSE['oldAreaData'] = array();
-		$RESPONSE['newAreaData'] = array();
-		foreach ( $AREADATA as $DATA ) {
+		if ( $stroke > $User->stroke ) {
+			$RESPONSE['error'] = 2;
+			$RESPONSE['newAreaData'] = $RESPONSE['oldAreaData'];
+			json( $RESPONSE );
+		}
 
-			$Pixel = Pixel::newFromCoords( $DATA['x'], $DATA['y'] );
-
-			$RESPONSE['oldAreaData'][] = $Pixel->getData();
+		foreach ( $PIXELS as $Pixel ) {
 
 			if ( $User->canEdit( $Pixel ) ) {
 				if ( $DATA['color'] ) {
@@ -77,7 +92,7 @@ class Areas extends Controller {
 					$Pixel->delete();
 				}
 			}
-
+			$RESPONSE['error'] = 3;
 			$RESPONSE['newAreaData'][] = $Pixel->getData();
 		}
 		json( $RESPONSE );

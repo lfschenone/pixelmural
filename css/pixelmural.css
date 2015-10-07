@@ -59,6 +59,13 @@ button::-moz-focus-inner {
 	background: #aaf;
 }
 
+.price-tag {
+	position: absolute;
+	right: -20px;
+	bottom: -30px;
+	z-index: 2;
+}
+
 #loading {
 	max-height: 30px;
 	position: fixed;
@@ -129,15 +136,17 @@ button::-moz-focus-inner {
 }
 
 /* Spectrum overrides */
-.sp-preview {
-	border: 1px solid black;
-	margin: 0;
-}
 .sp-replacer {
 	background: none;
 	border: none;
 	margin: 5px;
+	overflow: visible;
 	padding: 0;
+	position: relative;
+}
+.sp-preview {
+	border: 1px solid black;
+	margin: 0;
 }
 .sp-container,
 .sp-color,
@@ -145,7 +154,7 @@ button::-moz-focus-inner {
 	border: 1px solid black;
 }
 .sp-active {
-	border: none;
+	outline: 5px solid #aaf;
 }
 .sp-dd {
 	display: none;

@@ -14,9 +14,10 @@ class User extends Model {
 	public $email;
 	public $gender;
 	public $locale;
-	public $link = '';
+	public $link;
 	public $status;
 	public $timezone;
+	public $stroke;
 
 	static function newFromId( $id ) {
 		global $gDatabase;
@@ -126,12 +127,13 @@ class User extends Model {
 			locale,
 			link,
 			status,
-			timezone
-			) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
+			timezone,
+			stroke
+			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
 		);
 		$this->insert_time = $_SERVER['REQUEST_TIME'];
 		$this->update_time = $_SERVER['REQUEST_TIME'];
-		$Statement->bind_param( 'iiisssssssi',
+		$Statement->bind_param( 'iiisssssssii',
 			$this->facebook_id,
 			$this->insert_time,
 			$this->update_time,
@@ -142,7 +144,8 @@ class User extends Model {
 			$this->locale,
 			$this->link,
 			$this->status,
-			$this->timezone
+			$this->timezone,
+			$this->stroke
 		);
 		$Statement->execute();
 		$this->id = $gDatabase->insert_id;
@@ -161,11 +164,12 @@ class User extends Model {
 			locale = ?,
 			link = ?,
 			status = ?,
-			timezone = ?
+			timezone = ?,
+			stroke = ?
 			WHERE id = ?'
 		);
 		$this->update_time = $_SERVER['REQUEST_TIME'];
-		$Statement->bind_param( 'iiisssssssii',
+		$Statement->bind_param( 'iiisssssssiii',
 			$this->facebook_id,
 			$this->insert_time,
 			$this->update_time,
@@ -177,6 +181,7 @@ class User extends Model {
 			$this->link,
 			$this->status,
 			$this->timezone,
+			$this->stroke,
 			$this->id
 		);
 		$Statement->execute();

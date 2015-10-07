@@ -11,18 +11,9 @@ tools = {
 		$( '.color-input' ).spectrum({
 			preferredFormat: 'hex',
 			showButtons: false,
-			show: function ( color ) {
-				tools.stroke = $( this ).data( 'stroke' );
-				tools.color = color.toHexString();
-			},
-			change: function ( color ) {
-				tools.stroke = $( this ).data( 'stroke' );
-				tools.color = color.toHexString();
-			},
-			hide: function ( color ) {
-				tools.stroke = $( this ).data( 'stroke' );
-				tools.color = color.toHexString();
-			}
+			show: tools.clickColorButton,
+			change: tools.clickColorButton,
+			hide: tools.clickColorButton
 		});
 
 		// Set the variables that must wait for the DOM to be loaded
@@ -49,9 +40,10 @@ tools = {
 		$( '#eraser-button' ).click( tools.clickEraserButton );
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
+		$( '#stroke-2-price-tag' ).click( facebook.login );
+		$( '#stroke-3-price-tag' ).click( tools.clickBucketButton );
 
 		$( document ).bind( 'keypress', 'b', tools.clickBucketButton );
-		$( document ).bind( 'keypress', 'c', tools.clickColorButton );
 		$( document ).bind( 'keypress', 'e', tools.clickEraserButton );
 		$( document ).bind( 'keypress', 'g', tools.clickGridButton );
 		$( document ).bind( 'keypress', 'i', tools.clickZoomInButton );
@@ -169,10 +161,6 @@ tools = {
 		tools.update();
 	},
 
-	clickColorButton: function () {
-		$( '#color-input' ).spectrum( 'toggle' );
-	},
-
 	activeTool: null,
 	previousTool: null,
 	clickPreviousTool: function () {
@@ -182,6 +170,12 @@ tools = {
 		if ( tools.previousTool === 'bucket' ) {
 			tools.clickBucketButton();
 		}		
+	},
+
+	clickColorButton: function ( color ) {
+		tools.stroke = $( this ).data( 'stroke' );
+		tools.color = color.toHexString();
+		tools.update();
 	},
 
 	// INTERFACE ACTIONS
@@ -209,6 +203,18 @@ tools = {
 		if ( mural.pixelSize < 4 ) {
 			$( '#grid-button' ).addClass( 'disabled' );
 			$( '#preview-button' ).addClass( 'disabled' );
+		}
+
+		$( '.sp-replacer' ).removeClass( 'sp-active' );
+		$( '#color-input-' + tools.stroke + ' + .sp-replacer' ).addClass( 'sp-active' );
+		$( '#color-input-' + tools.stroke ).spectrum( 'set', tools.color );
+
+		$( '.price-tag' ).hide();
+		if ( user.stroke < 2 ) {
+			$( '#color-input-2 + .sp-replacer' ).append( $( '#stroke-2-price-tag' ).show() );
+		}
+		if ( user.stroke < 3 ) {
+			$( '#color-input-3 + .sp-replacer' ).append( $( '#stroke-3-price-tag' ).show() );
 		}
 
 		$( '.menu button' ).removeClass( 'active' );
@@ -583,7 +589,12 @@ function Area( data ) {
 
 	this.save = function ( undoable ) {
 		var timeout = setTimeout( showLoading, 1000 );
-		$.post( 'Areas', { 'areaData': this.data }, function ( response ) {
+			data = {
+				'tool': tools.activeTool,
+				'stroke': tools.stroke,
+				'area': this.data
+			};
+		$.post( 'Areas', data, function ( response ) {
 			//console.log( response );
 
 			if ( undoable ) {

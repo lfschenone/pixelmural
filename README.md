@@ -16,7 +16,7 @@ Tasks
 -----
 * Stroke
 * Mobile version
-* Download button
+* Download button?
 * Erase ugly drawings
 * The bucket doesn't work well with big areas
 * Stateless API
