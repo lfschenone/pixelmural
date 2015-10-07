@@ -167,7 +167,16 @@ tools = {
 				method: 'pay',
 				action: 'purchaseitem',
 				product: '//pixelmural.com/stroke3.html',
-			}, verifyPayment );
+			}, function ( data ) {
+				//console.log( data );
+				$.post( 'FacebookPayments', data, function ( response ) {
+					//console.log( response );
+					if ( response === 'completed' ) {
+						user.stroke = 3;
+						tools.update();
+					}
+				});
+			});
 		} else {
 			location.href = 'https://apps.facebook.com/pixelmural/';
 		}

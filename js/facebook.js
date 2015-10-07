@@ -39,9 +39,7 @@ facebook = {
 			// Then use the token to update the user object
 			$.get( 'Users', { 'token': response }, function ( response ) {
 				//console.log( response );
-
 				user = new User( response );
-
 				if ( tools ) {
 					tools.update();
 				}
