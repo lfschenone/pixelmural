@@ -165,7 +165,7 @@ tools = {
 		FB.ui({
 			method: 'pay',
 			action: 'purchaseitem',
-			product: 'http://pixelmural/stroke3.html',
+			product: 'https://pixelmural/stroke3.html',
 		});
 		return false;
 	},
