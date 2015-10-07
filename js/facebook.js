@@ -45,18 +45,6 @@ facebook = {
 				if ( tools ) {
 					tools.update();
 				}
-
-				// Part of the payment flow
-				if ( document.referrer === 'https://apps.facebook.com/pixelmural/?buy=stroke3' ) {
-					if ( user.stroke === 3 ) {
-						return; // If the user already has stroke 3, don't try to sell it again
-					}
-					FB.ui({
-						method: 'pay',
-						action: 'purchaseitem',
-						product: '//pixelmural.com/stroke3.html',
-					}, verifyPayment );
-				}
 			});
 		});
 		if ( response.status === 'connected' ) {

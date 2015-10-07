@@ -169,7 +169,7 @@ tools = {
 				product: '//pixelmural.com/stroke3.html',
 			}, verifyPayment );
 		} else {
-			location.href = 'https://apps.facebook.com/pixelmural/?buy=stroke3';
+			location.href = 'https://apps.facebook.com/pixelmural/';
 		}
 		return false;
 	},
