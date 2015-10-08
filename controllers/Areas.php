@@ -50,50 +50,50 @@ class Areas extends Controller {
 
 		$tool = POST( 'tool' );
 		$stroke = POST( 'stroke' );
-		$AREA = POST( 'area' );
+		$AREADATA = POST( 'area' );
 
 		$RESPONSE['oldAreaData'] = array();
 		$RESPONSE['newAreaData'] = array();
 
 		// First get the old area data
-		foreach ( $AREA as $DATA ) {
-			$Pixel = Pixel::newFromCoords( $DATA['x'], $DATA['y'] );
-			$PIXELS[] = $Pixel;
-			$RESPONSE['oldAreaData'][] = $Pixel->getData();
+		foreach ( $AREADATA as $DATA ) {
+			$oldPixel = Pixel::newFromCoords( $DATA['x'], $DATA['y'] );
+			$OLDPIXELS[] = $oldPixel;
+			$RESPONSE['oldAreaData'][] = $oldPixel->getData();
 		}
 
 		$token = SESSION( 'token' );
 		$User = User::newFromToken( $token );
 		if ( !$User ) {
-			$RESPONSE['error'] = 1;
-			$RESPONSE['newAreaData'] = $RESPONSE['oldAreaData'];
 			json( $RESPONSE );
 		}
 
 		if ( $stroke > $User->stroke ) {
-			$RESPONSE['error'] = 2;
-			$RESPONSE['newAreaData'] = $RESPONSE['oldAreaData'];
 			json( $RESPONSE );
 		}
 
-		foreach ( $PIXELS as $Pixel ) {
+		foreach ( $OLDPIXELS as $i => $oldPixel ) {
+			$newPixel = clone $oldPixel;
 
-			if ( $User->canEdit( $Pixel ) ) {
-				if ( $DATA['color'] ) {
-					$Pixel->color = $DATA['color'];
-					if ( $Pixel->author_id ) {
-						$Pixel->update();
+			if ( $User->canEdit( $newPixel ) ) {
+				$newPixel->color = $AREADATA[ $i ]['color'];
+
+				if ( $newPixel->color == $oldPixel->color ) {
+					continue; // The pixel is unchanged
+				}
+
+				if ( $newPixel->color ) {
+					if ( $newPixel->author_id ) {
+						$newPixel->update();
 					} else {
-						$Pixel->author_id = $User->id;
-						$Pixel->insert();
+						$newPixel->author_id = $User->id;
+						$newPixel->insert();
 					}
 				} else {
-					$Pixel->color = null;
-					$Pixel->delete();
+					$newPixel->delete();
 				}
 			}
-			$RESPONSE['error'] = 3;
-			$RESPONSE['newAreaData'][] = $Pixel->getData();
+			$RESPONSE['newAreaData'][] = $newPixel->getData();
 		}
 		json( $RESPONSE );
 	}

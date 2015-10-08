@@ -428,6 +428,10 @@ bucket = {
 					oldAreaData.push( neighbor );
 				}
 			});
+
+			if ( newAreaData.length > 112 ) {
+				break; // Bugfix! For some reason if the bucket paints too much, it erases instead of painting!
+			}
 		}
 
 		var newArea = new window.Area( newAreaData );
@@ -667,17 +671,17 @@ function Area( data ) {
 			};
 		$.post( 'Areas', data, function ( response ) {
 			//console.log( response );
-
-			if ( undoable ) {
-				tools.oldData.splice( tools.arrayPointer, tools.oldData.length - tools.arrayPointer, response.oldAreaData );
-				tools.newData.splice( tools.arrayPointer, tools.newData.length - tools.arrayPointer, response.newAreaData );
-				tools.arrayPointer++;
-				tools.update();
+			if ( response.newAreaData.length ) {
+				if ( undoable ) {
+					tools.oldData.splice( tools.arrayPointer, tools.oldData.length - tools.arrayPointer, response.oldAreaData );
+					tools.newData.splice( tools.arrayPointer, tools.newData.length - tools.arrayPointer, response.newAreaData );
+					tools.arrayPointer++;
+					tools.update();
+				}
+			} else {
+				var oldArea = new window.Area( response.oldAreaData );
+				oldArea.paint();
 			}
-
-			var newArea = new window.Area( response.newAreaData );
-			newArea.paint();
-
 			clearTimeout( timeout );
 			hideLoading();
 		});
