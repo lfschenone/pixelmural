@@ -9,7 +9,7 @@ class Pixels extends Controller {
 
 		$Pixel = Pixel::newFromCoords( $x, $y );
 
-		if ( $Pixel ) {
+		if ( $Pixel->color ) {
 			$RESPONSE['Pixel'] = $Pixel;
 			$RESPONSE['Author'] = $Pixel->getAuthor();
 		}
