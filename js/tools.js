@@ -24,8 +24,8 @@ tools = {
 
 		tools.bindEvents();
 
-		// Set the pencil as the default action
-		tools.clickPencilButton();
+		// Set 'move' as the default action
+		tools.clickMoveButton();
 	},
 
 	bindEvents: function () {
@@ -65,6 +65,14 @@ tools = {
 			.bind( 'keyup', 'Right', mural.update )
 			.bind( 'keyup', 'Down', mural.update )
 			.bind( 'keyup', 'Alt', tools.clickPreviousTool );
+	},
+
+	clickMoveButton: function () {
+		mouse.downAction = move.down;
+		mouse.dragAction = move.drag;
+		mouse.upAction = move.up;
+		tools.activeTool = 'move';
+		tools.update();
 	},
 
 	clickGridButton: function () {
@@ -248,6 +256,44 @@ tools = {
 		$( '#' + tools.activeTool + '-button' ).addClass( 'active' );
 
 		$( '#color-input' ).spectrum( 'set', tools.color );
+	}
+};
+
+move = {
+
+	down: function () {
+		mouse.diffX = 0;
+		mouse.diffY = 0;
+		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
+	},
+
+	drag: function ( event ) {
+		mural.centerX += mouse.previousX - mouse.currentX;
+		mural.centerY += mouse.previousY - mouse.currentY;
+
+		mouse.diffX += ( mouse.currentX - mouse.previousX ) * mural.pixelSize;
+		mouse.diffY += ( mouse.currentY - mouse.previousY ) * mural.pixelSize;
+
+		mural.context.clearRect( 0, 0, mural.width, mural.height );
+		mural.context.putImageData( mural.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
+
+		// Bugfix: without this, the mural flickers when moving, not sure why
+		mouse.currentX = mouse.getCurrentX( event );
+		mouse.currentY = mouse.getCurrentY( event );
+	},
+
+	up: function ( event ) {
+		if ( mouse.diffX || mouse.diffY ) {
+			mural.update();
+			preview.update();
+			return;
+		}
+		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
+		$.get( 'Pixels', data, function ( response ) {
+			if ( response ) {
+				showPixelAuthor( response.Pixel, response.Author );
+			}
+		});
 	}
 };
 
