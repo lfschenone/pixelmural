@@ -605,7 +605,7 @@ function Pixel( data ) {
 	}
 
 	this.paint = function () {
-		if ( this.color === null ) {
+		if ( !this.color ) {
 			return this.erase();
 		}
 		var x = ( this.x + Math.floor( mural.xPixels / 2 ) - mural.centerX ) * mural.pixelSize,

@@ -10,14 +10,13 @@ This is contrary to the documented behaviour, and may be related to https://gith
 * When selecting a tool like the pencil, and pressing the spacebar, the tool switches to move but then returns.
 * When painting too many pixels, the bucket erases instead of painting! There is a bugfix in place that simply limits
 the amount of pixels that the bucket can paint.
-* The null color is transmitted to the server as an empty string.
+* NULL is transmitted to the server as an empty string.
 
 Tasks
 -----
 * Zoom locally before loading from the server
 * Zoom with pinch
 * Zoom with the wheel
-* Undoing and then redoing doesn't work perfect
 
 Tasks if and when there is enough traffic
 -----------------------------------------
