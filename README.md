@@ -4,27 +4,21 @@ An infinite canvas of collaborative pixel art
 
 Bugs
 ----
-* When repainting a pixel by clicking on its exact border, the pencil doesn't erase it, instead it updates it to the same color
+* When repainting a pixel by clicking on its exact border, the pencil doesn't erase it, instead it updates it to the same color.
 * Spectrum bug: when selecting a color, if you click the pencil or the mural directly after, the color isn't updated.
 This is contrary to the documented behaviour, and may be related to https://github.com/bgrins/spectrum/issues/301
 * When selecting a tool like the pencil, and pressing the spacebar, the tool switches to move but then returns.
-It surely has to do with the functionality that by pressing the spacebar, the active button is pressed, and the move tool,
-by being the first, is the active button by default.
-* Get rid of the scrollbar
-* Sometimes, when you drag, the menu is selected
 
 Tasks
 -----
 * Mobile version
-* Erase ugly drawings
-* The bucket doesn't work well with big areas
-* Stateless API
-* Fix the encoding issue with Facebook names
+* The bucket completely fails when painting a lot
 * Zoom with the wheel
 * Zoom locally before loading from the server
 
 Tasks if and when there is enough traffic
 -----------------------------------------
+* Fix the encoding issue with Facebook names
 * Accesskeys?
 * Download button?
 * Custom SVG icons
@@ -35,3 +29,4 @@ Tasks if and when there is enough traffic
 * API documentation?
 * Steam version, contact Daniel Steer
 * Rotate?
+* Stateless API

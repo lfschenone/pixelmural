@@ -16,6 +16,11 @@ body {
 	padding: 0;
 	position: relative;
 	height: 100%;
+	user-select: none;
+	-o-user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none; 
+	-webkit-user-select: none;
 }
 
 button::-moz-focus-inner {
@@ -31,8 +36,16 @@ button::-moz-focus-inner {
 	width: 100%;
 	z-index: 3;
 }
-
-.menu button {
+#header a {
+	display: inline-block;
+	padding: 5px;
+	vertical-align: middle;
+}
+#header a img {
+	display: block;
+	max-height: 30px;
+}
+#header button {
 	background: transparent;
 	border: none;
 	box-sizing: border-box;
@@ -45,17 +58,17 @@ button::-moz-focus-inner {
 	position: relative;
 	vertical-align: middle;
 }
-.menu button img {
+#header button img {
 	display: block;
 	max-height: 30px;
 }
-.menu button.disabled {
+#header button.disabled {
 	cursor: default;
 }
-.menu button.disabled img {
+#header button.disabled img {
 	opacity: .1;
 }
-.menu button.active {
+#header button.active {
 	background: #aaf;
 }
 

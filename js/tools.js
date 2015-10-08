@@ -29,21 +29,23 @@ tools = {
 	},
 
 	bindEvents: function () {
-		$( '#grid-button' ).click( tools.clickGridButton );
-		$( '#preview-button' ).click( tools.clickPreviewButton );
-		$( '#zoom-in-button' ).click( tools.clickZoomInButton );
-		$( '#zoom-out-button' ).click( tools.clickZoomOutButton );
-		$( '#undo-button' ).click( tools.clickUndoButton );
-		$( '#redo-button' ).click( tools.clickRedoButton );
-		$( '#link-button' ).click( tools.clickLinkButton );
+		$( '#move-button' ).click( tools.clickMoveButton );
 		$( '#pencil-button' ).click( tools.clickPencilButton );
 		$( '#eraser-button' ).click( tools.clickEraserButton );
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
 		$( '#stroke-2-price-tag' ).click( facebook.login );
 		$( '#stroke-3-price-tag' ).click( tools.clickStroke3PriceTag );
+		$( '#link-button' ).click( tools.clickLinkButton );
+		$( '#grid-button' ).click( tools.clickGridButton );
+		$( '#preview-button' ).click( tools.clickPreviewButton );
+		$( '#zoom-in-button' ).click( tools.clickZoomInButton );
+		$( '#zoom-out-button' ).click( tools.clickZoomOutButton );
+		$( '#undo-button' ).click( tools.clickUndoButton );
+		$( '#redo-button' ).click( tools.clickRedoButton );
 
 		$( document )
+			.bind( 'keypress', 'Space', tools.clickMoveButton )
 			.bind( 'keypress', 'b', tools.clickBucketButton )
 			.bind( 'keypress', 'e', tools.clickEraserButton )
 			.bind( 'keypress', 'g', tools.clickGridButton )
@@ -356,7 +358,6 @@ bucket = {
 			newAreaData = [],
 			neighbors = [];
 
-		showLoading();
 		while ( oldAreaData.length ) {
 			oldPixelData = oldAreaData.shift();
 			x = oldPixelData.x;
@@ -382,7 +383,6 @@ bucket = {
 				}
 			});
 		}
-		hideLoading();
 
 		var newArea = new window.Area( newAreaData );
 		newArea.save( true );
