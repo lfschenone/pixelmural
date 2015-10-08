@@ -45,7 +45,9 @@ tools = {
 		$( '#redo-button' ).click( tools.clickRedoButton );
 
 		$( document )
-			.bind( 'keypress', 'Space', tools.clickMoveButton )
+			.bind( 'keypress', '1', tools.clickStroke1Button )
+			.bind( 'keypress', '2', tools.clickStroke2Button )
+			.bind( 'keypress', '3', tools.clickStroke3Button )
 			.bind( 'keypress', 'b', tools.clickBucketButton )
 			.bind( 'keypress', 'e', tools.clickEraserButton )
 			.bind( 'keypress', 'g', tools.clickGridButton )
@@ -53,6 +55,7 @@ tools = {
 			.bind( 'keypress', 'l', tools.clickLinkButton )
 			.bind( 'keypress', 'o', tools.clickZoomOutButton )
 			.bind( 'keypress', 'p', tools.clickPencilButton )
+			.bind( 'keypress', 'r', tools.clickPreviewButton )
 			.bind( 'keypress', 'x', tools.clickRedoButton )
 			.bind( 'keypress', 'z', tools.clickUndoButton )
 			.bind( 'keydown', 'Left', mural.moveLeft )
@@ -60,6 +63,7 @@ tools = {
 			.bind( 'keydown', 'Right', mural.moveRight )
 			.bind( 'keydown', 'Down', mural.moveDown )
 			.bind( 'keydown', 'Alt', tools.clickDropperButton )
+			.bind( 'keydown', 'Space', tools.clickMoveButton )
 			.bind( 'keyup', 'Left', mural.update )
 			.bind( 'keyup', 'Up', mural.update )
 			.bind( 'keyup', 'Right', mural.update )
@@ -73,12 +77,12 @@ tools = {
 		mouse.upAction = move.up;
 		tools.activeTool = 'move';
 		tools.update();
+		return false;
 	},
 
 	clickGridButton: function () {
 		grid.toggle();
 		grid.update();
-		return false;
 	},
 
 	clickPreviewButton: function () {
@@ -211,6 +215,16 @@ tools = {
 		tools.stroke = $( this ).data( 'stroke' );
 		tools.color = color.toHexString();
 		tools.update();
+	},
+
+	clickStroke1Button: function () {
+		$( '#color-input-1 + .sp-replacer' ).click();
+	},
+	clickStroke2Button: function () {
+		$( '#color-input-2 + .sp-replacer' ).click();
+	},
+	clickStroke3Button: function () {
+		$( '#color-input-3 + .sp-replacer' ).click();
 	},
 
 	// INTERFACE ACTIONS
