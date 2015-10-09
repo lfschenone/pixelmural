@@ -40,9 +40,6 @@ facebook = {
 			$.get( 'Users', { 'token': response }, function ( response ) {
 				//console.log( response );
 				user = new User( response );
-				if ( tools ) {
-					tools.update();
-				}
 			});
 		});
 		if ( response.status === 'connected' ) {

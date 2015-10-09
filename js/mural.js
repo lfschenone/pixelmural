@@ -381,7 +381,6 @@ function User( data ) {
 	this.link = null;
 	this.status = 'anon';
 	this.timezone = null;
-	this.stroke = null;
 
 	for ( var property in data ) {
 		this[ property ] = data[ property ];
@@ -399,8 +398,7 @@ function User( data ) {
 			'locale': this.locale,
 			'link': this.link,
 			'status': this.status,
-			'timezone': this.timezone,
-			'stroke': this.stroke,
+			'timezone': this.timezone
 		}
 	}
 

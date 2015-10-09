@@ -34,8 +34,6 @@ tools = {
 		$( '#eraser-button' ).click( tools.clickEraserButton );
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
-		$( '#stroke-2-price-tag' ).click( facebook.login );
-		$( '#stroke-3-price-tag' ).click( tools.clickStroke3PriceTag );
 		$( '#link-button' ).click( tools.clickLinkButton );
 		$( '#grid-button' ).click( tools.clickGridButton );
 		$( '#preview-button' ).click( tools.clickPreviewButton );
@@ -178,28 +176,6 @@ tools = {
 		return false;
 	},
 
-	clickStroke3PriceTag: function () {
-		if ( document.referrer === 'https://apps.facebook.com/' ) {
-			FB.ui({
-				method: 'pay',
-				action: 'purchaseitem',
-				product: '//pixelmural.com/stroke3.html',
-			}, function ( data ) {
-				//console.log( data );
-				$.post( 'FacebookPayments', data, function ( response ) {
-					//console.log( response );
-					if ( response === 'completed' ) {
-						user.stroke = 3;
-						tools.update();
-					}
-				});
-			});
-		} else {
-			location.href = 'https://apps.facebook.com/pixelmural/';
-		}
-		return false;
-	},
-
 	activeTool: null,
 	previousTool: null,
 	clickPreviousTool: function () {
@@ -257,14 +233,6 @@ tools = {
 		$( '.sp-replacer' ).removeClass( 'sp-active' );
 		$( '#color-input-' + tools.stroke + ' + .sp-replacer' ).addClass( 'sp-active' );
 		$( '#color-input-' + tools.stroke ).spectrum( 'set', tools.color );
-
-		$( '.price-tag' ).hide();
-		if ( user.stroke < 2 ) {
-			$( '#color-input-2 + .sp-replacer' ).append( $( '#stroke-2-price-tag' ).show() );
-		}
-		if ( user.stroke < 3 ) {
-			$( '#color-input-3 + .sp-replacer' ).append( $( '#stroke-3-price-tag' ).show() );
-		}
 
 		$( '.menu button' ).removeClass( 'active' );
 		$( '#' + tools.activeTool + '-button' ).addClass( 'active' );

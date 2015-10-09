@@ -48,8 +48,6 @@ class Areas extends Controller {
 	static function POST() {
 		global $gDatabase;
 
-		$tool = POST( 'tool' );
-		$stroke = POST( 'stroke' );
 		$AREADATA = POST( 'area' );
 
 		$RESPONSE['oldAreaData'] = array();
@@ -65,10 +63,6 @@ class Areas extends Controller {
 		$token = SESSION( 'token' );
 		$User = User::newFromToken( $token );
 		if ( !$User ) {
-			json( $RESPONSE );
-		}
-
-		if ( $stroke > $User->stroke ) {
 			json( $RESPONSE );
 		}
 

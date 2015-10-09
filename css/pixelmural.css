@@ -50,7 +50,6 @@ button::-moz-focus-inner {
 	border: none;
 	box-sizing: border-box;
 	cursor: pointer;
-	display: inline-block;
 	font: inherit;
 	margin: 0;
 	outline: none;
@@ -72,13 +71,6 @@ button::-moz-focus-inner {
 	background: #aaf;
 }
 
-.price-tag {
-	position: absolute;
-	right: -20px;
-	bottom: -30px;
-	z-index: 2;
-}
-
 #loading {
 	max-height: 30px;
 	position: fixed;
@@ -87,15 +79,16 @@ button::-moz-focus-inner {
 	z-index: 2;
 }
 
-#facebook-icon {
-	position: absolute;
-	right: 5px;
-	bottom: 5px;
+#tools-menu {
+	display: inline-block;
 }
 
 #facebook-menu {
 	float: right;
 	margin: 5px;
+}
+#facebook-logout-button {
+	display: none;
 }
 
 #profile-picture {
