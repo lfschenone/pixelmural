@@ -242,11 +242,8 @@ mouse = {
 	// INITIALISER
 	init: function () {
 		// Bind events
-		$( mural.canvas )
-			.mousedown( mouse.down )
-			.mousemove( mouse.move )
-			.mouseup( mouse.up )
-			.bind( 'mousewheel DOMMouseScroll', mouse.wheel );
+		$( mural.canvas ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
+		//$( mural.canvas ).bind( 'mousewheel DOMMouseScroll', mouse.wheel );
 	},
 
 	// GETTERS

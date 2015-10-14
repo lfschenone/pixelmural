@@ -71,6 +71,11 @@ button::-moz-focus-inner {
 	background: #aaf;
 }
 
+#beta-tag {
+	max-height: 20px;
+	vertical-align: middle;
+}
+
 #loading {
 	max-height: 30px;
 	position: fixed;
