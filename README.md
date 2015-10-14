@@ -21,6 +21,7 @@ Tasks
 
 Tasks if and when there is enough traffic
 -----------------------------------------
+* Tool to move drawings, maybe by color?
 * Encoding issue with Facebook names
 * Accesskeys?
 * Download screenshot button?

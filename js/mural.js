@@ -242,7 +242,11 @@ mouse = {
 	// INITIALISER
 	init: function () {
 		// Bind events
-		$( mural.canvas ).mousedown( mouse.down ).mousemove( mouse.move ).mouseup( mouse.up );
+		$( mural.canvas )
+			.mousedown( mouse.down )
+			.mousemove( mouse.move )
+			.mouseup( mouse.up )
+			.bind( 'mousewheel DOMMouseScroll', mouse.wheel );
 	},
 
 	// GETTERS
@@ -283,6 +287,14 @@ mouse = {
 		mouse.state = 'up';
 		if ( mouse.upAction ) {
 			mouse.upAction( event );
+		}
+	},
+
+	wheel: function ( event ) {
+		if ( event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0 ) {
+			mural.zoomOut();
+		} else {
+			mural.zoomIn();
 		}
 	}
 };
