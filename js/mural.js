@@ -292,9 +292,9 @@ mouse = {
 
 	wheel: function ( event ) {
 		if ( event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0 ) {
-			mural.zoomOut();
-		} else {
 			mural.zoomIn();
+		} else {
+			mural.zoomOut();
 		}
 	}
 };

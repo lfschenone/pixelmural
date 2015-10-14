@@ -16,13 +16,12 @@ Tasks
 -----
 * Zoom locally before loading from the server
 * Zoom with pinch
-* Zoom with the mouse wheel
 * Only load new pixels
 
 Tasks if and when there is enough traffic
 -----------------------------------------
-* Tool to move drawings, maybe by color?
 * Encoding issue with Facebook names
+* Tool to move drawings?
 * Accesskeys?
 * Download screenshot button?
 * Custom SVG icons
