@@ -660,9 +660,8 @@ function Area( data ) {
 					tools.arrayPointer++;
 					tools.update();
 				}
-			} else {
-				var oldArea = new window.Area( response.oldAreaData );
-				oldArea.paint();
+				var newArea = new window.Area( response.newAreaData );
+				newArea.paint();
 			}
 			clearTimeout( timeout );
 			hideLoading();
