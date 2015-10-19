@@ -139,9 +139,9 @@ tools = {
 	},
 
 	clickPencilButton: function () {
-		mouse.downAction = pencil.down;
-		mouse.dragAction = pencil.drag;
-		mouse.upAction = pencil.up;
+		mouse.downAction = pencil.paintPixel;
+		mouse.dragAction = null;
+		mouse.upAction = null;
 		tools.activeTool = 'pencil';
 		tools.update();
 	},
@@ -281,40 +281,13 @@ move = {
 
 pencil = {
 
-	down: function () {
-		mouse.diffX = 0;
-		mouse.diffY = 0;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-	},
-
-	drag: function ( event ) {
-		mural.centerX += mouse.previousX - mouse.currentX;
-		mural.centerY += mouse.previousY - mouse.currentY;
-
-		mouse.diffX += ( mouse.currentX - mouse.previousX ) * mural.pixelSize;
-		mouse.diffY += ( mouse.currentY - mouse.previousY ) * mural.pixelSize;
-
-		mural.context.clearRect( 0, 0, mural.width, mural.height );
-		mural.context.putImageData( mural.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
-
-		// Bugfix: without this, the mural flickers when moving, not sure why
-		mouse.currentX = mouse.getCurrentX( event );
-		mouse.currentY = mouse.getCurrentY( event );
-	},
-
-	up: function ( event ) {
-		if ( mouse.diffX || mouse.diffY ) {
-			mural.update();
-			preview.update();
-			return;
-		}
-
+	paintPixel: function ( event ) {
 		var x = mouse.currentX,
 			y = mouse.currentY,
 			color = tools.color;
 
 		// For convenience, re-painting a pixel erases it
-		if ( color === mural.getPixelColor( x, y ) && x === mouse.previousX && y === mouse.previousY ) {
+		if ( color === mural.getPixelColor( x, y ) ) {
 			color = null;
 		}
 

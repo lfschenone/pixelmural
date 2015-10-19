@@ -14,6 +14,7 @@ the amount of pixels that the bucket can paint.
 
 Tasks
 -----
+* Use canvas transformations
 * Zoom locally before loading from the server
 * Zoom with pinch
 * Only load new pixels
