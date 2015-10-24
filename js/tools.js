@@ -369,9 +369,9 @@ paintArea = function ( event ) {
 				oldAreaData.push( neighbor );
 			}
 		});
-
+		// Bugfix! For some reason if the bucket paints too much, it erases instead of painting, so we put a hard limit to it
 		if ( newAreaData.length > 112 ) {
-			break; // Bugfix! For some reason if the bucket paints too much, it erases instead of painting!
+			break;
 		}
 	}
 
