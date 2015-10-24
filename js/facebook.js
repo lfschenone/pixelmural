@@ -11,7 +11,6 @@ facebook = {
 		FB.getLoginStatus( facebook.statusChangeCallback );
 
 		// Bind events
-		$( '#facebook-icon' ).click( facebook.login );
 		$( '#facebook-share-button' ).click( facebook.share );
 		$( '#facebook-login-button' ).click( facebook.login );
 		$( '#facebook-logout-button' ).click( facebook.logout );
@@ -19,7 +18,6 @@ facebook = {
 
 	login: function ( event ) {
 		FB.login( facebook.statusChangeCallback );
-		return false;
 	},
 
 	logout: function () {

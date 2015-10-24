@@ -70,9 +70,9 @@ tools = {
 	},
 
 	clickMoveButton: function () {
-		mouse.downAction = move.down;
-		mouse.dragAction = move.drag;
-		mouse.upAction = move.up;
+		mouse.onDown = move.down;
+		mouse.onDrag = move.drag;
+		mouse.onUp = move.up;
 		tools.activeTool = 'move';
 		tools.update();
 		return false;
@@ -92,12 +92,14 @@ tools = {
 		mural.zoomIn();
 		tools.update();
 		grid.update();
+		tools.update();
 	},
 
 	clickZoomOutButton: function () {
 		mural.zoomOut();
 		tools.update();
 		grid.update();
+		tools.update();
 	},
 
 	/**
@@ -130,18 +132,18 @@ tools = {
 	},
 
 	clickDropperButton: function () {
-		mouse.downAction = dropper.suckColor;
-		mouse.dragAction = dropper.suckColor;
-		mouse.upAction = null;
+		mouse.onDown = suckColor;
+		mouse.onDrag = suckColor;
+		mouse.onUp = null;
 		tools.previousTool = tools.activeTool;
 		tools.activeTool = 'dropper';
 		tools.update();
 	},
 
 	clickPencilButton: function () {
-		mouse.downAction = pencil.paintPixel;
-		mouse.dragAction = null;
-		mouse.upAction = null;
+		mouse.onDown = paintPixel;
+		mouse.onDrag = null;
+		mouse.onUp = null;
 		tools.activeTool = 'pencil';
 		tools.update();
 	},
@@ -160,17 +162,17 @@ tools = {
 	},
 
 	clickEraserButton: function () {
-		mouse.downAction = eraser.erasePixel;
-		mouse.dragAction = eraser.erasePixel;
-		mouse.upAction = null;
+		mouse.onDown = erasePixel;
+		mouse.onDrag = erasePixel;
+		mouse.onUp = null;
 		tools.activeTool = 'eraser';
 		tools.update();
 	},
 
 	clickBucketButton: function () {
-		mouse.downAction = bucket.paintArea;
-		mouse.dragAction = null;
-		mouse.upAction = null;
+		mouse.onDown = paintArea;
+		mouse.onDrag = null;
+		mouse.onUp = null;
 		tools.activeTool = 'bucket';
 		tools.update();
 		return false;
@@ -243,31 +245,26 @@ tools = {
 
 move = {
 
-	down: function () {
-		mouse.diffX = 0;
-		mouse.diffY = 0;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-	},
+	moved: false,
 
 	drag: function ( event ) {
-		mural.centerX += mouse.previousX - mouse.currentX;
-		mural.centerY += mouse.previousY - mouse.currentY;
+		var diffX = mouse.currentX - mouse.previousX,
+			diffY = mouse.currentY - mouse.previousY;
 
-		mouse.diffX += ( mouse.currentX - mouse.previousX ) * mural.pixelSize;
-		mouse.diffY += ( mouse.currentY - mouse.previousY ) * mural.pixelSize;
+		mural.move( diffX, diffY );
 
-		mural.context.clearRect( 0, 0, mural.width, mural.height );
-		mural.context.putImageData( mural.imageData, parseFloat( mouse.diffX ), parseFloat( mouse.diffY ) );
-
-		// Bugfix: without this, the mural flickers when moving, not sure why
+		// Bugfix: without this, the board flickers while moving, not sure why
 		mouse.currentX = mouse.getCurrentX( event );
 		mouse.currentY = mouse.getCurrentY( event );
+
+		move.moved = true;
 	},
 
 	up: function ( event ) {
-		if ( mouse.diffX || mouse.diffY ) {
+		if ( move.moved ) {
 			mural.update();
 			preview.update();
+			move.moved = false;
 			return;
 		}
 		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
@@ -279,119 +276,107 @@ move = {
 	}
 };
 
-pencil = {
+paintPixel = function ( event ) {
+	var x = mouse.currentX,
+		y = mouse.currentY,
+		color = tools.color;
 
-	paintPixel: function ( event ) {
-		var x = mouse.currentX,
-			y = mouse.currentY,
-			color = tools.color;
-
-		// For convenience, re-painting a pixel erases it
-		if ( color === mural.getPixelColor( x, y ) ) {
-			color = null;
-		}
-
-		var newAreaData = [{ 'x': x, 'y': y, 'color': color }];
-
-		if ( tools.stroke > 1 ) {
-			newAreaData.push({ 'x': x + 1, 'y': y + 0, 'color': color });
-			newAreaData.push({ 'x': x + 0, 'y': y + 1, 'color': color });
-			newAreaData.push({ 'x': x + 1, 'y': y + 1, 'color': color });
-		}
-
-		if ( tools.stroke > 2 ) {
-			newAreaData.push({ 'x': x - 1, 'y': y + 1, 'color': color });
-			newAreaData.push({ 'x': x - 1, 'y': y + 0, 'color': color });
-			newAreaData.push({ 'x': x - 1, 'y': y - 1, 'color': color });
-			newAreaData.push({ 'x': x + 0, 'y': y - 1, 'color': color });
-			newAreaData.push({ 'x': x + 1, 'y': y - 1, 'color': color });
-		}
-
-		var newArea = new window.Area( newAreaData );
-		newArea.paint().save( true );
+	// For convenience, re-painting a pixel erases it
+	if ( color === mural.getPixelColor( x, y ) ) {
+		color = null;
 	}
+
+	var newAreaData = [{ 'x': x, 'y': y, 'color': color }];
+
+	if ( tools.stroke > 1 ) {
+		newAreaData.push({ 'x': x + 1, 'y': y + 0, 'color': color });
+		newAreaData.push({ 'x': x + 0, 'y': y + 1, 'color': color });
+		newAreaData.push({ 'x': x + 1, 'y': y + 1, 'color': color });
+	}
+
+	if ( tools.stroke > 2 ) {
+		newAreaData.push({ 'x': x - 1, 'y': y + 1, 'color': color });
+		newAreaData.push({ 'x': x - 1, 'y': y + 0, 'color': color });
+		newAreaData.push({ 'x': x - 1, 'y': y - 1, 'color': color });
+		newAreaData.push({ 'x': x + 0, 'y': y - 1, 'color': color });
+		newAreaData.push({ 'x': x + 1, 'y': y - 1, 'color': color });
+	}
+
+	var newArea = new window.Area( newAreaData );
+	newArea.paint().save( true );
 };
 
-eraser = {
+erasePixel = function ( event ) {
 
-	erasePixel: function ( event ) {
+	var x = mouse.currentX,
+		y = mouse.currentY
+		newAreaData = [{ 'x': x, 'y': y, 'color': null }];
 
-		var x = mouse.currentX,
-			y = mouse.currentY
-			newAreaData = [{ 'x': x, 'y': y, 'color': null }];
-
-		if ( tools.stroke > 1 ) {
-			newAreaData.push({ 'x': x + 1, 'y': y + 0, 'color': null });
-			newAreaData.push({ 'x': x + 0, 'y': y + 1, 'color': null });
-			newAreaData.push({ 'x': x + 1, 'y': y + 1, 'color': null });
-		}
-
-		if ( tools.stroke > 2 ) {
-			newAreaData.push({ 'x': x - 1, 'y': y + 1, 'color': null });
-			newAreaData.push({ 'x': x - 1, 'y': y + 0, 'color': null });
-			newAreaData.push({ 'x': x - 1, 'y': y - 1, 'color': null });
-			newAreaData.push({ 'x': x + 0, 'y': y - 1, 'color': null });
-			newAreaData.push({ 'x': x + 1, 'y': y - 1, 'color': null });
-		}
-
-		var newArea = new window.Area( newAreaData );
-		newArea.erase().save( true );
+	if ( tools.stroke > 1 ) {
+		newAreaData.push({ 'x': x + 1, 'y': y + 0, 'color': null });
+		newAreaData.push({ 'x': x + 0, 'y': y + 1, 'color': null });
+		newAreaData.push({ 'x': x + 1, 'y': y + 1, 'color': null });
 	}
+
+	if ( tools.stroke > 2 ) {
+		newAreaData.push({ 'x': x - 1, 'y': y + 1, 'color': null });
+		newAreaData.push({ 'x': x - 1, 'y': y + 0, 'color': null });
+		newAreaData.push({ 'x': x - 1, 'y': y - 1, 'color': null });
+		newAreaData.push({ 'x': x + 0, 'y': y - 1, 'color': null });
+		newAreaData.push({ 'x': x + 1, 'y': y - 1, 'color': null });
+	}
+
+	var newArea = new window.Area( newAreaData );
+	newArea.erase().save( true );
 };
 
-dropper = {
-
-	suckColor: function ( event ) {
-		tools.color = mural.getPixelColor( mouse.currentX, mouse.currentY );
-		tools.update();
-	}
+suckColor = function ( event ) {
+	tools.color = mural.getPixelColor( mouse.currentX, mouse.currentY );
+	tools.update();
 };
 
-bucket = {
+paintArea: function ( event ) {
+	var x = mouse.currentX,
+		y = mouse.currentY,
+		color = tools.color,
+		oldAreaData = [{ 'x': x, 'y': y, 'color': mural.getPixelColor( x, y ) }],
+		newPixelData,
+		newPixel,
+		newAreaData = [],
+		neighbors = [];
 
-	paintArea: function ( event ) {
-		var x = mouse.currentX,
-			y = mouse.currentY,
-			color = tools.color,
-			oldAreaData = [{ 'x': x, 'y': y, 'color': mural.getPixelColor( x, y ) }],
-			newPixelData,
-			newPixel,
-			newAreaData = [],
-			neighbors = [];
-
-		while ( oldAreaData.length ) {
-			oldPixelData = oldAreaData.shift();
-			x = oldPixelData.x;
-			y = oldPixelData.y;
-			newPixelData = { 'x': x, 'y': y, 'color': color };
-			newPixel = new window.Pixel( newPixelData );
-			newPixel.paint();
-			newAreaData.push( newPixelData );
-			neighbors = [
-				{ 'x': x, 'y': y - 1, 'color': mural.getPixelColor( x, y - 1 ) },
-				{ 'x': x + 1, 'y': y, 'color': mural.getPixelColor( x + 1, y ) },
-				{ 'x': x, 'y': y + 1, 'color': mural.getPixelColor( x, y + 1 ) },
-				{ 'x': x - 1, 'y': y, 'color': mural.getPixelColor( x - 1, y ) }
-			];
-			neighbors.forEach( function ( neighbor ) {
-				if ( neighbor.color && neighbor.color === oldPixelData.color ) {
-					for ( var i = 0; i < oldAreaData.length; i++ ) {
-						if ( oldAreaData[ i ].x === neighbor.x && oldAreaData[ i ].y === neighbor.y ) {
-							return; // Make sure the neighbor is not in oldAreaData already
-						}
+	while ( oldAreaData.length ) {
+		oldPixelData = oldAreaData.shift();
+		x = oldPixelData.x;
+		y = oldPixelData.y;
+		newPixelData = { 'x': x, 'y': y, 'color': color };
+		newPixel = new window.Pixel( newPixelData );
+		newPixel.paint();
+		newAreaData.push( newPixelData );
+		neighbors = [
+			{ 'x': x, 'y': y - 1, 'color': mural.getPixelColor( x, y - 1 ) },
+			{ 'x': x + 1, 'y': y, 'color': mural.getPixelColor( x + 1, y ) },
+			{ 'x': x, 'y': y + 1, 'color': mural.getPixelColor( x, y + 1 ) },
+			{ 'x': x - 1, 'y': y, 'color': mural.getPixelColor( x - 1, y ) }
+		];
+		neighbors.forEach( function ( neighbor ) {
+			if ( neighbor.color && neighbor.color === oldPixelData.color ) {
+				for ( var i = 0; i < oldAreaData.length; i++ ) {
+					if ( oldAreaData[ i ].x === neighbor.x && oldAreaData[ i ].y === neighbor.y ) {
+						return; // Make sure the neighbor is not in oldAreaData already
 					}
-					oldAreaData.push( neighbor );
 				}
-			});
-
-			if ( newAreaData.length > 112 ) {
-				break; // Bugfix! For some reason if the bucket paints too much, it erases instead of painting!
+				oldAreaData.push( neighbor );
 			}
-		}
+		});
 
-		var newArea = new window.Area( newAreaData );
-		newArea.save( true );
+		if ( newAreaData.length > 112 ) {
+			break; // Bugfix! For some reason if the bucket paints too much, it erases instead of painting!
+		}
 	}
+
+	var newArea = new window.Area( newAreaData );
+	newArea.save( true );
 };
 
 grid = {

@@ -17,14 +17,18 @@ mural = {
 	// INITIALISER
 
 	init: function () {
-		// Set the variables that must wait for the DOM to be loaded
-		mural.setCanvas( document.getElementById( 'mural' ) );
-		mural.setCenterX( mural.getCenterX() );
-		mural.setCenterY( mural.getCenterY() );
-		mural.setPixelSize( mural.getPixelSize() );
+		// Get and set the variables that must wait for the DOM to be loaded
+		var canvas = document.getElementById( 'mural' ),
+			centerX = mural.getCenterX(),
+			centerY = mural.getCenterY(),
+			pixelSize = mural.getPixelSize();
+		mural.setCanvas( canvas );
+		mural.setCenterX( centerX );
+		mural.setCenterY( centerY );
+		mural.setPixelSize( pixelSize );
 
 		// Fill the mural
-		mural.update();
+		mural.resize();
 
 		// Bind events
 		$( window ).resize( mural.resize );
@@ -88,9 +92,9 @@ mural = {
 
 	// SETTERS
 
-	setCanvas: function ( value ) {
-		mural.canvas = value;
-		mural.context = value.getContext( '2d' );
+	setCanvas: function ( canvas ) {
+		mural.canvas = canvas;
+		mural.context = canvas.getContext( '2d' );
 	},
 
 	setWidth: function ( value ) {
@@ -113,10 +117,12 @@ mural = {
 
 	setCenterX: function ( value ) {
 		mural.centerX = value;
+		mural.updateURL();
 	},
 
 	setCenterY: function ( value ) {
 		mural.centerY = value;
+		mural.updateURL();
 	},
 
 	setPixelSize: function ( value ) {
@@ -129,58 +135,68 @@ mural = {
 		}
 		mural.xPixels = mural.getXpixels();
 		mural.yPixels = mural.getYpixels();
+		mural.updateURL();
 	},
 
 	// ACTIONS
 
+	zoom: function ( scale ) {
+		if ( mural.pixelSize < 1 || mural.pixelSize > 64 ) {
+			return;
+		}
+		// First zoom in locally
+		var image = new Image();
+		image.src = mural.canvas.toDataURL( 'image/png' );
+		image.onload = function () {
+			mural.clear();
+			mural.context.save();
+			mural.context.imageSmoothingEnabled = false;
+			mural.context.setTransform( scale, 0, 0, scale, mural.canvas.width / 2, mural.canvas.height / 2 );
+			mural.context.drawImage( image, -image.width / 2, -image.height / 2 );
+			mural.context.restore();
+
+			// Then get the new data
+			mural.setPixelSize( mural.pixelSize * scale );
+			mural.update();
+		}
+	},
 	zoomIn: function () {
-		if ( mural.pixelSize === 64 ) {
-			return;
-		}
-		mural.setPixelSize( mural.pixelSize * 2 );
-		mural.update();
+		mural.zoom( 2 );
 	},
-
 	zoomOut: function () {
-		if ( mural.pixelSize === 1 ) {
-			return;
-		}
-		mural.setPixelSize( mural.pixelSize / 2 );
-		mural.update();
+		mural.zoom( 0.5 );
 	},
 
+	move: function ( diffX, diffY ) {
+		mural.setCenterX( mural.centerX - diffX );
+		mural.setCenterY( mural.centerY - diffY );
+		var imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
+		mural.clear();
+		mural.context.putImageData( imageData, diffX * mural.pixelSize, diffY * mural.pixelSize );
+	},
 	moveLeft: function () {
-		mural.centerX--;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-		mural.clear();
-		mural.context.putImageData( mural.imageData, mural.pixelSize, 0 );
+		mural.move( -1, 0 );
 	},
-
 	moveUp: function () {
-		mural.centerY--;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-		mural.clear();
-		mural.context.putImageData( mural.imageData, 0, mural.pixelSize );
+		mural.move( 0, -1 );
 	},
-
 	moveRight: function () {
-		mural.centerX++;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-		mural.clear();
-		mural.context.putImageData( mural.imageData, -mural.pixelSize, 0 );
+		mural.move( 1, 0 );
 	},
-
 	moveDown: function () {
-		mural.centerY++;
-		mural.imageData = mural.context.getImageData( 0, 0, mural.width, mural.height );
-		mural.clear();
-		mural.context.putImageData( mural.imageData, 0, -mural.pixelSize );
+		mural.move( 0, 1 );
 	},
 
 	timeout: null,
 	resize: function () {
 		clearTimeout( mural.timeout );
-		mural.timeout = setTimeout( mural.update, 200 );	
+		mural.timeout = setTimeout( function () {
+			var width = $( 'body' ).width(),
+				height = $( 'body' ).height();
+			mural.setWidth( width );
+			mural.setHeight( height );
+			mural.update();
+		}, 200 );
 	},
 
 	clear: function () {
@@ -192,10 +208,6 @@ mural = {
 		if ( mural.jqXHR ) {
 			mural.jqXHR.abort(); // Abort any unfinished updates
 		}
-
-		mural.setWidth( $( 'body' ).width() );
-		mural.setHeight( $( 'body' ).height() );
-
 		showLoading();
 
 		var data = {
@@ -211,16 +223,16 @@ mural = {
 			var image = new Image();
 			image.src = 'data:image/png;base64,' + response;
 			image.onload = function () {
-				mural.context.clearRect( 0, 0, mural.width, mural.height );
+				mural.clear();
 				mural.context.drawImage( image, 0, 0 );
-
 				hideLoading();
-
-				// Update the URL of the browser
-				var BASE = $( 'base' ).attr( 'href' );
-				history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
 			};
 		});
+	},
+
+	updateURL: function () {
+		var BASE = $( 'base' ).attr( 'href' );
+		history.replaceState( null, null, BASE + mural.centerX + '/' + mural.centerY + '/' + mural.pixelSize );
 	}
 };
 
@@ -235,9 +247,9 @@ mouse = {
 
 	state: 'up',
 
-	downAction: null,
-	dragAction: null,
-	upAction: null,
+	onDown: null,
+	onDrag: null,
+	onUp: null,
 
 	// INITIALISER
 	init: function () {
@@ -264,7 +276,9 @@ mouse = {
 
 	down: function ( event ) {
 		mouse.state = 'down';
-		mouse.downAction( event );
+		if ( mouse.onDown ) {
+			mouse.onDown( event );
+		}
 	},
 
 	move: function ( event ) {
@@ -275,15 +289,15 @@ mouse = {
 		mouse.currentY = mouse.getCurrentY( event );
 
 		// If the mouse is being dragged
-		if ( mouse.state === 'down' && ( mouse.currentX !== mouse.previousX || mouse.currentY !== mouse.previousY ) && mouse.dragAction ) {
-			mouse.dragAction( event );
+		if ( mouse.state === 'down' && ( mouse.currentX !== mouse.previousX || mouse.currentY !== mouse.previousY ) && mouse.onDrag ) {
+			mouse.onDrag( event );
 		}
 	},
 
 	up: function ( event ) {
 		mouse.state = 'up';
-		if ( mouse.upAction ) {
-			mouse.upAction( event );
+		if ( mouse.onUp ) {
+			mouse.onUp( event );
 		}
 	},
 
