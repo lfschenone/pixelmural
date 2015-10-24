@@ -265,14 +265,14 @@ move = {
 			mural.update();
 			preview.update();
 			move.moved = false;
-			return;
+		} else {
+			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
+			$.get( 'Pixels', data, function ( response ) {
+				if ( response ) {
+					showPixelAuthor( response.Pixel, response.Author );
+				}
+			});
 		}
-		var data = { 'x': mouse.currentX, 'y': mouse.currentY };
-		$.get( 'Pixels', data, function ( response ) {
-			if ( response ) {
-				showPixelAuthor( response.Pixel, response.Author );
-			}
-		});
 	}
 };
 

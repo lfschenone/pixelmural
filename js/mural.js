@@ -368,14 +368,14 @@ touch = {
 		if ( touch.moved ) {
 			mural.update();
 			touch.moved = false;
-			return;
+		} else {
+			var data = { 'x': touch.currentX, 'y': touch.currentY };
+			$.get( 'Pixels', data, function ( response ) {
+				if ( response ) {
+					showPixelAuthor( response.Pixel, response.Author );
+				}
+			});
 		}
-		var data = { 'x': touch.currentX, 'y': touch.currentY };
-		$.get( 'Pixels', data, function ( response ) {
-			if ( response ) {
-				showPixelAuthor( response.Pixel, response.Author );
-			}
-		});
 	}
 };
 
