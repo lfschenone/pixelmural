@@ -335,7 +335,7 @@ suckColor = function ( event ) {
 	tools.update();
 };
 
-paintArea: function ( event ) {
+paintArea = function ( event ) {
 	var x = mouse.currentX,
 		y = mouse.currentY,
 		color = tools.color,
