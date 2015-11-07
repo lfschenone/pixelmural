@@ -324,26 +324,31 @@ touch = {
 	// INITIALISER
 	init: function () {
 		// Bind events
-    	$( mural.canvas ).on( 'touchmove', touch.move ).on( 'touchend', touch.end );
+    	$( mural.canvas ).on( 'touchstart', touch.start ).on( 'touchmove', touch.move ).on( 'touchend', touch.end );
 	},
 
 	// GETTERS
 
 	getCurrentX: function ( event ) {
 		var pageX = event.originalEvent.changedTouches[0].pageX,
-			offsetX = pageX - $( event.target ).offset().left - 1, // The -1 is to correct a minor displacement
+			offsetX = pageX - $( event.target ).offset().left,
 			currentX = mural.centerX - Math.floor( mural.xPixels / 2 ) + Math.floor( offsetX / mural.pixelSize );
 		return currentX;
 	},
 
 	getCurrentY: function ( event ) {
 		var pageY = event.originalEvent.changedTouches[0].pageY,
-			offsetY = pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
+			offsetY = pageY - $( event.target ).offset().top,
 			currentY = mural.centerY - Math.floor( mural.yPixels / 2 ) + Math.floor( offsetY / mural.pixelSize );
 		return currentY;
 	},
 
 	// EVENT HANDLERS
+
+	start: function ( event ) {
+		touch.currentX = touch.getCurrentX( event );
+		touch.currentY = touch.getCurrentY( event );
+	},
 
 	move: function ( event ) {
 		touch.previousX = touch.currentX;

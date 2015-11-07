@@ -10,8 +10,8 @@ This is contrary to the documented behaviour, and may be related to https://gith
 the amount of pixels that the bucket can paint.
 * The null value is transmitted to the server as an empty string.
 * Facebook names with special characters have encoding issues.
+* Minor displacement when moving in the mobile version
 * Minor displacement when zooming
-* Major displacement when moving with touch. The problem is with mural.centerX and mural.centerY
 
 Tasks
 -----
