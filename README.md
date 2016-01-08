@@ -15,8 +15,10 @@ the amount of pixels that the bucket can paint.
 
 Tasks
 -----
+* Replace Facebook link with custom link?
 * Zoom with pinch
 * Only load new pixels
+* Only exchange with server on mouse up
 
 Tasks if and when there is enough traffic
 -----------------------------------------

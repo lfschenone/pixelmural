@@ -141,7 +141,8 @@ mural = {
 	// ACTIONS
 
 	zoom: function ( scale ) {
-		if ( mural.pixelSize < 1 || mural.pixelSize > 64 ) {
+		mural.setPixelSize( mural.pixelSize * scale );
+		if ( mural.pixelSize === 1 || mural.pixelSize === 64 ) {
 			return;
 		}
 		// First zoom in locally
@@ -150,14 +151,11 @@ mural = {
 		image.onload = function () {
 			mural.clear();
 			mural.context.save();
-			mural.context.imageSmoothingEnabled = false;
+			mural.context.imageSmoothingEnabled = false; // Else the pixels will blur
 			mural.context.setTransform( scale, 0, 0, scale, mural.canvas.width / 2, mural.canvas.height / 2 );
 			mural.context.drawImage( image, -image.width / 2, -image.height / 2 );
 			mural.context.restore();
-
-			// Then get the new data
-			mural.setPixelSize( mural.pixelSize * scale );
-			mural.update();
+			mural.update(); // Get the new data
 		}
 	},
 	zoomIn: function () {
@@ -374,6 +372,7 @@ touch = {
 			mural.update();
 			touch.moved = false;
 		} else {
+			showPixelAuthor(); // Show dummy
 			var data = { 'x': touch.currentX, 'y': touch.currentY };
 			$.get( 'Pixels', data, function ( response ) {
 				if ( response ) {

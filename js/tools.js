@@ -266,6 +266,7 @@ move = {
 			preview.update();
 			move.moved = false;
 		} else {
+			showPixelAuthor(); // Show dummy
 			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
 			$.get( 'Pixels', data, function ( response ) {
 				if ( response ) {
