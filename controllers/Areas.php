@@ -72,6 +72,7 @@ class Areas extends Controller {
 			if ( $User->canEdit( $newPixel ) ) {
 				$newPixel->color = $AREADATA[ $i ]['color'];
 
+				// Bug: posting data converts null values to empty strings, so we must avoid strict comparisons
 				if ( $newPixel->color == $oldPixel->color ) {
 					continue; // The pixel is unchanged
 				}

@@ -142,9 +142,6 @@ mural = {
 
 	zoom: function ( scale ) {
 		mural.setPixelSize( mural.pixelSize * scale );
-		if ( mural.pixelSize === 1 || mural.pixelSize === 64 ) {
-			return;
-		}
 		// First zoom in locally
 		var image = new Image();
 		image.src = mural.canvas.toDataURL( 'image/png' );
@@ -153,15 +150,21 @@ mural = {
 			mural.context.save();
 			mural.context.imageSmoothingEnabled = false; // Else the pixels will blur
 			mural.context.setTransform( scale, 0, 0, scale, mural.canvas.width / 2, mural.canvas.height / 2 );
-			mural.context.drawImage( image, -image.width / 2, -image.height / 2 );
+			mural.context.drawImage( image, -image.width / 2, -image.height / 2 - 1 ); // The -1 corrects a minor displacement
 			mural.context.restore();
 			mural.update(); // Get the new data
 		}
 	},
 	zoomIn: function () {
+		if ( mural.pixelSize >= 64 ) {
+			return;
+		}
 		mural.zoom( 2 );
 	},
 	zoomOut: function () {
+		if ( mural.pixelSize <= 1 ) {
+			return;
+		}
 		mural.zoom( 0.5 );
 	},
 
@@ -259,13 +262,13 @@ mouse = {
 	// GETTERS
 
 	getCurrentX: function ( event ) {
-		var offsetX = event.pageX - $( event.target ).offset().left - 1, // The -1 is to correct a minor displacement
+		var offsetX = event.pageX - $( event.target ).offset().left - 1, // The -1 corrects a minor displacement
 			currentX = mural.centerX - Math.floor( mural.xPixels / 2 ) + Math.floor( offsetX / mural.pixelSize );
 		return currentX;
 	},
 
 	getCurrentY: function ( event ) {
-		var offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
+		var offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 corrects a minor displacement
 			currentY = mural.centerY - Math.floor( mural.yPixels / 2 ) + Math.floor( offsetY / mural.pixelSize );
 		return currentY;
 	},
@@ -372,13 +375,16 @@ touch = {
 			mural.update();
 			touch.moved = false;
 		} else {
-			showPixelAuthor(); // Show dummy
-			var data = { 'x': touch.currentX, 'y': touch.currentY };
-			$.get( 'Pixels', data, function ( response ) {
-				if ( response ) {
-					showPixelAuthor( response.Pixel, response.Author );
-				}
-			});
+			var color = mural.getPixelColor( touch.currentX, touch.currentY );
+			if ( color ) {
+				showPixelAuthor(); // Show dummy while we get the data
+				var data = { 'x': touch.currentX, 'y': touch.currentY };
+				$.get( 'Pixels', data, function ( response ) {
+					if ( response ) {
+						showPixelAuthor( response.Pixel, response.Author );
+					}
+				});
+			}
 		}
 	}
 };

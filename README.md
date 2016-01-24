@@ -8,20 +8,18 @@ Bugs
 This is contrary to the documented behaviour, and may be related to https://github.com/bgrins/spectrum/issues/301
 * When painting too many pixels, the bucket erases instead of painting! There is a bugfix in place that simply limits
 the amount of pixels that the bucket can paint.
-* The null value is transmitted to the server as an empty string.
+* The null value is transmitted to the server as an empty string. The current solution is avoiding strict comparisons, see controllers/Areas.php
 * Facebook names with special characters have encoding issues.
-* Minor displacement when moving in the mobile version
-* Minor displacement when zooming
 
 Tasks
 -----
 * Replace Facebook link with custom link?
 * Zoom with pinch
-* Only load new pixels
-* Only exchange with server on mouse up
+* Title attribute for the stroke/color buttons
 
 Tasks if and when there is enough traffic
 -----------------------------------------
+* Only load new pixels
 * SVG icons
 * Screenshot button?
 * WebSockets?
