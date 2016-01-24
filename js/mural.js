@@ -384,6 +384,8 @@ touch = {
 						showPixelAuthor( response.Pixel, response.Author );
 					}
 				});
+			} else {
+				hidePixelAuthor();
 			}
 		}
 	}
