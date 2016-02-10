@@ -266,13 +266,18 @@ move = {
 			preview.update();
 			move.moved = false;
 		} else {
-			showPixelAuthor(); // Show dummy
-			var data = { 'x': mouse.currentX, 'y': mouse.currentY };
-			$.get( 'Pixels', data, function ( response ) {
-				if ( response ) {
-					showPixelAuthor( response.Pixel, response.Author );
-				}
-			});
+			var color = mural.getPixelColor( mouse.currentX, mouse.currentY );
+			if ( color ) {
+				showPixelAuthor(); // Show dummy while getting the data
+				var data = { 'x': mouse.currentX, 'y': mouse.currentY };
+				$.get( 'Pixels', data, function ( response ) {
+					if ( response ) {
+						showPixelAuthor( response.Pixel, response.Author );
+					}
+				});
+			} else {
+				hidePixelAuthor();
+			}
 		}
 	}
 };
@@ -390,6 +395,8 @@ grid = {
 
 	visible: false,
 
+	color: '#aaa',
+
 	// SETTERS
 
 	setCanvas: function ( value ) {
@@ -449,7 +456,7 @@ grid = {
 			grid.context.moveTo( 0, y * mural.pixelSize - 0.5 );
 			grid.context.lineTo( grid.width, y * mural.pixelSize - 0.5 );
 		}
-		grid.context.strokeStyle = '#ccc';
+		grid.context.strokeStyle = grid.color;
 		grid.context.stroke();
 	}
 };

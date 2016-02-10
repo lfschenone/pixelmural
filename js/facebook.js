@@ -6,7 +6,7 @@ facebook = {
 			xfbml: true,
 			status: true,
 			cookie: true,
-			version: 'v2.4'
+			version: FACEBOOK_API_VERSION
 		});
 		FB.getLoginStatus( facebook.statusChangeCallback );
 

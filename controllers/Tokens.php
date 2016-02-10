@@ -7,7 +7,7 @@ class Tokens extends Controller {
 		$Facebook = new Facebook\Facebook([
 			'app_id' => FACEBOOK_APP_ID,
 			'app_secret' => FACEBOOK_APP_SECRET,
-			'default_graph_version' => 'v2.4',
+			'default_graph_version' => FACEBOOK_API_VERSION,
 		]);
 
 		$Helper = $Facebook->getJavaScriptHelper();

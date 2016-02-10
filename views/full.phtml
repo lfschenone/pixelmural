@@ -9,7 +9,10 @@
 	<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="//connect.facebook.net/en_US/sdk.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.7.1/spectrum.min.js"></script>
-	<script>var FACEBOOK_APP_ID = <?php echo FACEBOOK_APP_ID; ?>;</script>
+	<script>
+		var FACEBOOK_APP_ID = <?php echo FACEBOOK_APP_ID; ?>,
+			FACEBOOK_API_VERSION = '<?php echo FACEBOOK_API_VERSION; ?>';
+	</script>
 	<script src="js/functions.js"></script>
 	<script src="js/facebook.js"></script>
 	<script src="js/mural.js"></script>
@@ -34,6 +37,8 @@
 
 		<div id="tools-menu" class="menu">
 			<button id="move-button" title="Move [Spacebar]"><img src="images/move.png" alt="Move"></button>
+			<button id="zoom-in-button" title="Zoom in [I]" accesskey="i"><img src="images/zoom-in.png" alt="Zoom in"></button>
+			<button id="zoom-out-button" title="Zoom out [O]" accesskey="o"><img src="images/zoom-out.png" alt="Zoom out"></button>
 			<button id="pencil-button" title="Pencil [P]" accesskey="p"><img src="images/pencil.png" alt="Pencil"></button>
 			<button id="eraser-button" title="Eraser [E]" accesskey="e"><img src="images/eraser.png" alt="Eraser"></button>
 			<button id="dropper-button" title="Dropper [Alt]" accesskey="d"><img src="images/dropper.png" alt="Dropper"></button>
@@ -42,8 +47,6 @@
 			<input id="color-input-2" title="Stroke 2" class="color-input" type="color" value="#000000" data-stroke="2">
 			<input id="color-input-3" title="Stroke 3" class="color-input" type="color" value="#000000" data-stroke="3">
 			<button id="link-button" title="Link [L]" accesskey="l"><img src="images/link.png" alt="Link"></button>
-			<button id="zoom-in-button" title="Zoom in [I]" accesskey="i"><img src="images/zoom-in.png" alt="Zoom in"></button>
-			<button id="zoom-out-button" title="Zoom out [O]" accesskey="o"><img src="images/zoom-out.png" alt="Zoom out"></button>
 			<button id="grid-button" title="Grid [G]" accesskey="g"><img src="images/grid.png" alt="Grid"></button>
 			<button id="preview-button" title="Preview [R]" accesskey="r"><img src="images/preview.png" alt="Preview"></button>
 			<button id="undo-button" title="Undo [Z]" accesskey="z"><img src="images/undo.png" alt="Undo"></button>

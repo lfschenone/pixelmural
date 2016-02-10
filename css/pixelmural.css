@@ -70,10 +70,8 @@ button::-moz-focus-inner {
 #header button.active {
 	background: #aaf;
 }
-
-#beta-tag {
-	max-height: 20px;
-	vertical-align: middle;
+#header .hidden {
+	display: none;
 }
 
 #loading {

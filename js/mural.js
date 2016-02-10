@@ -377,7 +377,7 @@ touch = {
 		} else {
 			var color = mural.getPixelColor( touch.currentX, touch.currentY );
 			if ( color ) {
-				showPixelAuthor(); // Show dummy while we get the data
+				showPixelAuthor(); // Show dummy while getting the data
 				var data = { 'x': touch.currentX, 'y': touch.currentY };
 				$.get( 'Pixels', data, function ( response ) {
 					if ( response ) {
