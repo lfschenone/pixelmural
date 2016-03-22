@@ -41,3 +41,32 @@ function showPixelAuthor( Pixel, Author ) {
 function hidePixelAuthor() {
 	$( '#author' ).remove();
 }
+
+function round_bytes( bytes ) {
+	var sizes = [ 'Bytes', 'KB', 'MB', 'GB', 'TB' ];
+	if ( bytes == 0 ) {
+		return '0 Byte';
+	}
+	var i = parseInt( Math.floor( Math.log( bytes ) / Math.log( 1024 ) ) );
+	return Math.round( bytes / Math.pow( 1024, i ), 2 ) + ' ' + sizes[ i ];
+};
+
+function in_array( needle, haystack ) {
+	if ( haystack.indexOf( needle ) > -1 ) {
+		return true;
+	}
+	return false;
+}
+
+function plural( amount, singular, plural ) {
+	if ( singular === undefined ) {
+		singular = '';
+	}
+	if ( plural === undefined ) {
+		plural = 's';
+	}
+	if ( amount === 1 ) {
+		return singular;
+	}
+	return plural;
+}
