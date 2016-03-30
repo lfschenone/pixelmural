@@ -619,7 +619,7 @@ function Area( data ) {
 			};
 		//console.log( data );
 		$.post( 'Areas', data, function ( response ) {
-			console.log( response );
+			//console.log( response );
 			if ( response.newAreaData.length ) {
 				if ( undoable ) {
 					tools.oldData.splice( tools.arrayPointer, tools.oldData.length - tools.arrayPointer, response.oldAreaData );
