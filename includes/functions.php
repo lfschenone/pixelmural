@@ -3,6 +3,7 @@
 function json( $data ) {
 	header( 'Content-Type: application/json' );
 	echo json_encode( $data, JSON_NUMERIC_CHECK );
+	ob_end_flush();
 	exit;
 }
 
