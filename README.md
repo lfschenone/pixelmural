@@ -13,12 +13,9 @@ Tasks
 -----
 * Zoom with pinch
 * Title attribute for the stroke/color buttons
-
-Tasks if and when there is enough traffic
------------------------------------------
+* Offline support
 * Only load new pixels
-* SVG icons
-* Screenshot button?
+* SVG icons?
 * WebSockets?
 * Live updating
 * Migrate to node.js?
