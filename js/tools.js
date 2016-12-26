@@ -34,7 +34,6 @@ tools = {
 		$( '#eraser-button' ).click( tools.clickEraserButton );
 		$( '#dropper-button' ).click( tools.clickDropperButton );
 		$( '#bucket-button' ).click( tools.clickBucketButton );
-		$( '#link-button' ).click( tools.clickLinkButton );
 		$( '#grid-button' ).click( tools.clickGridButton );
 		$( '#preview-button' ).click( tools.clickPreviewButton );
 		$( '#zoom-in-button' ).click( tools.clickZoomInButton );
@@ -50,7 +49,6 @@ tools = {
 			.bind( 'keypress', 'e', tools.clickEraserButton )
 			.bind( 'keypress', 'g', tools.clickGridButton )
 			.bind( 'keypress', 'i', tools.clickZoomInButton )
-			.bind( 'keypress', 'l', tools.clickLinkButton )
 			.bind( 'keypress', 'o', tools.clickZoomOutButton )
 			.bind( 'keypress', 'p', tools.clickPencilButton )
 			.bind( 'keypress', 'r', tools.clickPreviewButton )
@@ -146,19 +144,6 @@ tools = {
 		mouse.onUp = null;
 		tools.activeTool = 'pencil';
 		tools.update();
-	},
-
-	clickLinkButton: function () {
-		var link = ''; // Default
-		if ( user.link ) {
-			link = user.link;
-		}
-		result = prompt( 'Link all your pixels to the following URL:', link );
-		if ( result === null ) {
-			return; // The user pressed cancel
-		}
-		user.link = result;
-		user.update();
 	},
 
 	clickEraserButton: function () {

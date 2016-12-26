@@ -442,12 +442,6 @@ function User( data ) {
 		}
 		return false;
 	};
-
-	this.update = function () {
-		$.post( 'Users', this.getData(), function ( response ) {
-			//console.log( response );
-		});
-	};
 }
 
 $( mural.init );
