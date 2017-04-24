@@ -1,2 +1,5 @@
 # Pixel Mural
-An infinite canvas of collaborative pixel art
+
+Infinite canvas of collaborative pixel art.
+
+http://pixelmural.com/
