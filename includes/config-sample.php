@@ -24,4 +24,4 @@ define( 'DB_NAME', 'pixelmural' );
 // Facebook
 define( 'FACEBOOK_APP_ID', '' );
 define( 'FACEBOOK_APP_SECRET', '' );
-define( 'FACEBOOK_API_VERSION', 'v2.5' );
+define( 'FACEBOOK_API_VERSION', 'v2.10' );
