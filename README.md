@@ -2,4 +2,4 @@
 
 Infinite canvas of collaborative pixel art.
 
-https://pixelmural.sophivorus.com/
+https://sophivorus.com/pixelmural
